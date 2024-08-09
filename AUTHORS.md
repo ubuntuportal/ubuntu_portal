@@ -1,1 +1,1 @@
-Hezekiahs Olushola. <hezekiahs.dev@gmail.com>
+Hezekiahs Olushola <hezekiahs.dev@gmail.com>
