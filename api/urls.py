@@ -12,7 +12,7 @@ router.register(r'products', ProductViewSet)
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     # path('users/', include('django.contrib.auth.urls')),  # For login, logout, password reset, etc.
 ]
