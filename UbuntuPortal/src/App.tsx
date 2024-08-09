@@ -1,14 +1,18 @@
-//import { useState } from "react";
-import "./App.css";
+// src/App.tsx
+import React from "react";
+import ProductForm from "./components/ProductForm";
+import { Product } from "./types/Product";
 
-function App() {
+const App: React.FC = () => {
+  const handleProductSubmit = (product: Product) => {
+    // Handle the submitted product (e.g., send it to an API or update state)
+    console.log("Product submitted:", product);
+  };
+
   return (
-    <>
-      <div>
-        <h1 className="text-3xl font-bold underline">Hello world!</h1>
-      </div>
-    </>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <ProductForm onSubmit={handleProductSubmit} />
+    </div>
   );
-}
-
+};
 export default App;
