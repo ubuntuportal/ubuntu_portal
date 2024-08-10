@@ -25,7 +25,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    role = models.CharField(max_length=10, choices=(('buyer', 'Buyer'), ('seller', 'Seller')))
+    role = models.CharField(max_length=10, choices=(('buyer', 'Buyer'), ('seller', 'Seller')), default='buyer')
     date_joined = models.DateTimeField(default=timezone.now)
 
     objects = CustomUserManager()
