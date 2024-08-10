@@ -1,5 +1,5 @@
-import Header from '@/components/supplier/Header';
-import Sidebar from '@/components/supplier/Sidebar';
+import Header from "@/components/supplier/Header";
+import Sidebar from "@/components/supplier/Sidebar";
 
 export default function SupplierLayout({
   children,

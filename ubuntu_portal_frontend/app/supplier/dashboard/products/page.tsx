@@ -1,7 +1,12 @@
-import React from 'react';
+import { AddProduct } from "@/components/supplier/AddProduct";
+import React from "react";
 
 function ProductsPage() {
-  return <div>ProductsPage</div>;
+  return (
+    <div>
+      <AddProduct />
+    </div>
+  );
 }
 
 export default ProductsPage;

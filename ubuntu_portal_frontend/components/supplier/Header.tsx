@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 function Header() {
   return <div className="h-11 bg-gray-50">Header</div>;
