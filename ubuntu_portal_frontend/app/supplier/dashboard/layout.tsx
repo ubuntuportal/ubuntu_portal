@@ -10,7 +10,7 @@ export default function SupplierLayout({
     <main>
       <div className="flex">
         <Sidebar />
-        <div className="flex flex-col">
+        <div className="flex-1 flex-col">
           <Header />
           {children}
         </div>

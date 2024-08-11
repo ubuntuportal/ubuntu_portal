@@ -4,14 +4,15 @@ import {
   ShoppingCartIcon,
   UsersIcon,
   CogIcon,
-} from "@heroicons/react/outline"; // Example icons
+} from "@heroicons/react/outline";
+// icons
 
 export default function Sidebar() {
   return (
     <div className="min-h-screen bg-gray-800 text-white w-64 flex flex-col">
       {/* Logo/Branding */}
       <div className="flex items-center justify-center h-16 bg-gray-900 shadow-md">
-        <h1 className="text-xl font-semibold">My Dashboard</h1>
+        <h1 className="text-xl font-semibold">Ubuntu Portal</h1>
       </div>
 
       {/* Navigation Links */}
