@@ -4,8 +4,11 @@ import React from "react";
 
 function ProductsPage() {
   return (
-    <div>
-      <AddProduct />
+    <div className="p-6">
+      <div className="flex justify-end mb-4">
+        <AddProduct />
+      </div>
+
       <Tables />
     </div>
   );
