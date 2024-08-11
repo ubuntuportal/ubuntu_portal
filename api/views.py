@@ -6,7 +6,9 @@ from rest_framework.exceptions import NotFound
 from .models import Product
 from django.db.models import Q
 from .serializers import ProductSerializer
-from .utils import IsSeller, ApplyAdvanceFiltering
+from .utils import IsSeller, ApplyAdvanceFiltering, get_paginated_queryset
+from rest_framework.response import Response
+from rest_framework.decorators import action
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -19,14 +21,8 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        search_query = self.request.query_params.get('q')
-        if search_query:
-            queryset = queryset.filter(
-                Q(title__icontains=search_query) |
-                Q(description__icontains=search_query) |
-                Q(seller__name__icontains=search_query)
-            )
 
+        # general filtering applied to all request
         price_min = self.request.query_params.get('price_min')
         price_max = self.request.query_params.get('price_max')
         category = self.request.query_params.get('category')
@@ -40,11 +36,37 @@ class ProductViewSet(viewsets.ModelViewSet):
         if category:
             queryset = queryset.filter(category__name__icontains=category)
             if not queryset.exists():
-                raise NotFound('No product found with this category')
-
-        # class to perform advanced filtering
-        queryset = ApplyAdvanceFiltering().get_queryset(queryset, self.request)
+                return Response(queryset.none(), status=200)
         return queryset
+    
+    # custom action to search products
+    @action(detail=False, methods=['get'], url_path='search')
+    def search(self, request):
+        queryset = self.get_queryset()
+        search_query = request.query_params.get('q')
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) |
+                Q(description__icontains=search_query) |
+                Q(seller__name__icontains=search_query)
+            )
+        
+        # apply pagination
+        paginated_queryset = get_paginated_queryset(queryset, request)
+        serializer = self.get_serializer(paginated_queryset, many=True)
+        return Response(serializer.data)
+    
+    # custom action to apply advance filtering on products
+    @action(detail=False, methods=['get'], url_path='filter')
+    def filter(self, request):
+        queryset = self.get_queryset()
+        queryset = ApplyAdvanceFiltering().get_queryset(queryset, request)
+        
+        # apply pagination
+        paginated_queryset = get_paginated_queryset(queryset, request)
+        serializer = self.get_serializer(paginated_queryset, many=True)
+
+        return Response(serializer.data)
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -55,3 +77,4 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(seller=self.request.user)
+

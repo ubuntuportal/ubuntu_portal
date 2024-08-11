@@ -1,7 +1,9 @@
 from rest_framework.permissions import BasePermission
-from rest_framework.exceptions import ValidationError, NotFound
+from rest_framework.exceptions import ValidationError
+from rest_framework.pagination import PageNumberPagination
 
 
+# Custom permission class to check if user is seller
 class IsSeller(BasePermission):
     def has_permission(self, request, view):
         if view.action in ['list', 'retrieve']:
@@ -14,6 +16,7 @@ class IsSeller(BasePermission):
         return True
 
 
+# Helper class to apply advance filtering on queryset
 class ApplyAdvanceFiltering:
     def get_queryset(self, queryset, request):
         categories = request.query_params.get('categories')
@@ -48,5 +51,8 @@ class ApplyAdvanceFiltering:
         
         return queryset
         
-        
-            
+
+# Helper function to get paginated queryset
+def get_paginated_queryset(queryset, request):
+    paginator = PageNumberPagination()
+    return paginator.paginate_queryset(queryset, request)
