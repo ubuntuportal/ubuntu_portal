@@ -22,13 +22,11 @@ class Product(models.Model):
         indexes = [
             models.Index(fields=['price']),
             models.Index(fields=['title', 'description']),
-            models.Index(fields=['Category'])
         ]
 
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
-    product = models.ManyToManyField(Product, related_name='categories')
     
     def __str__(self):
         return self.name
