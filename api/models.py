@@ -11,6 +11,7 @@ class Product(models.Model):
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products', default=1)
     category = models.ManyToManyField('Category', related_name='products')
     rating = models.FloatField(default=0.0)
+    image = models.ImageField(upload_to='products/', null=True, blank=True)  # Add image field
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
