@@ -20,6 +20,30 @@ class ProductPagination(PageNumberPagination):
 
 
 class ProductViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for handling CRUD operations on the Product model.
+
+    This viewset provides the following functionalities:
+    
+    - **List**: Retrieve a list of products, with optional filtering and ordering by price and creation date.
+    - **Retrieve**: Get details of a specific product.
+    - **Create**: Add a new product to the platform (restricted to authenticated users with 'Seller' role).
+    - **Update**: Modify an existing product (restricted to authenticated users with 'Seller' role).
+    - **Partial Update**: Partially modify an existing product (restricted to authenticated users with 'Seller' role).
+    - **Destroy**: Delete a product from the platform (restricted to authenticated users with 'Seller' role).
+
+    Permissions:
+    - **IsAuthenticatedOrReadOnly**: Allows unauthenticated users to view product listings and details, but restricts creating, updating, or deleting products to authenticated users.
+    - **IsSeller**: Ensures that only users with the 'Seller' role can create, update, or delete products.
+
+    Filtering and Ordering:
+    - Supports filtering by `price` and `seller`.
+    - Allows ordering by `price` and `created_at`.
+
+    Methods:
+    - `get_permissions()`: Determines the appropriate permissions based on the action being performed.
+    - `perform_create(serializer)`: Custom method to set the seller field to the current authenticated user when creating a new product.
+    """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
@@ -86,4 +110,3 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(seller=self.request.user)
-
