@@ -8,6 +8,8 @@ from .views import ProductViewSet
 router = DefaultRouter()
 
 router.register(r'products', ProductViewSet)
+router.register(r'products/search', ProductViewSet)
+router.register(r'products/filter', ProductViewSet)
 
 
 
