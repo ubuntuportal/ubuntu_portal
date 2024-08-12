@@ -17,18 +17,23 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     class Meta:
         indexes = [
             models.Index(fields=['price']),
             models.Index(fields=['title', 'description']),
-            models.Index(fields=['Category'])
+            # models.Index(fields=['Category'])
         ]
 
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
-    product = models.ManyToManyField(Product, related_name='categories')
-    
+    # product = models.ManyToManyField(Product, related_name='categories')
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['name']),
+        ]
+
     def __str__(self):
         return self.name
