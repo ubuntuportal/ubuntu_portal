@@ -3,5 +3,4 @@ u-portal
 .vscode
 __pycache__/
 db.sqlite3
-api/migrations/0002_category_product_image_product_rating_and_more.py
-migrations/
+
