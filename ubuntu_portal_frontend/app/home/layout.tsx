@@ -7,7 +7,7 @@ export default function BuyerLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <body className="h-screen">
       <Header />
       <main>
         {/* <div className="flex">
@@ -19,6 +19,6 @@ export default function BuyerLayout({
         {children}
       </main>
       <Footer />
-    </>
+    </body>
   );
 }
