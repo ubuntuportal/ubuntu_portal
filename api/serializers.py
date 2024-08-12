@@ -3,7 +3,7 @@ from .models import Product, Category
 
 class ProductSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), many=True)
-    
+
     class Meta:
         model = Product
         fields = ('id', 'title', 'description', 'price', 'image', 'category')
@@ -15,3 +15,9 @@ class ProductSerializer(serializers.ModelSerializer):
         product = Product.objects.create(**validated_data)
         product.category.set(categories)
         return product
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name']

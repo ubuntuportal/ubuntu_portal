@@ -1,13 +1,14 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ProductViewSet
+from .views import ProductViewSet, CategoryViewSet
 # from users.views import UserViewSet
 # from orders.views import OrderViewSet
 
 router = DefaultRouter()
 
 router.register(r'products', ProductViewSet, basename='product')
+router.register(r'categories', CategoryViewSet, basename='category')  # Register CategoryViewSet
 
 
 
