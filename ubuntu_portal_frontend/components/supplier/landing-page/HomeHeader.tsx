@@ -27,7 +27,7 @@ const navigation = [
 function HomeHeader() {
   return (
     <div className="max-w-screen-xl mx-auto px-8 py-4 mt-2 flex items-cente justify-between">
-      <img src="ubuntuLogo.svg" alt="" className="h-10 w-auto object-cover" />
+      <img src="ubuntuLogo.png" alt="" className="h-10 w-auto object-cover" />
       <div className="flex gap-6">
         {navigation.map((item) => (
           <a href={item.link} key={item.title} className="hover:text-green-500">
