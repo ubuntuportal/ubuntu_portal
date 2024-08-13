@@ -17,7 +17,7 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     class Meta:
         indexes = [
             models.Index(fields=['price']),
@@ -27,6 +27,12 @@ class Product(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
-    
+    # product = models.ManyToManyField(Product, related_name='categories')
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['name']),
+        ]
+
     def __str__(self):
         return self.name
