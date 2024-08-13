@@ -1,5 +1,5 @@
-import HeroSection from '@/components/supplier/HeroSection';
-import HomeHeader from '@/components/supplier/HomeHeader';
+import HeroSection from '@/components/supplier/landing-page/HeroSection';
+import HomeHeader from '@/components/supplier/landing-page/HomeHeader';
 import React from 'react';
 
 function SipplierLandingPage() {
