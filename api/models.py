@@ -36,3 +36,25 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart')
+
+    def __str__(self):
+        return f"Cart of {self.user.first_name}"
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    variation = models.ForeignKey(ProductVariation, on_delete=models.SET_NULL, null=True, blank=True)
+    quantity = models.PositiveIntegerField(default=1)
+
+    @property
+    def total_price(self):
+        base_price = self.product.price
+        variation_price = self.variation.additional_price if self.variation else 0
+        return (base_price + variation_price) * self.quantity  
+
+
+    def __str__(self):
+        return f"{self.product.title} x {self.quantity} pcs"
