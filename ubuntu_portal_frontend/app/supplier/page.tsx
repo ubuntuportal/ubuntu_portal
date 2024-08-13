@@ -1,7 +1,12 @@
-import React from "react";
+import HomeHeader from '@/components/supplier/HomeHeader';
+import React from 'react';
 
 function SipplierLandingPage() {
-  return <div className="text-4xl">Sipplier Landing Page</div>;
+  return (
+    <main className="">
+      <HomeHeader />
+    </main>
+  );
 }
 
 export default SipplierLandingPage;
