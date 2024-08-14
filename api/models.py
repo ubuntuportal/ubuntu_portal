@@ -137,22 +137,28 @@ class OrderItem(models.Model):
 #     instance.order.update_total_amount()
 
 class Cart(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart')
 
     def __str__(self):
         return f"Cart of {self.user.first_name}"
 
 class CartItem(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     variation = models.ForeignKey(ProductVariation, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
+    price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
-    @property
-    def total_price(self):
-        base_price = self.product.price
-        variation_price = self.variation.additional_price if self.variation else 0
-        return (base_price + variation_price) * self.quantity  
+    # @property
+    # def total_price(self):
+    #     base_price = self.product.price
+    #     variation_price = self.variation.additional_price if self.variation else 0
+    #     return (base_price + variation_price) * self.quantity
+
+    def get_total_price(self):
+        return self.quantity * self.price_at_purchase
 
 
     def __str__(self):

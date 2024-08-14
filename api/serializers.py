@@ -110,7 +110,7 @@ class CartItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ['id', 'product', 'product_name', 'quantity', 'price', 'total_price', 'variation']
+        fields = ['id', 'product', 'product_name', 'quantity', 'total_price', 'variation', 'price_at_purchase']
 
     def get_total_price(self, obj):
         # Calculate the total price including any variation price modifiers
@@ -125,6 +125,6 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = ['id', 'user', 'items', 'cart_total']
-    
+
     def get_cart_total(self, obj):
         return sum([item.get_total_price() for item in obj.items.all()])

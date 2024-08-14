@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Category, Order, OrderItem, ProductVariation
+from .models import Product, Category, Order, OrderItem, ProductVariation, Cart, CartItem
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'description', 'price', 'created_at', 'updated_at')
@@ -25,9 +25,21 @@ class ProductVariationAdmin(admin.ModelAdmin):
     search_fields = ('product__title', 'attribute', 'value')
     list_filter = ('product',)
 
+class CartAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user')
+    search_fields = ('user__email',)
+    list_filter = ('user',)
+
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ('id', 'cart', 'product', 'variation', 'quantity', 'price_at_purchase')
+    search_fields = ('cart__user__email', 'product__title', 'variation__value')
+    list_filter = ('cart__user', 'product')
+
 # Register the models with their respective admin configurations
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderItem, OrderItemAdmin)
 admin.site.register(ProductVariation, ProductVariationAdmin)
+admin.site.register(Cart, CartAdmin)
+admin.site.register(CartItem, CartItemAdmin)
