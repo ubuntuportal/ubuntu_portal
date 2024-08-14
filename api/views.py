@@ -1,11 +1,12 @@
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from rest_framework import filters
+from rest_framework import filters, status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import NotFound
 from django.db import transaction
-from .models import Product, Category, Order
+from django.shortcuts import get_object_or_404
+from .models import Product, Category, Order, Cart, CartItem, ProductVariation
 from django.db.models import Q
 from .serializers import ProductSerializer, CategorySerializer, OrderSerializer, CartItemSerializer, CartSerializer
 from .utils import IsSeller, ApplyAdvanceFiltering, get_paginated_queryset
@@ -128,74 +129,53 @@ class CategoryViewSet(viewsets.ModelViewSet):
         # Optionally, you can add additional logic here
         serializer.save()
 
-class CartViewSet(viewsets.ViewSet):
+class CartViewSet(viewsets.ModelViewSet):
+    serializer_class = CartSerializer
     permission_classes = [IsAuthenticated]
 
-    def list(self, request):
-        """Retrieve the current user's cart."""
-        cart, created = Cart.objects.get_or_create(user=request.user)
-        serializer = CartSerializer(cart)
-        return Response(serializer.data)
+    def get_queryset(self):
+        return Cart.objects.filter(user=self.request.user)
 
+    @action(detail=False, methods=['post'])
     @transaction.atomic
-    def create(self, request):
-        """Add an item to the cart or update its quantity."""
-        product_id = request.data.get('product_id')
+    def add_item(self, request):
+        print("Request data:", request.data)
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        product = get_object_or_404(Product, id=request.data.get('product'))
+        variation = get_object_or_404(ProductVariation, id=request.data.get('variation')) if request.data.get('variation') else None
         quantity = request.data.get('quantity', 1)
-        variation_id = request.data.get('variation_id')
 
-        product = get_object_or_404(Product, id=product_id)
-        cart, created = Cart.objects.get_or_create(user=request.user)
+        # Check if the cart item already exists
+        cart_item, item_created = CartItem.objects.get_or_create(cart=cart, product=product, variation=variation)
 
-        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-
-        if variation_id:
-            variation = get_object_or_404(ProductVariation, id=variation_id)
-            cart_item.variation = variation
-
-        cart_item.quantity += quantity
+        # Update quantity
+        cart_item.quantity += int(request.data.get('quantity', 1))
         cart_item.save()
 
-        serializer = CartItemSerializer(cart_item)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if item_created:
+            return Response({'success': 'Item added to cart'}, status=status.HTTP_201_CREATED)
+        return Response({'success': 'Cart item updated'}, status=status.HTTP_200_OK)
 
-    def retrieve(self, request, pk=None):
-        """Retrieve details of a specific cart item."""
-        cart_item = get_object_or_404(CartItem, id=pk, cart__user=request.user)
-        serializer = CartItemSerializer(cart_item)
-        return Response(serializer.data)
-
-    @transaction.atomic
-    def update(self, request, pk=None):
-        """Update the quantity or variation of a cart item."""
-        cart_item = get_object_or_404(CartItem, id=pk, cart__user=request.user)
-        quantity = request.data.get('quantity')
-        variation_id = request.data.get('variation_id')
-
-        if quantity is not None:
-            cart_item.quantity = quantity
-
-        if variation_id:
-            variation = get_object_or_404(ProductVariation, id=variation_id)
-            cart_item.variation = variation
-
+    @action(detail=True, methods=['put'])
+    def update_item(self, request, pk=None):
+        cart_item = get_object_or_404(CartItem, id=pk)
+        cart_item.quantity = int(request.data.get('quantity', cart_item.quantity))
+        cart_item.variation_id = request.data.get('variation_id', cart_item.variation_id)
         cart_item.save()
+        return Response({'success': 'Cart item updated'}, status=status.HTTP_200_OK)
 
-        serializer = CartItemSerializer(cart_item)
-        return Response(serializer.data)
-
-    def destroy(self, request, pk=None):
-        """Remove a specific item from the cart."""
-        cart_item = get_object_or_404(CartItem, id=pk, cart__user=request.user)
+    @action(detail=True, methods=['delete'])
+    def remove_item(self, request, pk=None):
+        cart_item = get_object_or_404(CartItem, id=pk)
         cart_item.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({'success': 'Item removed from cart'}, status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['delete'])
     def clear_cart(self, request):
-        """Clear all items from the user's cart."""
         cart = get_object_or_404(Cart, user=request.user)
         cart.items.all().delete()
-        return Response({"message": "Cart cleared."}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'success': 'Cart cleared'}, status=status.HTTP_204_NO_CONTENT)
+
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()

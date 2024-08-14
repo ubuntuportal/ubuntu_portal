@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Product, Category, Cart, CartItem, ProductVariation, Order, OrderItem
+from django.db.models import F, Sum, ExpressionWrapper, DecimalField
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -104,19 +105,18 @@ class OrderSerializer(serializers.ModelSerializer):
     #     return instance
 
 class CartItemSerializer(serializers.ModelSerializer):
-    product_name = serializers.ReadOnlyField(source='product.name')
+    product_name = serializers.CharField(source='product.name', read_only=True)
     total_price = serializers.SerializerMethodField()
-    variation = ProductVariationSerializer()
 
     class Meta:
         model = CartItem
-        fields = ['id', 'product', 'product_name', 'quantity', 'price', 'total_price', 'variation']
+        fields = ['id', 'product', 'product_name', 'quantity', 'variation', 'total_price']
 
     def get_total_price(self, obj):
-        # Calculate the total price including any variation price modifiers
-        base_price = obj.product.price
-        variation_modifier = obj.variation.price_modifier if obj.variation else 0
-        return (base_price + variation_modifier) * obj.quantity
+        price = obj.product.price
+        if obj.variation:
+            price += obj.variation.price_modifier
+        return price * obj.quantity
 
 class CartSerializer(serializers.ModelSerializer):
     items = CartItemSerializer(many=True, read_only=True)
@@ -124,7 +124,13 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cart
-        fields = ['id', 'user', 'items', 'cart_total']
-    
-    def get_cart_total(self, obj):
-        return sum([item.get_total_price() for item in obj.items.all()])
+        fields = ['items', 'cart_total']
+
+def get_cart_total(self, obj):
+    total = obj.items.annotate(
+        item_total=ExpressionWrapper(
+            (F('product__price') + F('variation__price_modifier')) * F('quantity'),
+            output_field=DecimalField()
+        )
+    ).aggregate(Sum('item_total'))['item_total__sum'] or 0
+    return total
