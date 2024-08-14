@@ -1,5 +1,6 @@
 import Header from "@/components/buyer/Header";
 import Footer from "@/components/buyer/Footer";
+import { Inter } from "next/font/google";
 
 export default function BuyerLayout({
   children,
@@ -7,17 +8,9 @@ export default function BuyerLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <body className="h-screen">
+    <body className="inter.className min-h-screen">
       <Header />
-      <main>
-        {/* <div className="flex">
-          <div className="flex-1 flex-col">
-            <Header />
-            {children}
-          </div>
-        </div> */}
-        {children}
-      </main>
+      <main>{children}</main>
       <Footer />
     </body>
   );
