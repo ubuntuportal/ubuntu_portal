@@ -1,5 +1,6 @@
 import HeroSection from '@/components/supplier/landing-page/HeroSection';
 import HomeHeader from '@/components/supplier/landing-page/HomeHeader';
+import Pricing from '@/components/supplier/landing-page/Pricing';
 import StatsSection from '@/components/supplier/landing-page/StatsSection';
 import React from 'react';
 
@@ -9,6 +10,7 @@ function SipplierLandingPage() {
       <HomeHeader />
       <HeroSection />
       <StatsSection />
+      <Pricing />
     </main>
   );
 }
