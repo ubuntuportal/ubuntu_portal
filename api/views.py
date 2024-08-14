@@ -4,9 +4,9 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import NotFound
-from .models import Product, Category
+from .models import Product, Category, Order
 from django.db.models import Q
-from .serializers import ProductSerializer, CategorySerializer, CartItemSerializer, CartSerializer
+from .serializers import ProductSerializer, CategorySerializer, OrderSerializer, CartItemSerializer, CartSerializer
 from .utils import IsSeller, ApplyAdvanceFiltering, get_paginated_queryset
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -195,3 +195,13 @@ class CartViewSet(viewsets.ViewSet):
         cart = get_object_or_404(Cart, user=request.user)
         cart.items.all().delete()
         return Response({"message": "Cart cleared."}, status=status.HTTP_204_NO_CONTENT)
+
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
