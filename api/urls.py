@@ -19,5 +19,5 @@ router.register(r'suppliers/products', ManageProductsViewSet, basename='supplier
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('cart/clear/', CartViewSet.as_view({'delete': 'clear_cart'}), name='clear-cart'),
+    # path('users/', include('django.contrib.auth.urls')),  # For login, logout, password reset, etc.
 ]
