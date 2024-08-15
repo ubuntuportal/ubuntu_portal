@@ -5,6 +5,7 @@
         "corsheaders",
         "filterset",
         "rcdfw",
+        "requset",
         "simplejwt",
         "viewset",
         "zmhvm"
