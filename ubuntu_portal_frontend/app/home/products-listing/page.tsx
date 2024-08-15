@@ -6,7 +6,7 @@ import Container from "@/components/buyer/Container";
 function ProductListing() {
   return (
     <div className=" bg-gray-100">
-      <div className="pr-16 py-8 px-8">
+      <div className="m-auto hidden lg:block lg:w-1/4">
         {" "}
         <BreadcrumbResponsive />
       </div>
@@ -14,7 +14,7 @@ function ProductListing() {
       <div className="container bg-white">
         {" "}
         <div className="flex mt-4">
-          <div>
+          <div className="hidden lg:block lg:w-1/4">
             <Sidebar />
           </div>
           <div>

@@ -60,7 +60,7 @@ export default function Sidebar() {
         </ul>
         <button
           onClick={handleShowMore}
-          className="mt-4 text-sm text-blue-500 hover:underline"
+          className="mt-4 text text-green-700 hover:underline"
         >
           {showMore ? "Show Less" : "Show More"}
         </button>
