@@ -7,7 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import NotFound
 from django.db import transaction
 from django.shortcuts import get_object_or_404
-from .models import Product, Category, Order, Cart, CartItem, ProductVariation
+from .models import Product, Category, Order, Cart, CartItem, OrderItem, ProductVariation
 from django.db.models import Q
 from .serializers import ProductSerializer, CategorySerializer, OrderSerializer, CartItemSerializer, CartSerializer
 from .utils import IsSeller, ApplyAdvanceFiltering, get_paginated_queryset
@@ -150,7 +150,7 @@ class CartViewSet(viewsets.ModelViewSet):
         cart_item, item_created = CartItem.objects.get_or_create(cart=cart, product=product, variation=variation)
 
         # Update quantity
-        cart_item.quantity += quantity
+        cart_item.quantity = quantity
         cart_item.save()
 
         if item_created:
@@ -178,6 +178,42 @@ class CartViewSet(viewsets.ModelViewSet):
         return Response({'success': 'Cart cleared'}, status=status.HTTP_204_NO_CONTENT)
 
 
+    @action(detail=False, methods=['post'])
+    @transaction.atomic
+    def checkout(self, request):
+        user = request.user
+        cart = get_object_or_404(Cart, user=user)
+
+        # Extract additional fields from the request
+        shipping_address = request.data.get('shipping_address', '')
+        payment_method = request.data.get('payment_method', '')
+
+        # Create a new order with additional fields
+        order = Order.objects.create(
+            user=user,
+            shipping_address=shipping_address,
+            payment_method=payment_method
+        )
+
+        # Move CartItems to OrderItems
+        for cart_item in cart.items.all():
+            OrderItem.objects.create(
+                order=order,
+                product=cart_item.product,
+                variation=cart_item.variation,
+                quantity=cart_item.quantity,
+                price_at_purchase=cart_item.get_total_price()
+            )
+
+        # Update the total amount of the order
+        order.update_total_amount()
+
+        # Clear the cart
+        cart.items.all().delete()
+
+        return Response({'success': 'Order placed successfully', 'order_id': order.id}, status=status.HTTP_201_CREATED)
+
+
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
@@ -187,3 +223,42 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+    @action(detail=True, methods=['put'], url_name='status')
+    def update_status(self, request, pk=None):
+        order = self.get_object()
+        status = request.data.get('status')
+        tracking_number = request.data.get('tracking_number')
+        if status:
+            order.status = status
+            if tracking_number:
+                order.tracking_number = tracking_number
+            order.save()
+            return Response({'success': 'Order status updated'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Status field is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['get'], url_path='history')
+    def history(self, request):
+        history = Order.objects.filter(items__product__seller=request.user)
+        if history:
+            serializer = self.get_serializer(history, many=True)
+            return Response(serializer.data)
+
+
+# I choose to create a new class for supplier to manage
+# their products as we are going to keep working on it
+
+class ManageProductsViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return self.queryset.filter(items__product__seller=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(seller=self.requset.user)
+
+
