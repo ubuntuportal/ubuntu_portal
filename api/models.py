@@ -146,3 +146,7 @@ class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     variation = models.ForeignKey(ProductVariation, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
+
+    def get_total_price(self):
+        price = self.variation.price if self.variation else self.product.price
+        return price * self.quantity
