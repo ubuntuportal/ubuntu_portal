@@ -225,4 +225,4 @@ class ManageProductsViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(items__product__seller=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(seller=self.requset.user)
+        serializer.save(seller=self.request.user)
