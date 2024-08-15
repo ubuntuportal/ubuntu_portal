@@ -126,11 +126,11 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = ['items', 'cart_total']
 
-def get_cart_total(self, obj):
-    total = obj.items.annotate(
-        item_total=ExpressionWrapper(
-            (F('product__price') + F('variation__price_modifier')) * F('quantity'),
-            output_field=DecimalField()
-        )
-    ).aggregate(Sum('item_total'))['item_total__sum'] or 0
-    return total
+    def get_cart_total(self, obj):
+        total = obj.items.annotate(
+            item_total=ExpressionWrapper(
+                (F('product__price') + F('variation__price_modifier')) * F('quantity'),
+                output_field=DecimalField()
+            )
+        ).aggregate(Sum('item_total'))['item_total__sum'] or 0
+        return total

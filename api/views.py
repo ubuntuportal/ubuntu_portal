@@ -145,6 +145,7 @@ class CartViewSet(viewsets.ModelViewSet):
         variation = get_object_or_404(ProductVariation, id=request.data.get('variation')) if request.data.get('variation') else None
         quantity = request.data.get('quantity', 1)
 
+
         # Check if the cart item already exists
         cart_item, item_created = CartItem.objects.get_or_create(cart=cart, product=product, variation=variation)
 
