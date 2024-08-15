@@ -17,11 +17,11 @@ export function ProductCard({
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden">
       <Image
-        src={"/public/img/${image}"}
+        src={image}
         alt={name}
-        className="w-full h-48 object-cover"
-        width={202}
-        height={174}
+        className="w-auto h-48 object-cover"
+        width={180}
+        height={164}
       />
       <div className="p-4">
         <h3 className="text-lg font-semibold">{name}</h3>
