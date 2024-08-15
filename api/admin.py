@@ -31,7 +31,7 @@ class CartAdmin(admin.ModelAdmin):
     list_filter = ('user',)
 
 class CartItemAdmin(admin.ModelAdmin):
-    list_display = ('id', 'cart', 'product', 'variation', 'quantity', 'price_at_purchase')
+    list_display = ('id', 'cart', 'product', 'variation', 'quantity')
     search_fields = ('cart__user__email', 'product__title', 'variation__value')
     list_filter = ('cart__user', 'product')
 
