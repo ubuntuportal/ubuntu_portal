@@ -14,7 +14,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 
 
-
 class ProductPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
@@ -89,7 +88,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(paginated_queryset, many=True)
         return Response(serializer.data)
 
-
     @action(detail=False, methods=['get'], url_path='filter')
     def filter(self, request):
         queryset = self.get_queryset()
@@ -100,6 +98,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(paginated_queryset, many=True)
 
         return Response(serializer.data)
+    
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -110,7 +109,6 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(seller=self.request.user)
-
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -129,6 +127,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
         # Optionally, you can add additional logic here
         serializer.save()
 
+
 class CartViewSet(viewsets.ModelViewSet):
     serializer_class = CartSerializer
     permission_classes = [IsAuthenticated]
@@ -142,11 +141,13 @@ class CartViewSet(viewsets.ModelViewSet):
         print("Request data:", request.data)
         cart, created = Cart.objects.get_or_create(user=request.user)
         product = get_object_or_404(Product, id=request.data.get('product'))
-        variation = get_object_or_404(ProductVariation, id=request.data.get('variation')) if request.data.get('variation') else None
+        variation = get_object_or_404(ProductVariation, id=request.data.get(
+            'variation')) if request.data.get('variation') else None
         quantity = request.data.get('quantity', 1)
 
         # Check if the cart item already exists
-        cart_item, item_created = CartItem.objects.get_or_create(cart=cart, product=product, variation=variation)
+        cart_item, item_created = CartItem.objects.get_or_create(
+            cart=cart, product=product, variation=variation)
 
         # Update quantity
         cart_item.quantity += int(request.data.get('quantity', 1))
@@ -159,8 +160,10 @@ class CartViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['put'])
     def update_item(self, request, pk=None):
         cart_item = get_object_or_404(CartItem, id=pk)
-        cart_item.quantity = int(request.data.get('quantity', cart_item.quantity))
-        cart_item.variation_id = request.data.get('variation_id', cart_item.variation_id)
+        cart_item.quantity = int(request.data.get(
+            'quantity', cart_item.quantity))
+        cart_item.variation_id = request.data.get(
+            'variation_id', cart_item.variation_id)
         cart_item.save()
         return Response({'success': 'Cart item updated'}, status=status.HTTP_200_OK)
 
@@ -182,7 +185,45 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        return Order.objects.filter(items__product__seller=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+    
+    
+    @action(detail=True, methods=['put'], url_name='status')    
+    def update_status(self, request, pk=None):
+        order = self.get_object()
+        status = request.data.get('status')
+        tracking_number = request.data.get('tracking_number')
+        if status:
+            order.status = status
+            if tracking_number:
+                order.tracking_number = tracking_number
+            order.save()
+            return Response({'success': 'Order status updated'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Status field is required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False, methods=['get'], url_path='history')
+    def history(self, request):
+        history = Order.objects.filter(items__product__seller=request.user)
+        if history:
+            serializer = self.get_serializer(history, many=True)
+            return Response(serializer.data)
+       
+
+
+# I choose to create a new class for supplier to manage their products as we are going to keep working on it
+
+class ManageProductsViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return self.queryset.filter(items__product__seller=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(seller=self.requset.user)
+    

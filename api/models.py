@@ -9,6 +9,7 @@ from decimal import Decimal
 # Get the user model
 User = get_user_model()
 
+
 class Category(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
@@ -21,13 +22,15 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
 class Product(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     description = models.TextField()
     stock = models.PositiveIntegerField(default=0)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products', default=1)
+    seller = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='products', default=1)
     category = models.ManyToManyField(Category, related_name='products')
     rating = models.FloatField(default=0.0)
     image = models.ImageField(upload_to='products/', null=True, blank=True)
@@ -43,16 +46,20 @@ class Product(models.Model):
             models.Index(fields=['title', 'description']),
         ]
 
+
 class ProductVariation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variations')
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name='variations')
     attribute = models.CharField(max_length=255)
     value = models.CharField(max_length=255)
-    price_modifier = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    price_modifier = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
     stock = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.attribute}: {self.value}"
+
 
 class Order(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -69,12 +76,17 @@ class Order(models.Model):
         ('bank_transfer', _('Bank Transfer')),
         ('cash_on_delivery', _('Cash on Delivery')),
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='orders')
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default='processing')
     shipping_address = models.CharField(max_length=255, null=True, blank=True)
-    payment_method = models.CharField(max_length=50, choices=PAYMENT_METHOD_CHOICES, null=True, blank=True)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
+    payment_method = models.CharField(
+        max_length=50, choices=PAYMENT_METHOD_CHOICES, null=True, blank=True)
+    total_amount = models.DecimalField(
+        max_digits=10, decimal_places=2, default=Decimal('0.00'))
     created_at = models.DateTimeField(auto_now_add=True)
+    items = models.ManyToManyField(Product, through='OrderItem')
 
     def __str__(self):
         return f"Order {self.id} by {self.user.email}"
@@ -97,12 +109,13 @@ class Order(models.Model):
         self.save(update_fields=['total_amount'])
 
 
-
 class OrderItem(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    variation = models.ForeignKey(ProductVariation, on_delete=models.CASCADE, null=True, blank=True)
+    variation = models.ForeignKey(
+        ProductVariation, on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
     price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -136,11 +149,16 @@ class OrderItem(models.Model):
 # def update_order_total(sender, instance, **kwargs):
 #     instance.order.update_total_amount()
 
+
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart')
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='cart')
+
 
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
+    cart = models.ForeignKey(
+        Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    variation = models.ForeignKey(ProductVariation, on_delete=models.SET_NULL, null=True, blank=True)
+    variation = models.ForeignKey(
+        ProductVariation, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
