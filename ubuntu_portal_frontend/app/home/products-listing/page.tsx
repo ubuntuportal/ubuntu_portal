@@ -6,7 +6,7 @@ import Container from "@/components/buyer/Container";
 function ProductListing() {
   return (
     <div className=" bg-gray-100">
-      <div className="m-auto hidden lg:block lg:w-1/4">
+      <div className="p-4 m-auto hidden lg:block lg:w-1/4">
         {" "}
         <BreadcrumbResponsive />
       </div>

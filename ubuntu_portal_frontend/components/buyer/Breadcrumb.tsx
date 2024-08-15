@@ -37,10 +37,9 @@ const items = [
   { href: "#", label: "Products-listing" },
   { href: "#", label: "Products-listing" },
   { href: "#", label: "Products-listing" },
-  { label: "Services" },
 ];
 
-const ITEMS_TO_DISPLAY = 3;
+const ITEMS_TO_DISPLAY = 2;
 
 export function BreadcrumbResponsive() {
   const [open, setOpen] = React.useState(false);
