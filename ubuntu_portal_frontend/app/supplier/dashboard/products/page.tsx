@@ -8,7 +8,6 @@ function ProductsPage() {
       <div className="flex justify-end mb-4">
         <AddProduct />
       </div>
-
       <Tables />
     </div>
   );
