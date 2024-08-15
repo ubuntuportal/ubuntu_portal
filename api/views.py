@@ -142,17 +142,15 @@ class CartViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'])
     @transaction.atomic
     def add_item(self, request):
-        print("Request data:", request.data)
         cart, created = Cart.objects.get_or_create(user=request.user)
-        product = get_object_or_404(Product, id=request.data.get('product'))
-        variation = get_object_or_404(ProductVariation, id=request.data.get('variation')) if request.data.get('variation') else None
-        quantity = request.data.get('quantity', 1)
+        product = get_object_or_404(Product, id=request.data.get('product_id'))
+        variation = get_object_or_404(ProductVariation, id=request.data.get('variation_id')) if request.data.get('variation_id') else None
+        quantity = int(request.data.get('quantity', 1))
 
-        # Check if the cart item already exists
         cart_item, item_created = CartItem.objects.get_or_create(cart=cart, product=product, variation=variation)
 
         # Update quantity
-        cart_item.quantity += int(request.data.get('quantity', 1))
+        cart_item.quantity += quantity
         cart_item.save()
 
         if item_created:
