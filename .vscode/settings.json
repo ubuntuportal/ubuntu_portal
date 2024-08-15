@@ -5,6 +5,7 @@
         "corsheaders",
         "filterset",
         "rcdfw",
+        "redoc",
         "requset",
         "simplejwt",
         "viewset",

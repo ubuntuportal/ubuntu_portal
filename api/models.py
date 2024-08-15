@@ -2,13 +2,10 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 import uuid
-# from django.db.models.signals import post_save
-# from django.dispatch import receiver
 from decimal import Decimal
 
 # Get the user model
 User = get_user_model()
-
 
 class Category(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -29,8 +26,7 @@ class Product(models.Model):
     description = models.TextField()
     stock = models.PositiveIntegerField(default=0)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    seller = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='products', default=1)
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products', default=1)
     category = models.ManyToManyField(Category, related_name='products')
     rating = models.FloatField(default=0.0)
     image = models.ImageField(upload_to='products/', null=True, blank=True)
@@ -49,12 +45,10 @@ class Product(models.Model):
 
 class ProductVariation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name='variations')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variations')
     attribute = models.CharField(max_length=255)
     value = models.CharField(max_length=255)
-    price_modifier = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True)
+    price_modifier = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     stock = models.PositiveIntegerField(default=0)
 
     def __str__(self):
@@ -76,31 +70,17 @@ class Order(models.Model):
         ('bank_transfer', _('Bank Transfer')),
         ('cash_on_delivery', _('Cash on Delivery')),
     ]
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='orders')
-    status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default='processing')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='processing')
     shipping_address = models.CharField(max_length=255, null=True, blank=True)
-    payment_method = models.CharField(
-        max_length=50, choices=PAYMENT_METHOD_CHOICES, null=True, blank=True)
-    total_amount = models.DecimalField(
-        max_digits=10, decimal_places=2, default=Decimal('0.00'))
+    payment_method = models.CharField(max_length=50, choices=PAYMENT_METHOD_CHOICES, null=True, blank=True)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     created_at = models.DateTimeField(auto_now_add=True)
-    items = models.ManyToManyField(Product, through='OrderItem')
+    items = models.ManyToManyField(Product, through='OrderItem', related_name='order_items')  # Change related_name here
 
     def __str__(self):
         return f"Order {self.id} by {self.user.email}"
 
-    # def update_total_amount(self):
-    #     total = Decimal('0.00')
-    #     for item in self.items.all():
-    #         item_total = Decimal(item.price_at_purchase)
-    #         if item.variation and item.variation.price_modifier:
-    #             item_total += Decimal(item.variation.price_modifier)
-    #         item_total *= Decimal(item.quantity)
-    #         total += item_total
-    #     self.total_amount = total
-    #     self.save(update_fields=['total_amount'])
     def update_total_amount(self):
         total = Decimal('0.00')
         for item in self.items.all():
@@ -111,11 +91,9 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    order = models.ForeignKey(
-        Order, on_delete=models.CASCADE, related_name='items')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    variation = models.ForeignKey(
-        ProductVariation, on_delete=models.CASCADE, null=True, blank=True)
+    variation = models.ForeignKey(ProductVariation, on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
     price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -124,47 +102,28 @@ class OrderItem(models.Model):
         return f"{self.product.title} ({self.variation.value if self.variation else ''})"
 
     def calculate_total(self):
-        if self.product:
-            total_price = self.price_at_purchase
-        elif self.variation:
-            total_price = self.price_at_purchase + self.variation.price_modifier
-        else:
-            total_price = Decimal('0.00')
-
+        total_price = self.price_at_purchase
+        if self.variation and self.variation.price_modifier:
+            total_price += self.variation.price_modifier
         return total_price * self.quantity
 
     def save(self, *args, **kwargs):
+        if not self.price_at_purchase:
+            self.price_at_purchase = self.product.price
         super().save(*args, **kwargs)
         self.order.update_total_amount()
 
-    # def save(self, *args, **kwargs):
-    #     if not self.price_at_purchase:
-    #         self.price_at_purchase = self.product.price
-    #     super().save(*args, **kwargs)
-    #     if not kwargs.get('update_fields'):
-    #         self.order.update_total_amount()
-
-# Register the signal after defining the OrderItem model
-# @receiver(post_save, sender=OrderItem)
-# def update_order_total(sender, instance, **kwargs):
-#     instance.order.update_total_amount()
-
 
 class Cart(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='cart')
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart')
 
+
 class CartItem(models.Model):
-    cart = models.ForeignKey(
-        Cart, on_delete=models.CASCADE, related_name='items')
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    variation = models.ForeignKey(
-        ProductVariation, on_delete=models.SET_NULL, null=True, blank=True)
+    variation = models.ForeignKey(ProductVariation, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
 
     def get_total_price(self):
