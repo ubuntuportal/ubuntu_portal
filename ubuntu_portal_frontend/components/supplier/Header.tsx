@@ -2,7 +2,7 @@ import React from "react";
 import { BellIcon, SearchIcon, UserCircleIcon } from "@heroicons/react/outline";
 function Header() {
   return (
-    <header className="bg-white shadow-md p-4 flex items-center justify-between">
+    <header className="bg-gray-50 shadow-md p-4 flex items-center justify-between">
       {/* Logo/Branding */}
       <div className="flex items-center space-x-2">
         {/* Replace with your logo */}
