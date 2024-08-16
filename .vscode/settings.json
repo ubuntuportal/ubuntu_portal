@@ -1,9 +1,12 @@
 {
     "cSpell.words": [
+        "cartitem",
+        "categor",
         "corsheaders",
         "filterset",
         "rcdfw",
         "simplejwt",
+        "viewset",
         "zmhvm"
     ]
 }
