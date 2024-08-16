@@ -8,7 +8,7 @@ export default function BuyerLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <body className="inter.className min-h-screen">
+    <body className="Inter.className min-h-screen">
       <Header />
       <main>{children}</main>
       <Footer />
