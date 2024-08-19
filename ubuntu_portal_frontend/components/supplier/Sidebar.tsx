@@ -1,68 +1,67 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import {
   HomeIcon,
-  ShoppingCartIcon,
-  UsersIcon,
-  CogIcon,
-} from "@heroicons/react/outline";
-// icons
+  UserIcon,
+  ShoppingBagIcon,
+  CollectionIcon,
+  PhoneIcon,
+} from "@heroicons/react/outline"; // Import the icons from heroicons
 
 export default function Sidebar() {
+  const [active, setActive] = useState("Dashboard");
+
+  const menuItems = [
+    { name: "Dashboard", icon: HomeIcon },
+    { name: "Profile", icon: UserIcon },
+    { name: "Store", icon: ShoppingBagIcon },
+    { name: "Products", icon: CollectionIcon },
+    { name: "Contact", icon: PhoneIcon },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-800 text-white w-64 flex flex-col">
-      {/* Logo/Branding */}
-      <div className="flex items-center justify-center h-16 bg-gray-900 shadow-md">
-        <h1 className="text-xl font-semibold">Ubuntu Portal</h1>
+    <div className="bg-white text-black w-64 h-screen p-4 border-r border-gray-200 flex flex-col justify-between">
+      <div>
+        <div className="mb-4">
+          <a href="#">
+            <img src="/Logo_black.png" alt="logo" className="w-full" />
+          </a>
+          {/* <div className="mt-2 mb-0">
+            <hr />
+          </div> */}
+        </div>
+        <div className="text-center text-gray-500">Suppliers Dashboard</div>
+        <nav className="mt-8">
+          <ul className="space-y-2">
+            {menuItems.map((item) => (
+              <li key={item.name} className="relative">
+                <a
+                  href="#"
+                  className={`flex items-center ml-8 p-2 rounded-md transition-colors duration-200 relative ${
+                    active === item.name
+                      ? "bg-green-100 text-green-800 font-bold"
+                      : "text-black hover:bg-gray-200"
+                  }`}
+                  onClick={() => setActive(item.name)}
+                >
+                  {active === item.name && (
+                    <span className="absolute left-[-40px] h-6 border-l-4 border-green-500"></span>
+                  )}
+                  <item.icon className="h-5 w-5 mr-3 z-10" />
+                  <span className="z-10">{item.name}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
-
-      {/* Navigation Links */}
-      <nav className="flex-1 px-4 py-8">
-        <ul className="space-y-4">
-          <li>
-            <a
-              href="#"
-              className="flex items-center space-x-3 text-gray-300 hover:bg-gray-700 hover:text-white p-2 rounded-md"
-            >
-              <HomeIcon className="h-6 w-6" />
-              <span>Dashboard</span>
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              className="flex items-center space-x-3 text-gray-300 hover:bg-gray-700 hover:text-white p-2 rounded-md"
-            >
-              <ShoppingCartIcon className="h-6 w-6" />
-              <span>Products</span>
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              className="flex items-center space-x-3 text-gray-300 hover:bg-gray-700 hover:text-white p-2 rounded-md"
-            >
-              <UsersIcon className="h-6 w-6" />
-              <span>Customers</span>
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              className="flex items-center space-x-3 text-gray-300 hover:bg-gray-700 hover:text-white p-2 rounded-md"
-            >
-              <CogIcon className="h-6 w-6" />
-              <span>Settings</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
-
-      {/* Footer Links */}
-      <div className="px-4 py-6 bg-gray-900">
-        <a href="#" className="text-gray-300 hover:text-white">
-          Log Out
-        </a>
-      </div>
+      <footer className="">
+        <div className="text-center text-gray-500">
+          UbuntuPortal © 2024
+          <br />
+          All Rights Reserved
+        </div>
+      </footer>
     </div>
   );
 }

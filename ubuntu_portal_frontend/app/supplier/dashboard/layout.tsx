@@ -7,7 +7,7 @@ export default function SupplierLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <main>
+    <main className="bg-gray-50">
       <div className="flex">
         <Sidebar />
         <div className="flex-1 flex-col">
