@@ -21,10 +21,6 @@ export default function Header() {
               className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500"
             />
           </div>
-          {/* <Input
-            type="search"
-            className=" bg-white text-lg pt-6 pb-6  text-black"
-          /> */}
         </div>
         <div className="flex  justify-between">
           <div>

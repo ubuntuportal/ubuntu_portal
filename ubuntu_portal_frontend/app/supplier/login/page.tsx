@@ -5,7 +5,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center">
       {/* Logo */}
-      <div className="mb-8">
+      <div className="mb-8 mt-8">
         <a href="#">
           {/* <Image
             src="/path-to-logo.png" // path to logo

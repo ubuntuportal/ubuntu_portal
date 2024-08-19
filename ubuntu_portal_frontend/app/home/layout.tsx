@@ -1,6 +1,7 @@
 import Header from "@/components/buyer/Header";
 import Footer from "@/components/buyer/Footer";
 import { Inter } from "next/font/google";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function BuyerLayout({
   children,
@@ -10,7 +11,9 @@ export default function BuyerLayout({
   return (
     <body className="Inter.className min-h-screen">
       <Header />
+
       <main>{children}</main>
+
       <Footer />
     </body>
   );
