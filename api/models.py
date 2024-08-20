@@ -6,6 +6,8 @@ import uuid
 # from django.db.models.signals import post_save
 # from django.dispatch import receiver
 from decimal import Decimal
+from django.core.cache import cache
+
 
 # Get the user model
 User = get_user_model()
@@ -289,12 +291,17 @@ class RFQ(models.Model):
 
 
 class Quotation(models.Model):
+    QUOTED = 1
+    REJECTED = 2
+    ACCEPTED = 3
+
     STATUS_CHOICES = [
-        ('Quoted', 'Quoted'),
-        ('Rejected', 'Rejected'),
-        ('Accepted', 'Accepted'),
+        (QUOTED, 'Quoted'),
+        (REJECTED, 'Rejected'),
+        (ACCEPTED, 'Accepted'),
     ]
 
+    status = models.IntegerField(choices=STATUS_CHOICES, default=QUOTED, db_index=True)
     rfq = models.ForeignKey(RFQ, on_delete=models.CASCADE, related_name='quotations')
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quotations')
     quotation_date = models.DateField(auto_now_add=True)
@@ -303,7 +310,18 @@ class Quotation(models.Model):
     total_price = models.DecimalField(max_digits=15, decimal_places=2)
     additional_notes = models.TextField(null=True, blank=True)
     attachments = models.FileField(upload_to='quotation_attachments/', null=True, blank=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Quoted')
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['rfq', 'seller'])
+        ]
 
     def __str__(self):
         return f"Quotation {self.id} for RFQ {self.rfq.id}"
+
+
+    #For frequently accessed quotations or RFQs, consider using Django's
+    # caching mechanisms to cache expensive queries or objects.
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        cache.set(f'quotation_{self.id}', self)
