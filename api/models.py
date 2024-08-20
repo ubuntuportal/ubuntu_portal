@@ -260,6 +260,7 @@ class RFQ(models.Model):
         ('Rejected', 'Rejected'),
     ]
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     buyer_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='buyer_rfq')
     rfq_date = models.DateField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
@@ -301,6 +302,7 @@ class Quotation(models.Model):
         (ACCEPTED, 'Accepted'),
     ]
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     status = models.IntegerField(choices=STATUS_CHOICES, default=QUOTED, db_index=True)
     rfq = models.ForeignKey(RFQ, on_delete=models.CASCADE, related_name='quotations')
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quotations')

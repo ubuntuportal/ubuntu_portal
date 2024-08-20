@@ -269,9 +269,10 @@ class QuotationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        # Ensure the supplier is the logged-in user
-        serializer.save(seller=self.request.user)
-
+        # Assuming you need to set the rfq field
+        rfq_id = self.request.data.get('rfq')
+        rfq = RFQ.objects.get(id=rfq_id)
+        serializer.save(seller=self.request.user, rfq=rfq)
 
 class RFQViewSet(viewsets.ModelViewSet):
     queryset = RFQ.objects.all()
