@@ -6,6 +6,8 @@ import uuid
 # from django.db.models.signals import post_save
 # from django.dispatch import receiver
 from decimal import Decimal
+from django.core.cache import cache
+
 
 # Get the user model
 User = get_user_model()
@@ -153,8 +155,8 @@ class CartItem(models.Model):
         return price * self.quantity
 
 
-class BuyerRFQ(models.Model):
-    
+class RFQ(models.Model):
+
     # Measurements choices
     MEASUREMENT_CHOICES = [
         ('pieces', 'pieces'),
@@ -206,7 +208,7 @@ class BuyerRFQ(models.Model):
         ('metric tons', 'metric tons'),
         ('miles', 'miles'),
         ('milliamperes', 'milliamperes'),
-        ('milligrams', 'milligrams'), 
+        ('milligrams', 'milligrams'),
         ('millihertz', 'millihertz'),
         ('milliliters', 'milliliters'),
         ('millimeters', 'millimeters'),
@@ -251,13 +253,13 @@ class BuyerRFQ(models.Model):
         ('Wp', 'Wp'),
         ('yards', 'yards')
     ]
-    
+
     STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('Approved', 'Approved'),
         ('Rejected', 'Rejected'),
     ]
-    
+
     buyer_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='buyer_rfq')
     rfq_date = models.DateField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
@@ -267,22 +269,59 @@ class BuyerRFQ(models.Model):
     detailed_requirements = models.TextField()
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     media = models.FileField(upload_to='medial/', blank=True, null=True)
-    
+
     class Meta:
         indexes = [
             models.Index(fields=['product_name', 'buyer_id', 'rfq_date'])
         ]
-    
+
     def clean(self):
         super.clean()
-        
+
         # Ensuring sourcing quantity is non-negative
         if self.sourcing_quantity < 0:
             raise ValidationError({'sourcing_quantity': 'Sourcing quantity must be a non-negative value.'})
-        
+
         if self.unit_price < 0:
             raise ValidationError({'unit_price': 'Unit price must be a non-negative value.'})
-    
+
     def __str__(self):
         return f"RFQ for {self.product_name} by Buyer {self.buyer_id}"
-    
+
+
+
+class Quotation(models.Model):
+    QUOTED = 1
+    REJECTED = 2
+    ACCEPTED = 3
+
+    STATUS_CHOICES = [
+        (QUOTED, 'Quoted'),
+        (REJECTED, 'Rejected'),
+        (ACCEPTED, 'Accepted'),
+    ]
+
+    status = models.IntegerField(choices=STATUS_CHOICES, default=QUOTED, db_index=True)
+    rfq = models.ForeignKey(RFQ, on_delete=models.CASCADE, related_name='quotations')
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quotations')
+    quotation_date = models.DateField(auto_now_add=True)
+    quoted_price_per_unit = models.DecimalField(max_digits=10, decimal_places=2)
+    delivery_time = models.DateField()
+    total_price = models.DecimalField(max_digits=15, decimal_places=2)
+    additional_notes = models.TextField(null=True, blank=True)
+    attachments = models.FileField(upload_to='quotation_attachments/', null=True, blank=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['rfq', 'seller'])
+        ]
+
+    def __str__(self):
+        return f"Quotation {self.id} for RFQ {self.rfq.id}"
+
+
+    #For frequently accessed quotations or RFQs, consider using Django's
+    # caching mechanisms to cache expensive queries or objects.
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        cache.set(f'quotation_{self.id}', self)

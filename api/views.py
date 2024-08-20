@@ -7,10 +7,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import NotFound
 from django.db import transaction
 from django.shortcuts import get_object_or_404
-from .models import Product, Category, Order, Cart, CartItem, OrderItem, ProductVariation, BuyerRFQ
+from .models import Product, Category, Order, Cart, CartItem, OrderItem, ProductVariation, Quotation, RFQ
 from django.db.models import Q
-from .serializers import (ProductSerializer, CategorySerializer, OrderSerializer, 
-                          CartItemSerializer, CartSerializer, BuyerRFQSerializer)
+from .serializers import (ProductSerializer, CategorySerializer, OrderSerializer,
+                          QuotationSerializer, CartSerializer, RFQSerializer)
 from .utils import IsSeller, ApplyAdvanceFiltering, get_paginated_queryset
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -260,10 +260,19 @@ class ManageProductsViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(items__product__seller=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(seller=self.requset.user)
+        serializer.save(seller=self.request.user)
 
 
-class BuyerRFQViewSet(viewsets.ModelViewSet):
-    queryset = BuyerRFQ.objects.all()
-    serializer_class = BuyerRFQSerializer
-    
+class QuotationViewSet(viewsets.ModelViewSet):
+    queryset = Quotation.objects.all()
+    serializer_class = QuotationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # Ensure the supplier is the logged-in user
+        serializer.save(seller=self.request.user)
+
+
+class RFQViewSet(viewsets.ModelViewSet):
+    queryset = RFQ.objects.all()
+    serializer_class = RFQSerializer
