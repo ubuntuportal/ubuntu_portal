@@ -4,7 +4,13 @@
         "categor",
         "corsheaders",
         "filterset",
+        "kiloamperes",
+        "kiloohms",
+        "millihertz",
+        "milliwatts",
+        "nauctical",
         "rcdfw",
+        "rfqs",
         "simplejwt",
         "viewset",
         "zmhvm"

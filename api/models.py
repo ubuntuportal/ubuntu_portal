@@ -153,7 +153,7 @@ class CartItem(models.Model):
         return price * self.quantity
 
 
-class BuyerRFQ(models.Model):
+class RFQ(models.Model):
 
     # Measurements choices
     MEASUREMENT_CHOICES = [

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import (Product, Category, Cart, CartItem, ProductVariation, Order, OrderItem,
-                     BuyerRFQ)
+    Quotation, RFQ)
 from django.db.models import F, Sum, ExpressionWrapper, DecimalField
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -131,6 +131,12 @@ class CartSerializer(serializers.ModelSerializer):
         return sum([item.get_total_price() for item in obj.items.all()])
 
 
+class RFQSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RFQ
+        fields = '__all__'
+
+
 class QuotationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quotation
@@ -144,6 +150,3 @@ class QuotationSerializer(serializers.ModelSerializer):
         validated_data['rfq'] = validated_data.get('rfq')
         return super().create(validated_data)
 
-
-        model = BuyerRFQ
-        fields = '__all__'

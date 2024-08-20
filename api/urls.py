@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ProductViewSet, CategoryViewSet, OrderViewSet, ManageProductsViewSet, QuotationViewSet, BuyerRFQViewSet
+from .views import ProductViewSet, CategoryViewSet, OrderViewSet, ManageProductsViewSet, QuotationViewSet, RFQViewSet
 from .views import CartViewSet
 # from users.views import UserViewSet
 # from orders.views import OrderViewSet
@@ -15,7 +15,7 @@ router.register(r'orders', OrderViewSet, basename='order')
 router.register(r'suppliers/orders', OrderViewSet, basename='supplier-order')
 router.register(r'suppliers/products', ManageProductsViewSet, basename='supplier-products')
 router.register(r'quotations', QuotationViewSet)
-router.register(r'rfqs', BuyerRFQViewSet, basename='buyer-rfqs')
+router.register(r'rfqs', RFQViewSet, basename='buyer-rfqs')
 
 
 urlpatterns = [
