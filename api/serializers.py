@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Product, Category, Cart, CartItem, ProductVariation, Order, OrderItem, Quotation
+from .models import (Product, Category, Cart, CartItem, ProductVariation, Order, OrderItem,
+                     BuyerRFQ)
 from django.db.models import F, Sum, ExpressionWrapper, DecimalField
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -142,3 +143,7 @@ class QuotationSerializer(serializers.ModelSerializer):
         # Automatically set the rfq from the request data if provided
         validated_data['rfq'] = validated_data.get('rfq')
         return super().create(validated_data)
+
+
+        model = BuyerRFQ
+        fields = '__all__'

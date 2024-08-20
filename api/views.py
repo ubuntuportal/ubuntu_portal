@@ -7,9 +7,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import NotFound
 from django.db import transaction
 from django.shortcuts import get_object_or_404
-from .models import Product, Category, Order, Cart, CartItem, OrderItem, ProductVariation, Quotation
+from .models import Product, Category, Order, Cart, CartItem, OrderItem, ProductVariation, Quotation, BuyerRFQ
 from django.db.models import Q
-from .serializers import ProductSerializer, CategorySerializer, OrderSerializer, QuotationSerializer, CartSerializer
+from .serializers import (ProductSerializer, CategorySerializer, OrderSerializer,
+                          QuotationSerializer, CartSerializer, BuyerRFQSerializer)
 from .utils import IsSeller, ApplyAdvanceFiltering, get_paginated_queryset
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -270,3 +271,6 @@ class QuotationViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Ensure the supplier is the logged-in user
         serializer.save(seller=self.request.user)
+class BuyerRFQViewSet(viewsets.ModelViewSet):
+    queryset = BuyerRFQ.objects.all()
+    serializer_class = BuyerRFQSerializer
