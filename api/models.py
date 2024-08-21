@@ -6,7 +6,7 @@ import uuid
 # from django.db.models.signals import post_save
 # from django.dispatch import receiver
 from decimal import Decimal
-from django.core.cache import cache
+# from django.core.cache import cache
 
 
 # Get the user model
@@ -261,10 +261,10 @@ class RFQ(models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    buyer_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='buyer_rfq')
-    rfq_date = models.DateField()
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='buyer_rfq')
+    rfq_date =models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
-    product_name = models.CharField(max_length=255, blank=False)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)  # Use ForeignKey to Product instead of product_name
     sourcing_quantity = models.IntegerField()
     quantities_measurements = models.CharField(max_length=255, choices=MEASUREMENT_CHOICES, default='pieces')
     detailed_requirements = models.TextField()
@@ -273,7 +273,7 @@ class RFQ(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['product_name', 'buyer_id', 'rfq_date'])
+            models.Index(fields=['product', 'buyer', 'rfq_date'])
         ]
 
     def clean(self):
@@ -287,7 +287,7 @@ class RFQ(models.Model):
             raise ValidationError({'unit_price': 'Unit price must be a non-negative value.'})
 
     def __str__(self):
-        return f"RFQ for {self.product_name} by Buyer {self.buyer_id}"
+        return f"RFQ for {self.product} by Buyer {self.buyer}"
 
 
 
@@ -305,7 +305,7 @@ class Quotation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     status = models.IntegerField(choices=STATUS_CHOICES, default=QUOTED, db_index=True)
     rfq = models.ForeignKey(RFQ, on_delete=models.CASCADE, related_name='quotations')
-    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quotations')
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quotations', null=True, blank=True)
     quotation_date = models.DateField(auto_now_add=True)
     quoted_price_per_unit = models.DecimalField(max_digits=10, decimal_places=2)
     delivery_time = models.DateField()
@@ -315,15 +315,18 @@ class Quotation(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['rfq', 'seller'])
+            models.Index(fields=['rfq', 'quotation_date']),
         ]
 
     def __str__(self):
         return f"Quotation {self.id} for RFQ {self.rfq.id}"
 
 
-    #For frequently accessed quotations or RFQs, consider using Django's
-    # caching mechanisms to cache expensive queries or objects.
+    def calculate_total_price(self):
+        self.total_price = self.quoted_price_per_unit * self.rfq.sourcing_quantity
+        self.save(update_fields=['total_price'])
+
     def save(self, *args, **kwargs):
+        if not self.total_price:
+            self.calculate_total_price()
         super().save(*args, **kwargs)
-        cache.set(f'quotation_{self.id}', self)

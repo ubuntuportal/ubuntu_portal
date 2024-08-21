@@ -141,12 +141,19 @@ class QuotationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quotation
         fields = '__all__'
-        read_only_fields = ['rfq', 'seller', 'quotation_date']
+        read_only_fields = ['quotation_date', 'total_price']
 
     def create(self, validated_data):
-        # Automatically set the supplier as the logged-in user
+        # Automatically set the seller as the logged-in user
         validated_data['seller'] = self.context['request'].user
-        # Automatically set the rfq from the request data if provided
-        validated_data['rfq'] = validated_data.get('rfq')
-        return super().create(validated_data)
 
+        # Get the RFQ instance from the validated data
+        rfq = validated_data.get('rfq')
+
+        if not rfq:
+            raise serializers.ValidationError("RFQ must be provided.")
+
+        # Calculate total_price using sourcing_quantity from the related RFQ
+        validated_data['total_price'] = rfq.sourcing_quantity * validated_data['quoted_price_per_unit']
+
+        return super().create(validated_data)

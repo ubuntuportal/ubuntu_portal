@@ -37,14 +37,14 @@ class CartItemAdmin(admin.ModelAdmin):
 
 # Admin configuration for RFQ
 class RFQAdmin(admin.ModelAdmin):
-    list_display = ('id', 'buyer_id', 'rfq_date', 'status', 'product_name', 'sourcing_quantity', 'quantities_measurements')
-    search_fields = ('buyer_id__username', 'product_name')
+    list_display = ('id', 'buyer_id', 'rfq_date', 'status', 'product', 'sourcing_quantity', 'quantities_measurements')
+    search_fields = ('buyer_id__username', 'product')
     list_filter = ('status', 'rfq_date')
 
 # Admin configuration for Quotation
 class QuotationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'rfq', 'seller', 'quotation_date', 'quoted_price_per_unit', 'delivery_time', 'total_price', 'status')
-    search_fields = ('rfq__product_name', 'seller__username')
+    list_display = ('id', 'rfq', 'quotation_date', 'quoted_price_per_unit', 'delivery_time', 'total_price', 'status')
+    search_fields = ('rfq__product', 'seller__username')
     list_filter = ('status', 'quotation_date', 'delivery_time')
 
 # Register the models with their respective admin configurations
