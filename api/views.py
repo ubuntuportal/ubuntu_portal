@@ -279,6 +279,11 @@ class QuotationViewSet(viewsets.ModelViewSet):
 
         # Save the Quotation with the current user as the seller and the fetched RFQ
         serializer.save(seller=self.request.user, rfq=rfq)
+
 class RFQViewSet(viewsets.ModelViewSet):
     queryset = RFQ.objects.all()
     serializer_class = RFQSerializer
+
+    def perform_create(self, serializer):
+        # The context is automatically passed by DRF; no need to manually set the buyer here
+        serializer.save()

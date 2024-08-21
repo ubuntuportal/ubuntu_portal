@@ -135,7 +135,13 @@ class RFQSerializer(serializers.ModelSerializer):
     class Meta:
         model = RFQ
         fields = '__all__'
+        read_only_fields = ['buyer']  # Make buyer a read-only field
 
+    def create(self, validated_data):
+        # Automatically set the buyer as the logged-in user
+        validated_data['buyer'] = self.context['request'].user
+
+        return super().create(validated_data)
 
 class QuotationSerializer(serializers.ModelSerializer):
     class Meta:
