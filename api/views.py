@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import viewsets, serializers
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import filters, status
@@ -7,9 +7,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import NotFound
 from django.db import transaction
 from django.shortcuts import get_object_or_404
-from .models import Product, Category, Order, Cart, CartItem, OrderItem, ProductVariation
+from .models import Product, Category, Order, Cart, CartItem, OrderItem, ProductVariation, Quotation, RFQ
 from django.db.models import Q
-from .serializers import ProductSerializer, CategorySerializer, OrderSerializer, CartItemSerializer, CartSerializer
+from .serializers import (ProductSerializer, CategorySerializer, OrderSerializer,
+                          QuotationSerializer, CartSerializer, RFQSerializer)
 from .utils import IsSeller, ApplyAdvanceFiltering, get_paginated_queryset
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -259,6 +260,30 @@ class ManageProductsViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(items__product__seller=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(seller=self.requset.user)
+        serializer.save(seller=self.request.user)
 
 
+class QuotationViewSet(viewsets.ModelViewSet):
+    queryset = Quotation.objects.all()
+    serializer_class = QuotationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # Retrieve the rfq_id from the request data
+        rfq_id = self.request.data.get('rfq')
+        if not rfq_id:
+            raise serializers.ValidationError({"rfq": "This field is required."})
+
+        # Fetch the RFQ object, or raise a 404 error if not found
+        rfq = get_object_or_404(RFQ, id=rfq_id)
+
+        # Save the Quotation with the current user as the seller and the fetched RFQ
+        serializer.save(seller=self.request.user, rfq=rfq)
+
+class RFQViewSet(viewsets.ModelViewSet):
+    queryset = RFQ.objects.all()
+    serializer_class = RFQSerializer
+
+    def perform_create(self, serializer):
+        # The context is automatically passed by DRF; no need to manually set the buyer here
+        serializer.save()
