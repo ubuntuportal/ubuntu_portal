@@ -42,6 +42,10 @@ INSTALLED_APPS = [
 
     'api',
     'user_auth',
+    'carts',
+    'orders',
+    'rfqs',
+    'products',
     'rest_framework',
     'django_filters',
     'corsheaders',
