@@ -12,13 +12,6 @@ from rest_framework.decorators import action
 
 
 
-
-class ProductPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = 'page_size'
-    max_page_size = 100
-
-
 class ProductViewSet(viewsets.ModelViewSet, 
                      AdvanceFilteringMixins,
                      PaginationMixins):
@@ -56,6 +49,9 @@ class ProductViewSet(viewsets.ModelViewSet,
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        
+        # Set default ordering
+        queryset = queryset.order_by('created_at')
 
         # General filtering applied to all requests
         price_min = self.request.query_params.get('price_min')
@@ -85,7 +81,8 @@ class ProductViewSet(viewsets.ModelViewSet,
             )
 
         # apply pagination
-        paginated_queryset = PaginationMixins.paginated_queryset(queryset, request)
+        paginator = PaginationMixins()
+        paginated_queryset = paginator.paginated_queryset(queryset, request)
         serializer = self.get_serializer(paginated_queryset, many=True)
         return Response(serializer.data)
 
@@ -93,10 +90,12 @@ class ProductViewSet(viewsets.ModelViewSet,
     @action(detail=False, methods=['get'], url_path='filter')
     def filter(self, request):
         queryset = self.get_queryset()
-        queryset = AdvanceFilteringMixins.apply_advance_filtering(self, queryset, request)
+        filtering = AdvanceFilteringMixins()
+        queryset = filtering.apply_advance_filtering(queryset, request)
 
         # Apply pagination
-        paginated_queryset = PaginationMixins.paginated_queryset(queryset, request)
+        paginator = PaginationMixins()
+        paginated_queryset = paginator.paginated_queryset(queryset, request)
         serializer = self.get_serializer(paginated_queryset, many=True)
 
         return Response(serializer.data)

@@ -1,5 +1,9 @@
 from rest_framework import viewsets, serializers
+from rest_framework import generics
 from .models import Quotation, RFQ
+from products.models import Product
+from products.serializers import ProductSerializer
+from rest_framework.response import Response
 from .serializers import QuotationSerializer, RFQSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
@@ -30,3 +34,25 @@ class RFQViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # The context is automatically passed by DRF; no need to manually set the buyer here
         serializer.save()
+
+
+class SuggestionGenericViewSet(generics.ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.query_params.get('q', '')
+        
+        if query:
+            queryset = queryset.filter(title__icontains=query)
+        else:
+            queryset = queryset.none()
+        
+        return queryset
+    
+    def list(self, request, *args, **kwargs):
+        suggestions = self.get_queryset()[:10]
+        data = [product.title for product in suggestions]
+        return Response(data)
+        
