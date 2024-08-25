@@ -7,12 +7,10 @@ function ProductListing() {
   return (
     <div className=" bg-gray-100">
       <div className="p-4 m-auto hidden lg:block lg:w-1/4">
-        {" "}
         <BreadcrumbResponsive />
       </div>
 
       <div className="container bg-white">
-        {" "}
         <div className="flex mt-4">
           <div className="hidden lg:block lg:w-1/4">
             <Sidebar />
