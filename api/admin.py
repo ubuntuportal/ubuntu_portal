@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import Product, Category, Order, OrderItem, ProductVariation, Cart, CartItem, RFQ, Quotation
+from products.models import Product, Category, ProductVariation
+from carts.models import Cart, CartItem
+from orders.models import Order, OrderItem
+from rfqs.models import RFQ, Quotation
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'description', 'price', 'created_at', 'updated_at')

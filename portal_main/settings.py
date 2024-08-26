@@ -36,6 +36,10 @@ INSTALLED_APPS = [
 
     'api',
     'user_auth',
+    'carts',
+    'orders',
+    'rfqs',
+    'products',
     'django_filters',
     'corsheaders',
     'drf_yasg',
@@ -140,6 +144,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
+    },
 ]
 
 REST_FRAMEWORK = {
@@ -151,7 +161,17 @@ REST_FRAMEWORK = {
     ),
 
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '5/minute',
+        'user': '10/minute'
+    }
 }
 
 # Add SimpleJWT settings
@@ -211,3 +231,11 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
 AUTH_USER_MODEL = 'user_auth.CustomUser'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'ubuntuportal60@gmail.com'
+EMAIL_HOST_PASSWORD = 'znyo ompp mcsl euta'
+DEFAULT_FROM_EMAIL = 'ubuntuportal60@gmail.com'
