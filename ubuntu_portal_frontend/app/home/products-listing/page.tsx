@@ -12,7 +12,7 @@ function ProductListing() {
 
       <div className="container bg-white">
         <div className="flex mt-4">
-          <div className="hidden lg:block lg:w-1/4">
+          <div>
             <Sidebar />
           </div>
           <div>
