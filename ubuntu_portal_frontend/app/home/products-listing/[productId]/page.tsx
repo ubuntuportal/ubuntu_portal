@@ -97,7 +97,7 @@ function Tabs() {
         </TabButton>
       </div>
 
-      <div className="inspiration-content">
+      <div className=" inspiration-content">
         {activeTab === 0 && <AdditionalTab />}
         {/* {activeTab === 1 && <DestinationOutdoorAdventure />}
         {activeTab === 2 && <MountainCabins />}
@@ -132,9 +132,9 @@ function TabButton({
 
 function AdditionalTab() {
   return (
-    <div className="flex gap-4 justify-center px-8">
+    <div className="flex gap-3 justify-center px-8 pb-9">
       <div className="basis-1/2">
-        <h1>Description</h1>
+        <h1 className="font-bold mb-2">Description</h1>
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae sed
           tenetur aliquid earum, eligendi labore illo architecto? Fugiat
@@ -143,8 +143,8 @@ function AdditionalTab() {
         </p>
       </div>
       <div className="flex-1">
-        <h1>Features</h1>
-        <div className="text-sm">
+        <h1 className="font-bold mb-2">Features</h1>
+        <div className="text-sm flex flex-col gap-3 ">
           <p>
             <span></span> Free 1 Year Warranty
           </p>
@@ -166,8 +166,28 @@ function AdditionalTab() {
           </p>
         </div>
       </div>
-      <div className="flex-1">
-        <h1>Shipping Information</h1>
+      <div className="flex-1 mb-2">
+        <h1 className="font-bold mb-2">Shipping Information</h1>
+        <div className="text-sm flex flex-col gap-3">
+          <p>
+            <span className="font-bold">Courier:</span> 2-4 days, free shipping{" "}
+          </p>
+
+          <p>
+            <span className="font-bold">Local Shipping:</span>Up to one week,
+            $19.00
+          </p>
+
+          <p>
+            <span className="font-bold">UPS Ground Shipping:</span>4-6 days,
+            $29.00
+          </p>
+
+          <p>
+            <span className="font-bold">Unishop Global Shipping:</span>3-4 days,
+            $39.00
+          </p>
+        </div>
       </div>
     </div>
   );
