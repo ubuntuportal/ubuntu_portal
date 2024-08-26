@@ -34,7 +34,7 @@ function BuyersLandingPage() {
             marginBottom: "10rem",
           }}
         />
-        <div className="absolute text-center top-[38%] left-[30%]">
+        <div className="absolute text-center top-[38%] left-[28%]">
           <div className="  w-[40rem] text-white">
             <h1 className=" text-5xl  font-extrabold">
               Lorem ipsum dolor sit, amet consectetur adipisicing
