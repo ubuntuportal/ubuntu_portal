@@ -6,8 +6,8 @@ import logo from "@/public/Logo.png";
 export default function Footer() {
   return (
     <footer className=" bottom-0  bg-gradient-to-b from-[#29964C] to-[#0D3018]   h-96">
-      <div className="flex gap-[4vw] mx-24 pt-16">
-        <div className="flex-[1.5]">
+      <div className="flex gap-[1vw] mx-20 pt-16">
+        <div className="flex-[1.5] mr-7">
           <div className=" mb-8 text-white font-extrabold leading-6">
             <Image src={logo} alt="logo" />
           </div>
