@@ -15,10 +15,11 @@ class IsSeller(BasePermission):
             return obj.seller == request.user
         return True
 
+# Advance filtering mixin
 
-# Helper class to apply advance filtering on queryset
-class ApplyAdvanceFiltering:
-    def get_queryset(self, queryset, request):
+
+class AdvanceFilteringMixins:
+    def apply_advance_filtering(self, queryset, request):
         categories = request.query_params.get('categories')
         price_range = request.query_params.get('price_range')
         created_at_range = request.query_params.get('created_at_range')
@@ -32,28 +33,36 @@ class ApplyAdvanceFiltering:
             try:
                 # Convert map to list
                 price_range = list(map(float, price_range.split('-')))
-                queryset = queryset.filter(price__gte=price_range[0], price__lte=price_range[1])
+                queryset = queryset.filter(
+                    price__gte=price_range[0], price__lte=price_range[1])
             except ValueError:
-                raise ValidationError('Invalid price range format. Use price_range=100-500.')
+                raise ValidationError(
+                    'Invalid price range format. Use price_range=100-500.')
 
         if created_at_range:
             try:
                 created_at_start, created_at_end = created_at_range.split('-')
-                queryset = queryset.filter(created_at__date__gte=created_at_start, created_at__date__lte=created_at_end)
+                queryset = queryset.filter(
+                    created_at__date__gte=created_at_start, created_at__date__lte=created_at_end)
             except ValueError:
-                raise ValidationError('Invalid date range format. Use created_at_range=YYYY-MM-DD,YYYY-MM-DD.')
+                raise ValidationError(
+                    'Invalid date range format. Use created_at_range=YYYY-MM-DD,YYYY-MM-DD.')
 
         if rating_min:
             try:
                 rating_min = float(rating_min)
                 queryset = queryset.filter(rating__gte=rating_min)
             except ValueError:
-                raise ValidationError('Invalid rating format. Use rating_min=4.5')
+                raise ValidationError(
+                    'Invalid rating format. Use rating_min=4.5')
 
         return queryset
 
 
-# Helper function to get paginated queryset
-def get_paginated_queryset(queryset, request):
-    paginator = PageNumberPagination()
-    return paginator.paginate_queryset(queryset, request)
+class PaginationMixins(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+    def paginated_queryset(self, queryset, request, view=None):
+        return super().paginate_queryset(queryset, request, view=view)

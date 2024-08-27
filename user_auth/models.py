@@ -25,7 +25,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     email = models.EmailField(unique=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     role = models.CharField(max_length=10, choices=(('buyer', 'Buyer'), ('seller', 'Seller')), default='buyer')
     date_joined = models.DateTimeField(default=timezone.now)

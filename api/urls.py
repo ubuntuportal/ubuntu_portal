@@ -1,10 +1,10 @@
-from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ProductViewSet, CategoryViewSet, OrderViewSet, ManageProductsViewSet, BuyerRFQViewSet
-from .views import CartViewSet
-# from users.views import UserViewSet
-# from orders.views import OrderViewSet
+from products.views import ProductViewSet, CategoryViewSet, ManageProductsViewSet
+from orders.views import OrderViewSet
+from rfqs.views import QuotationViewSet, RFQViewSet, SuggestionGenericViewSet
+from carts.views import CartViewSet
+
 
 router = DefaultRouter()
 
@@ -14,11 +14,11 @@ router.register(r'cart', CartViewSet, basename='cart')
 router.register(r'orders', OrderViewSet, basename='order')
 router.register(r'suppliers/orders', OrderViewSet, basename='supplier-order')
 router.register(r'suppliers/products', ManageProductsViewSet, basename='supplier-products')
-router.register(r'rfqs', BuyerRFQViewSet, basename='buyer-rfqs')
+router.register(r'quotations', QuotationViewSet)
+router.register(r'rfqs', RFQViewSet, basename='buyer-rfqs')
 
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    # path('users/', include('django.contrib.auth.urls')),  # For login, logout, password reset, etc.
+    path('api/suggestions/', SuggestionGenericViewSet.as_view())
 ]
