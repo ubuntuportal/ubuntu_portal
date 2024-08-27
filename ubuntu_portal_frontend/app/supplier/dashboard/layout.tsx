@@ -8,11 +8,11 @@ export default function SupplierLayout({
 }>) {
   return (
     <main className="bg-gray-50">
-      <div className="flex">
+      <div className=" h-screen flex">
         <Sidebar />
-        <div className="flex-1 flex-col">
+        <div className="w-[86%] md:w-[92%] lg:w-[84%] xl:w-[86%] overflow-scroll flex-1 flex-col">
           <Header />
-          {children}
+          <section> {children}</section>
         </div>
       </div>
     </main>
