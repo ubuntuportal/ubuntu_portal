@@ -195,6 +195,11 @@ CORS_ALLOW_ALL_ORIGINS = True
 AUTH_USER_MODEL = 'user_auth.CustomUser'
 
 
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -202,3 +207,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'ubuntuportal60@gmail.com'
 EMAIL_HOST_PASSWORD = 'znyo ompp mcsl euta'
 DEFAULT_FROM_EMAIL = 'ubuntuportal60@gmail.com'
+
+
