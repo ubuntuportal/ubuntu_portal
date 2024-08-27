@@ -1,12 +1,13 @@
 import React from "react";
+import RevenueChart from "@/components/supplier/Chart";
 
 function Dashboard() {
   return (
-    <div className="p-4 flex gap-4 flex-col md:flex-row">
+    <div className="px-8 mt-8 flex gap-8 flex-col md:flex-row">
       {/* LEFT */}
       <div className="w-full lg:w-2/3 flex flex-col gap-8">
         {/* STATS CARDS */}
-        <div className="flex gap-4 justify-between flex-wrap">
+        <div className="flex gap-2 justify-between flex-wrap">
           <div>Card1</div>
           <div>Card2</div>
           <div>Card3</div>
@@ -17,7 +18,9 @@ function Dashboard() {
           Order status table
         </div>
         {/* CHART */}
-        <div className="w-full h-[500px]">cHART</div>
+        <div className="w-full h-[500px]">
+          <RevenueChart />
+        </div>
       </div>
 
       {/* RIGHT */}
