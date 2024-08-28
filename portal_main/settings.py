@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     'drf_yasg',
+    'phonenumber_field',
+    'django_countries',
 
     'django.contrib.sites',
     'rest_framework',
@@ -53,7 +55,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    
+
     # dj-rest-auth app
     'dj_rest_auth',
     'dj_rest_auth.registration',
@@ -224,9 +226,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
 
 REST_USE_JWT = True  # Enable JWT authentication
-ACCOUNT_EMAIL_VERIFICATION = "none"  # Disable email verification 
-ACCOUNT_AUTHENTICATION_METHOD = "email"  # Use email for authentication 
-ACCOUNT_EMAIL_REQUIRED = True 
+ACCOUNT_EMAIL_VERIFICATION = "none"  # Disable email verification
+ACCOUNT_AUTHENTICATION_METHOD = "email"  # Use email for authentication
+ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 

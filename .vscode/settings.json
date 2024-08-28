@@ -1,19 +1,31 @@
 {
     "cSpell.words": [
+        "allauth",
+        "authtoken",
         "cartitem",
         "categor",
         "corsheaders",
+        "dotenv",
+        "euta",
         "filterset",
         "kiloamperes",
         "kiloohms",
+        "mcsl",
         "millihertz",
         "milliwatts",
+        "modelfields",
         "nauctical",
+        "ompp",
+        "phonenumber",
         "rcdfw",
         "redoc",
         "rfqs",
         "simplejwt",
+        "socialaccount",
+        "uidb",
         "viewset",
-        "zmhvm"
+        "yasg",
+        "zmhvm",
+        "znyo"
     ]
 }
