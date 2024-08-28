@@ -1,5 +1,6 @@
 import React from "react";
 import RevenueChart from "@/components/supplier/Chart";
+import StatsCard from "@/components/supplier/StatsCard";
 
 function Dashboard() {
   return (
@@ -8,9 +9,9 @@ function Dashboard() {
       <div className="w-full lg:w-2/3 flex flex-col gap-8">
         {/* STATS CARDS */}
         <div className="flex gap-2 justify-between flex-wrap">
-          <div>Card1</div>
-          <div>Card2</div>
-          <div>Card3</div>
+          <StatsCard />
+          <StatsCard />
+          <StatsCard />
         </div>
         {/* ORDER STATUS LIST*/}
         <div className="flex gap-4 flex-col lg:flex-row">
