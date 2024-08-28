@@ -7,12 +7,12 @@ import { SearchIcon } from "@heroicons/react/outline";
 
 export default function Header() {
   return (
-    <header className=" bg-[#29964C]">
+    <header className="bg-[#29964C]">
       <div className="flex items-center justify-evenly   ">
         <div className="text-white  font-extrabold leading-6">
           <Image src={logo} alt="logo" />
         </div>
-        <div className="w-5/12 pt-8 pb-9">
+        <div className="w-5/12 ">
           <div className="relative flex items-center w-full">
             <SearchIcon className="absolute left-3 h-5 w-5 text-gray-500" />
             <input
