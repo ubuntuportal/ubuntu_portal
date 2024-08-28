@@ -65,8 +65,8 @@ const data = [
   },
   {
     name: "Nov",
-    2023: 3490,
-    2024: 4300,
+    2023: 4920,
+    2024: 3920,
   },
   {
     name: "Dec",
@@ -79,7 +79,7 @@ const RevenueChart = () => {
   return (
     <div className="bg-white rounded-xl w-full h-full p-4">
       <div className="flex justify-between items-center">
-        <h1 className="text-lg font-semibold">Finance</h1>
+        <h1 className="text-lg font-semibold">Revenue</h1>
         <Image src="/moreDark.png" alt="" width={20} height={20} />
       </div>
       <ResponsiveContainer width="100%" height="90%">
@@ -110,22 +110,12 @@ const RevenueChart = () => {
           />
           <Tooltip />
           <Legend
-            align="center"
+            align="right"
             verticalAlign="top"
             wrapperStyle={{ paddingTop: "10px", paddingBottom: "30px" }}
           />
-          <Line
-            type="monotone"
-            dataKey="2023"
-            stroke="#C3EBFA"
-            strokeWidth={5}
-          />
-          <Line
-            type="monotone"
-            dataKey="2024"
-            stroke="#CFCEFF"
-            strokeWidth={5}
-          />
+          <Line type="monotone" dataKey="2023" stroke="green" strokeWidth={5} />
+          <Line type="monotone" dataKey="2024" stroke="red" strokeWidth={5} />
         </LineChart>
       </ResponsiveContainer>
     </div>
