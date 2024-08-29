@@ -1,6 +1,7 @@
 import React from "react";
 import RevenueChart from "@/components/supplier/Chart";
 import StatsCard from "@/components/supplier/StatsCard";
+import OrderStatusTable from "@/components/supplier/OderStatusTable";
 
 function Dashboard() {
   return (
@@ -21,10 +22,12 @@ function Dashboard() {
             label="Total revenue"
           />
         </div>
-        {/* ORDER STATUS LIST*/}
+        {/* ORDER STATUS TABLE*/}
         <div className="flex gap-4 flex-col lg:flex-row">
           {" "}
-          Order status table
+          <div>
+            <OrderStatusTable />
+          </div>
         </div>
         {/* CHART */}
         <div className="w-full h-[500px]">
