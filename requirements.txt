@@ -27,7 +27,6 @@ djangorestframework-simplejwt==5.3.1
 drf-yasg==1.21.7
 idna==3.8
 google-auth==2.34.0
-idna==3.7
 inflection==0.5.1
 oauthlib==3.2.2
 packaging==24.1
