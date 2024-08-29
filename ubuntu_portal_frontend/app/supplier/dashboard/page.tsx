@@ -1,5 +1,7 @@
 import React from "react";
 import RevenueChart from "@/components/supplier/Chart";
+import StatsCard from "@/components/supplier/StatsCard";
+import OrderStatusTable from "@/components/supplier/OderStatusTable";
 
 function Dashboard() {
   return (
@@ -8,14 +10,24 @@ function Dashboard() {
       <div className="w-full lg:w-2/3 flex flex-col gap-8">
         {/* STATS CARDS */}
         <div className="flex gap-2 justify-between flex-wrap">
-          <div>Card1</div>
-          <div>Card2</div>
-          <div>Card3</div>
+          <StatsCard icon="/Icon_Order.png" value="75" label="Total order" />
+          <StatsCard
+            icon="/Icon_Delivered.png"
+            value="50"
+            label="Total delivered"
+          />
+          <StatsCard
+            icon="/Icon_Revenue.png"
+            value="$500"
+            label="Total revenue"
+          />
         </div>
-        {/* ORDER STATUS LIST*/}
+        {/* ORDER STATUS TABLE*/}
         <div className="flex gap-4 flex-col lg:flex-row">
           {" "}
-          Order status table
+          <div>
+            <OrderStatusTable />
+          </div>
         </div>
         {/* CHART */}
         <div className="w-full h-[500px]">

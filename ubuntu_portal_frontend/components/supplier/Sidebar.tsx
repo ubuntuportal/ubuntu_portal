@@ -17,10 +17,15 @@ export default function Sidebar() {
     { name: "Store", icon: ShoppingBagIcon },
     { name: "Products", icon: CollectionIcon },
     { name: "Contact", icon: PhoneIcon },
+    { name: "Comunication", icon: HomeIcon },
+    { name: "Profile", icon: UserIcon },
+    { name: "Store", icon: ShoppingBagIcon },
+    { name: "RFQ", icon: CollectionIcon },
+    { name: "Contact", icon: PhoneIcon },
   ];
 
   return (
-    <div className="bg-white text-black w-64 h-screen p-4 border-r border-gray-200 flex flex-col justify-between">
+    <div className="bg-white text-black w-64 h-screen p-4 border-r border-gray-200 flex flex-col justify-between overflow-y-visible">
       <div>
         <div className="mb-4">
           <a href="#">
@@ -56,7 +61,7 @@ export default function Sidebar() {
         </nav>
       </div>
       <footer className="">
-        <div className="text-center text-gray-500">
+        <div className="text-center mt-4 text-gray-500">
           UbuntuPortal © 2024
           <br />
           All Rights Reserved
