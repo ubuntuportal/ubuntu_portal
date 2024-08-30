@@ -5,6 +5,9 @@ from rest_framework.permissions import AllowAny
 from .serializers import (RegisterSerializer, CustomTokenObtainPairSerializer, ForgotPasswordSerializer,
                           ResetPasswordSerializer)
 from django.contrib.auth import get_user_model
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from dj_rest_auth.registration.views import SocialLoginView
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.urls import reverse
@@ -131,6 +134,22 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     - Uses a custom serializer (`CustomTokenObtainPairSerializer`) to handle the token creation logic.
     """
     serializer_class = CustomTokenObtainPairSerializer
+
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter
+
+    def get_response(self):
+        original_response = super().get_response()
+        user = self.user
+
+        refresh = RefreshToken.for_user(user)
+        token_data = {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }
+
+        original_response.data.update(token_data)
+        return original_response
 
 
 class ForgotPasswordView(APIView):
