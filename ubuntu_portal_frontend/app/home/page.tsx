@@ -60,9 +60,9 @@ function BuyersLandingPage() {
             height: "100%",
           }}
         />
-        <div className="hidden md:block absolute text-center md:inset-y-[28%] md:inset-x-[30%] lg:inset-y-[30%] lg:inset-x-[30%] ">
+        <div className="hidden md:block absolute text-center md:inset-y-[28%] md:inset-x-[30%] lg:inset-y-[35%] lg:inset-x-[30%] ">
           <div className="text-white">
-            <h1 className=" text-5xl md:text-3xl md:line-clamp-3.5 md:leading-7 font-extrabold">
+            <h1 className=" lg:text-5xl lg:leading-10 md:text-3xl 5 md:leading-7 font-extrabold">
               Lorem ipsum dolor sit, amet consectetur adipisicing
             </h1>
             <p className="text-lg my-4 md:my-3  md:leading-4 font-bold">
