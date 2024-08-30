@@ -4,6 +4,7 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
+from django_countries.widgets import CountrySelectWidget
 
 
 User = get_user_model()
@@ -15,7 +16,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name', 'email', 'password', 'password2', 'role')
+        fields = ('id', 'country', 'first_name', 'last_name', 'email', 'password', 'password2', 'role')
+        widgets = {"country": CountrySelectWidget()}
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
