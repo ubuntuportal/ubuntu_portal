@@ -3,7 +3,7 @@ from .models import CustomUser
 
 class CustomUserAdmin(admin.ModelAdmin):
     # Specify the fields to display in the list view
-    list_display = ('id', 'first_name', 'last_name', 'email', 'role', 'is_staff', 'is_active')
+    list_display = ('id', 'first_name', 'last_name', 'email','country','phone_number', 'role', 'is_staff', 'is_active')
 
     # Optional: Add search fields to allow searching in the admin interface
     search_fields = ('first_name', 'last_name', 'email')
