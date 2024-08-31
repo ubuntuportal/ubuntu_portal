@@ -16,7 +16,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'country', 'first_name', 'last_name', 'email','country', 'phone_number', 'password', 'password2', 'role')
+        fields = ('id', 'first_name', 'last_name', 'email','country', 'phone_number', 'password', 'password2', 'role')
         widgets = {"country": CountrySelectWidget()}
 
     def validate(self, attrs):
