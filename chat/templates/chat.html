@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{chat.c_id}}</h2>
+
+{% for msg in messages %}
+<p>{{msg.body}}</p>
+<p>{{msg.sender.username}></p>
+{% endfor %}
+
+<form action="{% url 'create-message' chat.id %}" method="post">
+    {% csrf_token %}
+
+<!--    <input type="text" name="message" id="messageBox">-->
+<!--    <input type="submit" value="send">-->
+<textarea id="chat-log" cols="100" rows="20" readonly></textarea><br>
+<input id="messageBox" type="text" size="100"><br>
+<input id="messageButton" type="button" value="Send">
+</form>
+{% endblock %}
+
+<script>
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/' + {{ chat.id }} + '/'
+    );
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        document.querySelector('#chat-log').value += (data.sender + ': ' + data.message + '\n');
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#messageBox').focus();
+    document.querySelector('#messageBox').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // Enter key
+            document.querySelector('#messageButton').click();
+        }
+    };
+
+    document.querySelector('#messageButton').onclick = function(e) {
+        const messageInputDom = document.querySelector('#messageBox');
+        const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'message': message,
+            'sender': "{{ request.user.username }}",
+        }));
+        messageInputDom.value = '';
+    };
+</script>

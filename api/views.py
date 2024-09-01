@@ -16,8 +16,6 @@ from rest_framework.decorators import action
 from rest_framework import status
 
 
-
-
 class ProductPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
@@ -92,7 +90,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(paginated_queryset, many=True)
         return Response(serializer.data)
 
-
     @action(detail=False, methods=['get'], url_path='filter')
     def filter(self, request):
         queryset = self.get_queryset()
@@ -115,7 +112,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer.save(seller=self.request.user)
 
 
-
 class CategoryViewSet(viewsets.ModelViewSet):
     """
     A viewset for handling CRUD operations on the Category model.
@@ -132,6 +128,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
         # Optionally, you can add additional logic here
         serializer.save()
 
+
 class CartViewSet(viewsets.ModelViewSet):
     serializer_class = CartSerializer
     permission_classes = [IsAuthenticated]
@@ -144,7 +141,8 @@ class CartViewSet(viewsets.ModelViewSet):
     def add_item(self, request):
         cart, created = Cart.objects.get_or_create(user=request.user)
         product = get_object_or_404(Product, id=request.data.get('product_id'))
-        variation = get_object_or_404(ProductVariation, id=request.data.get('variation_id')) if request.data.get('variation_id') else None
+        variation = get_object_or_404(ProductVariation, id=request.data.get('variation_id')) if request.data.get(
+            'variation_id') else None
         quantity = int(request.data.get('quantity', 1))
 
         cart_item, item_created = CartItem.objects.get_or_create(cart=cart, product=product, variation=variation)
@@ -176,7 +174,6 @@ class CartViewSet(viewsets.ModelViewSet):
         cart = get_object_or_404(Cart, user=request.user)
         cart.items.all().delete()
         return Response({'success': 'Cart cleared'}, status=status.HTTP_204_NO_CONTENT)
-
 
     @action(detail=False, methods=['post'])
     @transaction.atomic
@@ -224,7 +221,6 @@ class OrderViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-
     @action(detail=True, methods=['put'], url_name='status')
     def update_status(self, request, pk=None):
         order = self.get_object()
@@ -260,5 +256,3 @@ class ManageProductsViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(seller=self.requset.user)
-
-

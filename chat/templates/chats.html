@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if request.user.is_authenticated %}
+<!--Add lougout here-->
+<form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit">logout</button>
+</form>
+<h1>Welcome to Live Chat, {{request.user}}</h1>
+{% else %}
+<!--Add login here-->
+<form method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <!--    <input type="button" name="username" value="Login">Login-->
+    <input type="submit" value="login">
+</form>
+<h1>Welcome to Live Chat</h1>
+{% endif %}
+<h2>Users</h2>
+{% for user in users %}
+
+{% if user != request.user %}
+<!--<a href="{% url 'create-chat' user.username %}" methods="post">{{user.username}}</a>-->
+<p>{{user.username}}</p>
+<form method="post" action="{% url 'create-chat' user.username %}">
+    {% csrf_token %}
+    <button type="submit">Create Chat</button>
+</form>
+<br>
+{% if user not in chats.members.all %}
+<a href="{% url 'create-chat' user.username %}" methods="post">{{user.username}}</a>
+{% endif %}
+
+{% endif %}
+
+{% endfor %}
+
+<h2>Chats</h2>
+{% for chat in chats %}
+<a href="{% url 'chat' chat.id %}">{{chat.c_id}}</a>
+<a href="{% url 'delete-chat' chat.id %}">Delete</a>
+<br>
+{% endfor %}
+{% endblock %}

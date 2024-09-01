@@ -33,6 +33,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,6 +49,8 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     'drf_yasg',
+
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -79,8 +84,29 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'portal_main.wsgi.application'
+# WSGI_APPLICATION = 'portal_main.wsgi.application'
+ASGI_APPLICATION = 'live_chat.asgi.application'
 
+
+# Channels
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
+
+
+# # Redis
+# REDIS_HOST = 'localhost'
+# REDIS_PORT = 6379
+# REDIS_CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [(REDIS_HOST, REDIS_PORT)],
+#         },
+#     },
+# }
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
