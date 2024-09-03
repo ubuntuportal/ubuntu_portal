@@ -26,7 +26,7 @@ export default function Footer() {
           <div className=" mb-8 text-white font-extrabold leading-6">
             <Image src={logo} alt="logo" />
           </div>
-          <p className="text-white text-sm ">
+          <p className="text-white">
             We are a platform that connects buyers and suppliers.
           </p>
         </aside>
