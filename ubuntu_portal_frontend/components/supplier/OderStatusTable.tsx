@@ -12,9 +12,6 @@ function OrderStatusTable() {
         <thead>
           <tr>
             <th className="py-2 px-4 border-b text-left">Order ID</th>
-            <th className="py-2 px-4 border-b text-left">Product</th>
-            <th className="py-2 px-4 border-b text-left">Status</th>
-            <th className="py-2 px-4 border-b text-left">Date</th>
           </tr>
         </thead>
         <tbody>
