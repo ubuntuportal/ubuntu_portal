@@ -8,7 +8,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center">
       {/* Logo */}
       <div className="mb-8 mt-8">
-        <a href="#">
+        <a href="/supplier/">
           {/* <Image
             src="/path-to-logo.png" // path to logo
             alt="Logo"

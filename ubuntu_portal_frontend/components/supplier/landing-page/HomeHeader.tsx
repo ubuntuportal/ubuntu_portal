@@ -36,7 +36,7 @@ function HomeHeader() {
           </a>
         ))}{" "}
       </div>
-      <Link href="/supplier/login">
+      <Link href="/supplier/register/">
         <Button className="bg-green-500">Get Started</Button>
       </Link>
     </div>
