@@ -1,4 +1,6 @@
 import React from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 function SupplierRegisterPage() {
   return (
@@ -123,12 +125,11 @@ function SupplierRegisterPage() {
 
         <div className="mt-6 border-t pt-6 text-sm text-gray-600">
           <p>Already on UbuntuPortal?</p>
-          <a
-            href="#"
-            className="w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-md shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 block text-center mt-3"
-          >
-            Sign-in to your UbuntuPortal
-          </a>
+          <Link href="/supplier/login/">
+            <Button className="w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-md shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 block text-center mt-3">
+              Sign-in to your UbuntuPortal
+            </Button>
+          </Link>
         </div>
       </div>
 
