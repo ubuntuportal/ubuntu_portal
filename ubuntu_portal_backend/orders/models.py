@@ -62,7 +62,7 @@ class OrderItem(models.Model):
         else:
             total_price = Decimal('0.00')
 
-        return total_price * self.quantity
+        return total_price
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
