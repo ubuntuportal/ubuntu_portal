@@ -126,13 +126,15 @@ WSGI_APPLICATION = 'portal_main.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-if not DEBUG: 
+if not DEBUG:
     DATABASES = {
         'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
     }
 else:
     DATABASES = {
-        'default': dj_database_url.config(default=os.getenv('EXTERNAL_DATABASE_URL'))
+        'default': dj_database_url.config(
+            default=os.getenv('EXTERNAL_DATABASE_URL', 'sqlite:///db.sqlite3')
+        )
     }
 
 # Password validation
