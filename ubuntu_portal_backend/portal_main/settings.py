@@ -58,6 +58,9 @@ INSTALLED_APPS = [
     # dj-rest-auth app
     'dj_rest_auth',
     'dj_rest_auth.registration',
+    
+    # channel
+    'channels',
 ]
 
 AUTHENTICATION_BACKENDS = (
