@@ -235,6 +235,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Allow Origin of cors-headers(Cross-Origin Resource Sharing)
 CORS_ALLOW_ALL_ORIGINS = True
 
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'ubuntu-portal.onrender.com',  # Add this domain
+]
+
+
 REST_USE_JWT = True  # Enable JWT authentication
 ACCOUNT_EMAIL_VERIFICATION = "none"  # Disable email verification
 ACCOUNT_AUTHENTICATION_METHOD = "email"  # Use email for authentication
