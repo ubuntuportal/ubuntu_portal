@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.core.mail import send_mail
 from .tasks import send_email_task
+import threading
 
 
 def generate_activation_token(user):
@@ -27,5 +28,13 @@ def email_sender(subject, message, recipient_list):
     )
 
 
+# def send_email_async(email_subject, message, recipient_list):
+#     return send_email_task.delay(email_subject, message, recipient_list)
+
 def send_email_async(email_subject, message, recipient_list):
-    return send_email_task.delay(email_subject, message, recipient_list)
+    email_thread = threading.Thread(
+        target=email_sender,
+        args=(email_subject, message, recipient_list)
+        )
+    
+    email_thread.start()
