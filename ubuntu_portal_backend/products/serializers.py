@@ -3,17 +3,25 @@ from .models import Product, ProductVariation, Category
 from django.db.models import F, Sum, ExpressionWrapper, DecimalField
 
 
+class SubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'parent']  # parent is the ForeignKey in the Category model
+
+
 class CategorySerializer(serializers.ModelSerializer):
-    subcategories = SubCategorySerializer(many=True, read_only=True)
+    # Use the SubCategorySerializer for subcategories
+    subcategories = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
         fields = ['id', 'name', 'subcategories']
 
-class SubCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = ['id', 'name', 'parent']
+    def get_subcategories(self, obj):
+        # Fetch subcategories where the current category is the parent
+        subcategories = obj.subcategories.all()
+        return SubCategorySerializer(subcategories, many=True).data
+
 
 
 class ProductVariationSerializer(serializers.ModelSerializer):
