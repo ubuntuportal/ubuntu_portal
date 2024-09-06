@@ -4,9 +4,16 @@ from django.db.models import F, Sum, ExpressionWrapper, DecimalField
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    subcategories = SubCategorySerializer(many=True, read_only=True)
+
     class Meta:
         model = Category
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'subcategories']
+
+class SubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'parent']
 
 
 class ProductVariationSerializer(serializers.ModelSerializer):

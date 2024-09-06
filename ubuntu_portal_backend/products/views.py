@@ -128,6 +128,20 @@ class CategoryViewSet(viewsets.ModelViewSet):
         # Optionally, you can add additional logic here
         serializer.save()
 
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def add_subcategory(self, request, pk=None):
+        """
+        Custom action to add a subcategory to a category.
+        """
+        parent_category = self.get_object()
+        subcategory_data = request.data
+        
+        subcategory_serializer = SubCategorySerializer(data=subcategory_data)
+        
+        if subcategory_serializer.is_valid():
+            subcategory_serializer.save(parent=parent_category)  # Ensure 'parent' field is set correctly
+            return Response(subcategory_serializer.data, status=201)
+        return Response(subcategory_serializer.errors, status=400)
 
 class ManageProductsViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
