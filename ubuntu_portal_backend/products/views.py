@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Product, Category
 from django.db.models import Q
-from .serializers import ProductSerializer, CategorySerializer
+from .serializers import ProductSerializer, CategorySerializer, SubCategorySerializer
 from rest_framework import filters
 from rest_framework.response import Response
 from .mixins import AdvanceFilteringMixins, PaginationMixins, IsSeller
