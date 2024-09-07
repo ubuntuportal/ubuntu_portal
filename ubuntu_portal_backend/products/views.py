@@ -120,9 +120,12 @@ class CategoryViewSet(viewsets.ModelViewSet):
     - **IsAuthenticatedOrReadOnly**: Allows unauthenticated users to view categories,
     but restricts creating, updating, or deleting categories to authenticated users.
     """
-    queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        # Return only top-level categories (categories without a parent)
+        return Category.objects.filter(parent__isnull=True)
 
     def perform_create(self, serializer):
         # Optionally, you can add additional logic here
