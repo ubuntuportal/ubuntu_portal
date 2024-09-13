@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -17,7 +17,9 @@ import { Label } from "@/components/ui/label";
 interface Product {
   title: string;
   description: string;
-  price: number;
+  price: string;
+  stock: number;
+  image: string;
 }
 
 export function AddProduct() {
@@ -29,7 +31,9 @@ export function AddProduct() {
   const [product, setProduct] = useState<Product>({
     title: "",
     description: "",
-    price: 0,
+    price: "",
+    stock: 0,
+    image: "",
   });
 
   const handleChange = (
@@ -39,13 +43,39 @@ export function AddProduct() {
     setProduct({
       ...product,
       [name]: name === "price" ? parseFloat(value) : value,
+      [name]: name === "stock" ? parseFloat(value) : value,
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // onSubmit(product);
-    setProduct({ title: "", description: "", price: 0 });
+    setProduct({ title: "", description: "", price: "", stock: 0, image: "" });
+    const productData: Product = {
+      title: "",
+      description: "",
+      price: "",
+      stock: 0,
+      image: "www.example.com",
+    };
+    const response = await fetch(
+      "https://ubuntu-portal.onrender.com/api/products/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(productData),
+      }
+    );
+
+    // Handle the response
+    if (response.ok) {
+      const data = await response.json();
+      console.log("Product added:", data);
+    } else {
+      console.error("Error adding product:", response.statusText);
+    }
   };
 
   return (
@@ -101,25 +131,47 @@ export function AddProduct() {
             />
           </div>
 
-          <div className="mb-5">
-            <label
-              htmlFor="price"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Price (in USD)
-            </label>
-            <input
-              type="number"
-              id="price"
-              name="price"
-              value={product.price}
-              onChange={handleChange}
-              className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              step="0.01"
-              min="0"
-              placeholder="Enter price"
-              required
-            />
+          <div className="mb-5 flex gap-4">
+            <div>
+              <label
+                htmlFor="price"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Price (in USD)
+              </label>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                value={product.price}
+                onChange={handleChange}
+                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                step="0.01"
+                min="0"
+                placeholder="Enter price"
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="price"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Quantity
+              </label>
+              <input
+                type="number"
+                id="price"
+                name="stock"
+                value={product.stock}
+                onChange={handleChange}
+                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                step="0.01"
+                min="0"
+                placeholder="Enter price"
+                required
+              />
+            </div>
           </div>
 
           <div className="mt-6">
