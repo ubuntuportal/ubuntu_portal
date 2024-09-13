@@ -42,11 +42,7 @@ export default function CartComponents() {
         <BreadcrumbResponsive />
       </div>
       <div>
-        <Cart
-        // items={cartItems}
-        // onAddItem={addItemToCart}
-        // onRemoveItem={removeItemFromCart}
-        />
+        <Cart />
       </div>
     </div>
   );

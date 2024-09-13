@@ -1,10 +1,37 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/buyer/Footer";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const data = Object.fromEntries(formData.entries());
+    const body = JSON.stringify(data);
+    console.log(data);
+    const req = await fetch(
+      "https://ubuntu-portal.onrender.com/api/auth/login/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: body,
+      }
+    );
+    const result = await req.json();
+    console.log(result);
+    console.log(result.access);
+    localStorage.setItem("token", result.access);
+    router.push("/supplier/dashboard");
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center w-screen">
       {/* Logo */}
@@ -27,7 +54,7 @@ export default function LoginPage() {
           </div>
 
           {/* Login Form */}
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label
                 htmlFor="email"
