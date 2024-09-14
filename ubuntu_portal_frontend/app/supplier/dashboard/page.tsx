@@ -13,7 +13,7 @@ function Dashboard() {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      router.push("/supplier/login"); // Redirect to login if token is missing
+      router.push("/login"); // Redirect to login if token is missing
     }
 
     // Optionally, verify token with the server to check if it's still valid
@@ -22,7 +22,7 @@ function Dashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    router.push("/supplier/login");
+    router.push("/login");
   };
   return (
     <div className="px-8 mt-8 flex gap-8 flex-col md:flex-row">
