@@ -1,5 +1,6 @@
-import { Button } from '@/components/ui/button';
-import React from 'react';
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import React from "react";
 
 function HeroSection() {
   return (
@@ -22,7 +23,10 @@ function HeroSection() {
               ipsum sit amet consectetur adipisicing elit.
             </p>
             <div className="flex mt-8">
-              <Button className="bg-green-500 mr-8">Get Start Now</Button>
+              <Link href="/supplier/register/">
+                <Button className="bg-green-500 mr-8">Get Started</Button>
+              </Link>
+
               <Button className="bg-white text-black">Our Mission</Button>
             </div>
           </div>

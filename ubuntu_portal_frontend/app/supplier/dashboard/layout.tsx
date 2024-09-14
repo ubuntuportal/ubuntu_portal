@@ -1,3 +1,4 @@
+import Footer from "@/components/buyer/Footer";
 import Header from "@/components/supplier/Header";
 import Sidebar from "@/components/supplier/Sidebar";
 
@@ -7,14 +8,15 @@ export default function SupplierLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <main>
-      <div className="flex">
+    <main className="bg-gray-50">
+      <div className=" h-screen flex">
         <Sidebar />
-        <div className="flex-1 flex-col">
+        <div className="w-[86%] md:w-[92%] lg:w-[84%] xl:w-[86%] overflow-scroll flex-1 flex-col">
           <Header />
-          {children}
+          <section> {children}</section>
         </div>
       </div>
+      <Footer />
     </main>
   );
 }

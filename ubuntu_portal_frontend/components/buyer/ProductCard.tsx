@@ -15,19 +15,21 @@ export function ProductCard({
   price,
 }: ProductCardProps) {
   return (
-    <div className="bg-white shadow-md rounded-lg overflow-hidden">
+    <div className="bg-white h-auto shadow-md rounded-lg  transition-transform transform hover:scale-105">
       <Image
-        src={"/public/img/${image}"}
+        src={image}
         alt={name}
-        className="w-full h-48 object-cover"
-        width={202}
-        height={174}
+        className="w-full p-5 "
+        width={187}
+        height={162}
       />
       <div className="p-4">
         <h3 className="text-lg font-semibold">{name}</h3>
         <p className="text-gray-600 mt-2">{description}</p>
         <div className="mt-4">
-          <span className="font-san text-lg font-bold">{price}</span>
+          <span className="font-sans text-lg font-bold text-green-700">
+            {price}
+          </span>
         </div>
       </div>
     </div>

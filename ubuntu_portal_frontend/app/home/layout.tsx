@@ -1,6 +1,6 @@
 import Header from "@/components/buyer/Header";
 import Footer from "@/components/buyer/Footer";
-import { Inter } from "next/font/google";
+
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function BuyerLayout({
@@ -9,7 +9,7 @@ export default function BuyerLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <body className="inter.className min-h-screen">
+    <body className="scroll-smooth">
       <Header />
 
       <main>{children}</main>

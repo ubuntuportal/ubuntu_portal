@@ -1,26 +1,27 @@
-import { Button } from '@/components/ui/button';
-import React from 'react';
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import React from "react";
 
 const navigation = [
   {
-    title: 'Home',
-    link: '#',
+    title: "Home",
+    link: "#",
   },
   {
-    title: 'About Us',
-    link: '#',
+    title: "About Us",
+    link: "#",
   },
   {
-    title: 'Service',
-    link: '#',
+    title: "Service",
+    link: "#",
   },
   {
-    title: 'Blog',
-    link: '#',
+    title: "Blog",
+    link: "#",
   },
   {
-    title: 'Contact',
-    link: '#',
+    title: "Contact",
+    link: "#",
   },
 ];
 
@@ -31,11 +32,13 @@ function HomeHeader() {
       <div className="flex gap-6">
         {navigation.map((item) => (
           <a href={item.link} key={item.title} className="hover:text-green-500">
-            {item.title}{' '}
+            {item.title}{" "}
           </a>
-        ))}{' '}
+        ))}{" "}
       </div>
-      <Button className="bg-green-500">Get Started</Button>
+      <Link href="/supplier/register/">
+        <Button className="bg-green-500">Get Started</Button>
+      </Link>
     </div>
   );
 }

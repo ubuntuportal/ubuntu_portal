@@ -35,12 +35,11 @@ import {
 const items = [
   { href: "#", label: "Home" },
   { href: "#", label: "Products-listing" },
+  { href: "#", label: "Products-details" },
   { href: "#", label: "Products-listing" },
-  { href: "#", label: "Products-listing" },
-  { label: "Services" },
 ];
 
-const ITEMS_TO_DISPLAY = 3;
+const ITEMS_TO_DISPLAY = 2;
 
 export function BreadcrumbResponsive() {
   const [open, setOpen] = React.useState(false);
@@ -53,7 +52,7 @@ export function BreadcrumbResponsive() {
           <BreadcrumbLink href={items[0].href}>{items[0].label}</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
-        {items.length > ITEMS_TO_DISPLAY ? (
+        {/* {items.length > ITEMS_TO_DISPLAY ? (
           <>
             <BreadcrumbItem>
               {isDesktop ? (
@@ -108,7 +107,7 @@ export function BreadcrumbResponsive() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
           </>
-        ) : null}
+        ) : null} */}
         {items.slice(-ITEMS_TO_DISPLAY + 1).map((item, index) => (
           <BreadcrumbItem key={index}>
             {item.href ? (
