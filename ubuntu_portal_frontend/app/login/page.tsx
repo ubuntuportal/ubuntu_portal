@@ -29,7 +29,11 @@ export default function LoginPage() {
     console.log(result);
     console.log(result.access);
     localStorage.setItem("token", result.access);
-    router.push("/supplier/dashboard");
+    if (result.role === "seller") {
+      router.push("/supplier/dashboard");
+    } else if (result.role === "buyer") {
+      router.push("/home/products-listing");
+    }
   };
 
   return (
@@ -49,7 +53,7 @@ export default function LoginPage() {
       <div className="flex mb-16 gap-8">
         {/* Login Form Container */}
         <div className="bg-green-50 bg-gradient-to-tr p-8 rounded-3xl shadow-md w-full max-w-sm shadow-lg shadow-slate-600">
-          <div className="item-center">
+          <div className="item-center text-center">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800">Login</h2>
           </div>
 
@@ -117,7 +121,7 @@ export default function LoginPage() {
 
           <div className="mt-6 border-t pt-6 text-sm text-gray-600">
             <p>New to UbuntuPortal?</p>
-            <Link href="/supplier/register/">
+            <Link href="/register">
               <Button className="w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-md shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 block text-center mt-3">
                 Create your UbuntuPortal
               </Button>

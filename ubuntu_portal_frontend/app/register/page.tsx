@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Footer from "@/components/buyer/Footer";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -36,7 +37,7 @@ export default function RegisterPage() {
       }
 
       // Registration successful
-      router.push("/supplier/login");
+      router.push("/login");
     } catch (err) {
       console.error("Registration failed:", err);
       // Display an error message to the user
@@ -58,25 +59,28 @@ export default function RegisterPage() {
       </div>
       <div className="flex mb-16 gap-8">
         {/* Login Form Container */}
-        <div className="bg-green-50 bg-gradient-to-tr p-8 pt-2 rounded-3xl shadow-md w-full max-w-sm shadow-lg shadow-slate-600">
-          <div className="item-center">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Login</h2>
+        <div className="bg-green-50 bg-gradient-to-tr p-8 pt-2 rounded-3xl shadow-md w-[70rem] max-w-sm shadow-lg shadow-slate-600">
+          <div className="item-center text-center">
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              Sign Up
+            </h2>
           </div>
 
           {/* Login Form */}
           <form onSubmit={handleSubmit}>
             {/* First name Input */}
             <div className="mb-2">
-              <label
+              {/* <label
                 htmlFor="firstname"
                 className="block text-sm font-medium text-gray-700"
               >
                 First Name
-              </label>
+              </label> */}
               <input
                 type="text"
                 id="firstname"
                 name="first_name"
+                placeholder="First Name"
                 className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
                 required
               />
@@ -84,16 +88,17 @@ export default function RegisterPage() {
 
             {/* Last name Input */}
             <div className="mb-2">
-              <label
+              {/* <label
                 htmlFor="lastname"
                 className="block text-sm font-medium text-gray-700"
               >
                 Last Name
-              </label>
+              </label> */}
               <input
                 type="text"
                 id="lastname"
                 name="last_name"
+                placeholder="Last Name"
                 className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
                 required
               />
@@ -101,16 +106,17 @@ export default function RegisterPage() {
 
             {/* Email Input */}
             <div className="mb-2">
-              <label
+              {/* <label
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700"
               >
                 Email
-              </label>
+              </label> */}
               <input
                 type="text"
                 id="email"
                 name="email"
+                placeholder="Email"
                 className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
                 required
               />
@@ -128,7 +134,10 @@ export default function RegisterPage() {
                   type="text"
                   id="country"
                   name="country"
-                  className="mt-1 w-32 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
+                  placeholder="UN"
+                  maxLength={2}
+                  pattern="[A-Za-z]{2}"
+                  className="mt-1 w-32 px-3 py-2 border uppercase border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
                   required
                 />
               </div>
@@ -163,6 +172,7 @@ export default function RegisterPage() {
               <input
                 type="text"
                 id="phonenumber"
+                placeholder="Phone Number"
                 name="phone_number"
                 className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
                 required
@@ -171,15 +181,16 @@ export default function RegisterPage() {
 
             {/* Password 1 input */}
             <div className="mb-2">
-              <label
+              {/* <label
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700"
               >
                 Password
-              </label>
+              </label> */}
               <input
                 type="password"
                 id="password"
+                placeholder="Password"
                 name="password"
                 className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
                 required
@@ -188,34 +199,44 @@ export default function RegisterPage() {
 
             {/* Password 2 input */}
             <div className="mb-2">
-              <label
+              {/* <label
                 htmlFor="confirmpassword"
                 className="block text-sm font-medium text-gray-700"
               >
                 Confirm Password
-              </label>
+              </label> */}
               <input
                 type="password"
                 id="confirmpassword"
                 name="password2"
+                placeholder="Confirm Password"
                 className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
                 required
               />
-              <a
+              {/* <a
                 href="#"
                 className="text-xs text-blue-600 hover:underline mt-1 inline-block"
               >
                 Forgot your password?
-              </a>
+              </a> */}
             </div>
 
-            <button
-              type="submit"
-              className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
-            >
-              Sign-Up
-            </button>
+            <div className="flex flex-col gap-2 text-center">
+              <button
+                type="submit"
+                className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+              >
+                Sign-Up
+              </button>
+              <div className="mt-1">Or</div>
+            </div>
           </form>
+          <button
+            onChange={() => signIn("google")}
+            className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+          >
+            Sign Up with Google
+          </button>
 
           {/* Additional Links */}
           {/* <div className="mt-6 text-sm text-gray-600">
@@ -233,7 +254,7 @@ export default function RegisterPage() {
 
           <div className="mt-6 border-t pt-6 text-sm text-gray-600">
             <p>Have an account?</p>
-            <Link href="/supplier/register/">
+            <Link href="/login/">
               <Button className="w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-md shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 block text-center mt-3">
                 Login to UbuntuPortal
               </Button>
