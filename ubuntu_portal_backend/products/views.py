@@ -15,30 +15,7 @@ from rest_framework.decorators import action
 class ProductViewSet(viewsets.ModelViewSet, 
                      AdvanceFilteringMixins,
                      PaginationMixins):
-    """
-    A viewset for handling CRUD operations on the Product model.
 
-    This viewset provides the following functionalities:
-
-    - **List**: Retrieve a list of products, with optional filtering and ordering by price and creation date.
-    - **Retrieve**: Get details of a specific product.
-    - **Create**: Add a new product to the platform (restricted to authenticated users with 'Seller' role).
-    - **Update**: Modify an existing product (restricted to authenticated users with 'Seller' role).
-    - **Partial Update**: Partially modify an existing product (restricted to authenticated users with 'Seller' role).
-    - **Destroy**: Delete a product from the platform (restricted to authenticated users with 'Seller' role).
-
-    Permissions:
-    - **IsAuthenticatedOrReadOnly**: Allows unauthenticated users to view product listings and details, but restricts creating, updating, or deleting products to authenticated users.
-    - **IsSeller**: Ensures that only users with the 'Seller' role can create, update, or delete products.
-
-    Filtering and Ordering:
-    - Supports filtering by `price` and `seller`.
-    - Allows ordering by `price` and `created_at`.
-
-    Methods:
-    - `get_permissions()`: Determines the appropriate permissions based on the action being performed.
-    - `perform_create(serializer)`: Custom method to set the seller field to the current authenticated user when creating a new product.
-    """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
@@ -115,10 +92,6 @@ class ProductViewSet(viewsets.ModelViewSet,
 class CategoryViewSet(viewsets.ModelViewSet):
     """
     A viewset for handling CRUD operations on the Category model.
-
-    Permissions:
-    - **IsAuthenticatedOrReadOnly**: Allows unauthenticated users to view categories,
-    but restricts creating, updating, or deleting categories to authenticated users.
     """
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -134,7 +107,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def add_subcategory(self, request, pk=None):
         """
-        Custom action to add a subcategory to a category.
+        Endpoint to add a subcatergory to a category
         """
         parent_category = self.get_object()
         subcategory_data = request.data
@@ -152,7 +125,13 @@ class ManageProductsViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return self.queryset.filter(items__product__seller=self.request.user)
+        if getattr(self, 'swagger_fake_view', False):
+            return self.queryset.none()  # Return an empty queryset for schema generation
+    
+        # For real requests, check if the user is authenticated
+        if not self.request.user.is_authenticated:
+            raise PermissionDenied("You must be logged in to view this data.")
+        return self.queryset.filter(seller=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(seller=self.request.user)

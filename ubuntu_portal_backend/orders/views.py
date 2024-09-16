@@ -10,8 +10,16 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        # Handle schema generation case for drf_yasg
+        if getattr(self, 'swagger_fake_view', False):
+            return Order.objects.none()
 
+        # Ensure the request has an authenticated user
+        user = self.request.user
+        if user.is_authenticated:
+            return Order.objects.filter(user=user)
+        else:
+            return Order.objects.none()
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
