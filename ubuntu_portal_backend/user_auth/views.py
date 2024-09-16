@@ -28,38 +28,7 @@ User = get_user_model()
 
 
 class RegisterViewSet(viewsets.ModelViewSet):
-    """
-    A viewset for handling user registration.
 
-    This viewset provides the functionality to register a new user to the platform.
-
-    - **Create**: Handles user registration by accepting the required data, validating it, and saving the new user to the database.
-
-    Permissions:
-    - **AllowAny**: This viewset is accessible to anyone, including unauthenticated users, allowing them to register.
-
-    Methods:
-    - `create(request, *args, **kwargs)`: Custom implementation of the create method to handle user registration.
-      Validates the provided data and saves a new user to the database if validation is successful.
-      Returns a success message upon successful registration.
-
-    Example Request:
-    ```
-    POST /register/
-    {
-        "username": "newuser",
-        "password": "password123",
-        "email": "newuser@example.com"
-    }
-    ```
-
-    Response:
-    ```
-    {
-        "message": "User registered successfully"
-    }
-    ```
-    """
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
@@ -122,16 +91,6 @@ class ActivateAccountView(APIView):
 class CustomTokenObtainPairView(TokenObtainPairView):
     """
     A custom view for handling JWT token generation upon user login.
-
-    This view extends the default `TokenObtainPairView` provided by Django REST framework SimpleJWT.
-
-    - **Create**: Handles the generation of a pair of JWT tokens (access and refresh) upon successful authentication.
-
-    Permissions:
-    - **AllowAny**: This view is accessible to anyone, allowing both authenticated and unauthenticated users to request tokens.
-
-    Serializer:
-    - Uses a custom serializer (`CustomTokenObtainPairSerializer`) to handle the token creation logic.
     """
     serializer_class = CustomTokenObtainPairSerializer
 

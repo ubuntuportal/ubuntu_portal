@@ -15,38 +15,22 @@ from rest_framework.decorators import action
 
 
 class CartViewSet(viewsets.ModelViewSet):
-    """
-CartViewSet handles the shopping cart operations for authenticated users. It provides CRUD functionality for 
-cart items and supports checkout operations.
 
-Methods:
-
-    add_item(self, request):
-        Adds a product (with an optional variation) to the user's cart. If the item already exists in the cart, 
-        its quantity is updated. Returns a success response if the item is added or updated successfully.
-
-    update_item(self, request, pk=None):
-        Updates the quantity and/or variation of a specific cart item identified by its primary key (pk).
-        Returns a success response if the item is updated successfully.
-
-    remove_item(self, request, pk=None):
-        Removes a specific cart item identified by its primary key (pk) from the user's cart.
-        Returns a success response if the item is removed successfully.
-
-    clear_cart(self, request):
-        Clears all items from the user's cart.
-        Returns a success response when the cart is cleared successfully.
-
-    checkout(self, request):
-        Processes the checkout operation. Moves cart items to an order and clears the cart. 
-        Accepts additional fields like shipping address and payment method.
-        Returns a success response with the order ID when the order is placed successfully.
-"""
     serializer_class = CartSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Cart.objects.filter(user=self.request.user)
+    # Handle schema generation case for drf_yasg
+        if getattr(self, 'swagger_fake_view', False):
+            return Cart.objects.none()
+
+    # Ensure the request has an authenticated user
+        user = self.request.user
+        if not user.is_authenticated:
+            return Cart.objects.none()
+
+        return Cart.objects.filter(user=user)
+
 
     @action(detail=False, methods=['post'])
     @transaction.atomic
