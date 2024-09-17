@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from products.views import ProductViewSet, CategoryViewSet, ManageProductsViewSet
 from orders.views import OrderViewSet
-from rfqs.views import QuotationViewSet, RFQViewSet, SuggestionGenericViewSet
+from rfqs.views import QuotationViewSet, RFQViewSet, SuggestionGenericViewSet, RfQNotifications
 from carts.views import CartViewSet
 
 
@@ -20,5 +20,6 @@ router.register(r'rfqs', RFQViewSet, basename='buyer-rfqs')
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('api/suggestions/', SuggestionGenericViewSet.as_view())
+    path('api/suggestions/', SuggestionGenericViewSet.as_view()),
+    path('api/notifications/', RfQNotifications.as_view()),
 ]

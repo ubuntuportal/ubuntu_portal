@@ -6,6 +6,7 @@ from products.serializers import ProductSerializer
 from rest_framework.response import Response
 from .serializers import QuotationSerializer, RFQSerializer
 from rest_framework.permissions import IsAuthenticated
+from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 
 
@@ -55,4 +56,28 @@ class SuggestionGenericViewSet(generics.ListAPIView):
         suggestions = self.get_queryset()[:10]
         data = [product.title for product in suggestions]
         return Response(data)
+             
+
+class RfQNotifications(generics.CreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = RFQSerializer
+    
+    def perform_create(self, *args, **kwargs):
+        try:
+            product = Product.objects.get(id=self.request.data['product_id'])
+        except Product.DoesNotExist:
+            raise ValidationError({'product_id': 'Product does not exist'})
         
+        rfq = RFQ.objects.create(
+            buyer=self.request.user, 
+            product=product,
+            sourcing_quantity=self.request.data['sourcing_quantity'],
+            quantities_measurements=self.request.data['quantities_measurements'],
+            detailed_requirements=self.request.data['detailed_requirements'],
+            unit_price=self.request.data['unit_price'],
+            media=self.request.FILES.get('media', None)
+        )
+        
+        rfq.notify_suppliers()
+        return rfq
+    

@@ -264,3 +264,12 @@ EMAIL_HOST_PASSWORD = 'znyo ompp mcsl euta'
 DEFAULT_FROM_EMAIL = 'ubuntuportal60@gmail.com'
 
 
+# Channel layer definitions
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.01', 6379)]
+        },
+    },
+}

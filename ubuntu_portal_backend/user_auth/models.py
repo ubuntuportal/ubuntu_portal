@@ -32,7 +32,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=30, blank=True)
     email = models.EmailField(unique=True)
     country = CountryField(blank_label='(select country)', default='US')
-    phone_number = PhoneNumberField(unique=True)  # Use PhoneNumberField
+    phone_number = PhoneNumberField(unique=True)
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     role = models.CharField(max_length=10, choices=(('buyer', 'Buyer'), ('seller', 'Seller')), default='buyer')
