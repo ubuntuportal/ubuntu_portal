@@ -18,6 +18,7 @@ interface Product {
   title: string;
   description: string;
   price: number;
+  stock: number;
   images: File[]; // Images field added to the Product type
 }
 
@@ -26,7 +27,8 @@ export function AddProduct() {
     title: "",
     description: "",
     price: 0,
-    images: [], // Initialize images as an empty array
+    stock: 0,
+    images: [],
   });
 
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -37,7 +39,7 @@ export function AddProduct() {
     const { name, value } = e.target;
     setProduct({
       ...product,
-      [name]: name === "price" ? parseFloat(value) : value,
+      [name]: name === "price" || name === "stock" ? parseFloat(value) : value,
     });
   };
 
@@ -47,7 +49,7 @@ export function AddProduct() {
       const fileArray = Array.from(files);
       setProduct((prevProduct) => ({
         ...prevProduct,
-        images: [...prevProduct.images, ...fileArray], // Add new files to existing array
+        images: [...prevProduct.images, ...fileArray],
       }));
 
       const previewUrls = fileArray.map((file) => URL.createObjectURL(file));
@@ -65,9 +67,8 @@ export function AddProduct() {
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (product.images.length === 0) {
       alert("Please upload at least one image.");
       return;
@@ -77,13 +78,16 @@ export function AddProduct() {
     formData.append("title", product.title);
     formData.append("description", product.description);
     formData.append("price", product.price.toString());
+    formData.append("stock", product.stock.toString());
 
     product.images.forEach((image, index) => {
       formData.append(`images[${index}]`, image);
     });
 
-    setProduct({ title: "", description: "", price: 0, images: [] });
+    setProduct({ title: "", description: "", price: 0, stock: 0, images: [] });
     setImagePreviews([]);
+
+    // Add your API request logic here
   };
 
   return (
@@ -94,10 +98,9 @@ export function AddProduct() {
         </Button>
       </DialogTrigger>
 
-      {/* DialogContent with Responsive and Scrollable Design */}
       <DialogContent
         className="sm:max-w-[500px] lg:max-w-[700px] w-full max-h-[90vh] overflow-y-auto"
-        style={{ maxHeight: "90vh" }} // Ensure dialog is responsive for all screen sizes
+        style={{ maxHeight: "90vh" }}
       >
         <div className="p-5">
           <DialogHeader>
@@ -105,7 +108,6 @@ export function AddProduct() {
             <DialogDescription></DialogDescription>
           </DialogHeader>
 
-          {/* Scrollable Form Container */}
           <form
             onSubmit={handleSubmit}
             className="space-y-5 sm:space-y-6 md:space-y-8"
@@ -151,26 +153,49 @@ export function AddProduct() {
               />
             </div>
 
-            {/* Price */}
-            <div className="mb-5">
-              <label
-                htmlFor="price"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Price (in USD)
-              </label>
-              <input
-                type="number"
-                id="price"
-                name="price"
-                value={product.price}
-                onChange={handleChange}
-                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                step="0.01"
-                min="0"
-                placeholder="Enter price"
-                required
-              />
+            {/* Price and Stock */}
+            <div className="mb-5 flex gap-4">
+              <div>
+                <label
+                  htmlFor="price"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Price (in USD)
+                </label>
+                <input
+                  type="number"
+                  id="price"
+                  name="price"
+                  value={product.price}
+                  onChange={handleChange}
+                  className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  step="0.01"
+                  min="0"
+                  placeholder="Enter price"
+                  required
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="stock"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Stock
+                </label>
+                <input
+                  type="number"
+                  id="stock"
+                  name="stock"
+                  value={product.stock}
+                  onChange={handleChange}
+                  className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  step="1"
+                  min="0"
+                  placeholder="Enter stock quantity"
+                  required
+                />
+              </div>
             </div>
 
             {/* Image Upload */}

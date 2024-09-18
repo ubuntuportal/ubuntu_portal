@@ -2,5 +2,6 @@ portal
 u-portal
 .vscode
 __pycache__/
-db.sqlite3
-
+node_modules/
+db.sqlite
+.env

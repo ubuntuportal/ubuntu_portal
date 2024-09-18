@@ -9,7 +9,7 @@ export default function BuyerLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <body>
+    <body className="scroll-smooth">
       <Header />
 
       <main>{children}</main>
