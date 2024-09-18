@@ -1,24 +1,20 @@
 import Header from "@/components/buyer/Header";
 import Footer from "@/components/buyer/Footer";
 
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+
 export default function BuyerLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <body className="scroll-smooth">
       <Header />
-      <main>
-        {/* <div className="flex">
-          <div className="flex-1 flex-col">
-            <Header />
-            {children}
-          </div>
-        </div> */}
-        {children}
-      </main>
+
+      <main>{children}</main>
+
       <Footer />
-    </>
+    </body>
   );
 }
