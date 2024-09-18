@@ -1,7 +1,7 @@
 amqp==5.2.0
 asgiref==3.8.1
 attrs==24.2.0
-autobahn==24.4.2
+autobahn==23.1.2
 Automat==24.8.1
 billiard==4.2.0
 cachetools==5.5.0

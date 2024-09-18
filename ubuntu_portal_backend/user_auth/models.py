@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 import uuid
 from phonenumber_field.modelfields import PhoneNumberField
 from django_countries.fields import CountryField
+from django.conf import settings
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -31,6 +32,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     email = models.EmailField(unique=True)
+    bio = models.TextField(null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     country = CountryField(blank_label='(select country)', default='US')
     phone_number = PhoneNumberField(unique=True)
     is_active = models.BooleanField(default=False)
@@ -45,3 +48,31 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+# New UserProfile model
+class UserProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
+    bio = models.TextField(null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
+    country = CountryField(blank_label='(select country)', default='US')
+    address = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    postal_code = models.CharField(max_length=20, null=True, blank=True)
+
+    def __str__(self):
+        return f"Profile of {self.user.first_name} {self.user.last_name}"
+
+
+class Company(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    company_name = models.CharField(max_length=255, unique=True)
+    company_logo = models.ImageField(upload_to='company_logos/', null=True, blank=True)
+    company_website = models.URLField(null=True, blank=True)
+    contact_person = models.CharField(max_length=255)
+    contact_email = models.EmailField()
+    contact_phone = PhoneNumberField()
+
+    def __str__(self):
+        return self.company_name
+

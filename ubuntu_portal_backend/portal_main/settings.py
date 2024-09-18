@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'api',
-    'user_auth',
+    # 'user_auth',
     'carts',
     'orders',
     'rfqs',
@@ -65,6 +65,8 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
 
     'chat', # Live Chat App
+
+    'user_auth.apps.UserAuthConfig',
 
 ]
 
