@@ -27,11 +27,27 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
+
+class Company(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    company_name = models.CharField(max_length=255, unique=True)
+    company_logo = models.ImageField(upload_to='company_logos/', null=True, blank=True)
+    company_website = models.URLField(null=True, blank=True)
+    contact_person = models.CharField(max_length=255)
+    contact_email = models.EmailField()
+    contact_phone = PhoneNumberField()
+
+    def __str__(self):
+        return self.company_name
+
+
+
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  # Use UUID for the id field
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     email = models.EmailField(unique=True)
+    # company = models.ForeignKey(Company, null=True, blank=True, on_delete=models.SET_NULL, related_name='users')
     bio = models.TextField(null=True, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     country = CountryField(blank_label='(select country)', default='US')
@@ -64,15 +80,4 @@ class UserProfile(models.Model):
         return f"Profile of {self.user.first_name} {self.user.last_name}"
 
 
-class Company(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    company_name = models.CharField(max_length=255, unique=True)
-    company_logo = models.ImageField(upload_to='company_logos/', null=True, blank=True)
-    company_website = models.URLField(null=True, blank=True)
-    contact_person = models.CharField(max_length=255)
-    contact_email = models.EmailField()
-    contact_phone = PhoneNumberField()
-
-    def __str__(self):
-        return self.company_name
 

@@ -14,25 +14,23 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ('bio', 'profile_picture', 'address', 'city', 'state', 'zipcode')
+        fields = ('bio', 'profile_picture', 'address', 'city', 'postal_code')
 
 class CompanySerializer(serializers.ModelSerializer):
     """Serializer for the Company model."""
 
     class Meta:
         model = Company
-        fields = ('company_name', 'company_logo', 'company_website', 'contact_person', 'contact_email', 'contact_phone')
+        fields = ('user', 'company_name', 'company_logo', 'company_website', 'contact_person', 'contact_email', 'contact_phone')
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    """Serializer for the User model, including profile and company information."""
-
-    profile = UserProfileSerializer()  # Nest the UserProfileSerializer
-    company = CompanySerializer()      # Nest the CompanySerializer
+    profile = UserProfileSerializer()
+    company = CompanySerializer()  # Add this line
 
     class Meta:
         model = User
         fields = ('id', 'first_name', 'last_name', 'email', 'country', 'phone_number', 'role', 'profile', 'company')
-        read_only_fields = ('id',)  # Make ID read-only
+        read_only_fields = ('id',)
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('profile', None)
@@ -42,19 +40,18 @@ class CustomUserSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         instance.save()
 
-        # Update related profile fields if present
         if profile_data:
             profile = instance.profile
             for attr, value in profile_data.items():
                 setattr(profile, attr, value)
             profile.save()
 
-        # Update related company fields if present
         if company_data:
-            company, created = Company.objects.get_or_create(user=instance)
-            for attr, value in company_data.items():
-                setattr(company, attr, value)
-            company.save()
+            company, created = Company.objects.get_or_create(user=instance, defaults=company_data)
+            if not created:
+                for attr, value in company_data.items():
+                    setattr(company, attr, value)
+                company.save()
 
         return instance
 

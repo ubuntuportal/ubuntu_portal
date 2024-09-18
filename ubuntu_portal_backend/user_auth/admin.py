@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser
+from .models import CustomUser, Company, UserProfile
 
 class CustomUserAdmin(admin.ModelAdmin):
     # Specify the fields to display in the list view
@@ -13,3 +13,19 @@ class CustomUserAdmin(admin.ModelAdmin):
 
 # Register the CustomUser model with the custom admin configuration
 admin.site.register(CustomUser, CustomUserAdmin)
+
+
+@admin.register(Company)
+class CompanyAdmin(admin.ModelAdmin):
+    list_display = ('company_name', 'contact_person', 'contact_email', 'contact_phone')
+    search_fields = ('company_name', 'contact_person', 'contact_email')
+
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'bio', 'country', 'address', 'city', 'postal_code')
+    search_fields = ('user__username', 'bio', 'address', 'city', 'state', 'postal_code')
+    list_filter = ('user', 'city')
+    ordering = ('user',)
+    readonly_fields = ('user',)  # Make the user field read-only to prevent changes
