@@ -22,12 +22,15 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',  # channels for live chat
+    'daphne', # Daphne server for Async WebSockers
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -60,9 +63,9 @@ INSTALLED_APPS = [
     # dj-rest-auth app
     'dj_rest_auth',
     'dj_rest_auth.registration',
-    
-    # channel
-    'channels',
+
+    'chat', # Live Chat App
+
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -121,9 +124,18 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'portal_main.wsgi.application'
+# WSGI_APPLICATION = 'portal_main.wsgi.application'
+ASGI_APPLICATION = "portal_main.asgi.application" # User ASGI application
 
-
+# Configure redis for channel layer
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 DATABASES = {
@@ -264,3 +276,12 @@ EMAIL_HOST_PASSWORD = 'znyo ompp mcsl euta'
 DEFAULT_FROM_EMAIL = 'ubuntuportal60@gmail.com'
 
 
+# Channel layer definitions
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.01', 6379)]
+        },
+    },
+}
