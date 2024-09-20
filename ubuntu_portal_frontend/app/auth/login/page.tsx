@@ -13,6 +13,10 @@ import { getSession } from "next-auth/react";
 export default function LoginPage() {
   const router = useRouter();
 
+  const handleGoogleLogin = () => {
+    signIn("google");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -107,6 +111,12 @@ export default function LoginPage() {
                 Sign-In
               </button>
             </form>
+            <button
+              onClick={handleGoogleLogin}
+              className="mt-2 w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+            >
+              Sign-In with Google
+            </button>
 
             {/* Additional Links */}
             {/* <div className="mt-6 text-sm text-gray-600">
