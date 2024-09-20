@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 import uuid
+from django.core.exceptions import ValidationError
 
 
 # Get the user model
@@ -10,7 +11,7 @@ User = get_user_model()
 
 class Category(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE,
                                null=True, blank=True, related_name='subcategories')
 
@@ -61,3 +62,12 @@ class ProductVariation(models.Model):
 
     def __str__(self):
         return f"{self.attribute}: {self.value}"
+
+    def clean(self):
+        # Validate that price_modifier is not negative
+        if self.price_modifier is not None and self.price_modifier < 0:
+            raise ValidationError("Price modifier cannot be negative.")
+
+        # Validate that price_modifier is not zero
+        if self.price_modifier == 0:
+            raise ValidationError("Price modifier cannot be zero.")

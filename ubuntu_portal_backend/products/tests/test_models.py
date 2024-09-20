@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from products.models import Product, Category, ProductVariation
 from django.contrib.auth import get_user_model
 
@@ -20,8 +21,9 @@ class CategoryModelTest(TestCase):
 
     def test_category_name_unique(self):
         # Test that category names must be unique
+        category = Category(name="Electronics")
         with self.assertRaises(ValidationError):
-            Category.objects.create(name="Electronics")
+            category.full_clean()
 
     def test_category_parent_relationship(self):
         # Test the parent-child relationship in categories
@@ -111,6 +113,8 @@ class ProductModelTest(TestCase):
 
     def test_product_image_upload(self):
         # Test that product image can be uploaded
+        image = SimpleUploadedFile(
+            name='test_image.jpg', content=b'', content_type='image/jpeg')
         product = Product.objects.create(
             title="Product with Image",
             description="Product description",
@@ -118,9 +122,9 @@ class ProductModelTest(TestCase):
             price=100.00,
             seller=self.user,
             rating=4.0,
-            image="path/to/image.jpg"
+            image=image
         )
-        self.assertEqual(product.image, "path/to/image.jpg")
+        self.assertTrue(product.image.name.startswith('products/test_image'))
 
 
 class ProductVariationModelTest(TestCase):
@@ -170,10 +174,24 @@ class ProductVariationModelTest(TestCase):
 
     def test_variation_price_modifier_not_negative(self):
         # Test that variation price modifier cannot be negative
+        variation = ProductVariation(
+            product=self.product, attribute="Color", value="Red", price_modifier=-10.00, stock=50)
         with self.assertRaises(ValidationError):
-            variation = ProductVariation(
-                product=self.product, attribute="Color", value="Red", price_modifier=-10.00, stock=50)
             variation.full_clean()
+
+    def test_variation_price_modifier_zero(self):
+        # Test that variation price modifier cannot be zero
+        variation = ProductVariation(
+            product=self.product, attribute="Color", value="Red", price_modifier=0.00, stock=50)
+        with self.assertRaises(ValidationError):
+            variation.full_clean()
+
+    def test_variation_price_modifier_positive(self):
+        # Test that variation price modifier can be positive
+        variation = ProductVariation(
+            product=self.product, attribute="Color", value="Red", price_modifier=10.00, stock=50)
+        variation.full_clean()
+        self.assertEqual(variation.price_modifier, 10.00)
 
     def test_variation_price_modifier_null(self):
         # Test that variation price modifier can be null
