@@ -1,17 +1,17 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/buyer/Footer";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { signIn } from "next-auth/react";
-import { GetServerSideProps } from "next";
-import { getSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const { data: session, status } = useSession();
 
   const handleGoogleLogin = () => {
     signIn("google");
@@ -23,39 +23,52 @@ export default function LoginPage() {
     const data = Object.fromEntries(formData.entries());
     const { email, password } = data;
     console.log(data);
-    const result = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
-    console.log(result);
-    if (result?.error) {
-      toast.error("Confirm Email & Password");
-      console.error("Confirm Email & Password");
-    } else {
-      toast.success("Login Succesfully");
-      router.push("/supplier/dashboard");
+
+    setLoading(true);
+
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+
+      console.log(result);
+
+      if (result?.error) {
+        toast.error("Confirm Email & Password");
+        console.error("Confirm Email & Password");
+      } else {
+        toast.success("Login Successfully");
+      }
+    } catch (error) {
+      console.error("Error during sign-in:", error);
+      toast.error("An error occurred during login. Please try again.");
+    } finally {
+      setLoading(false); // End loading state
     }
   };
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.role) {
+      if (session.role === "buyer") {
+        router.push("/home");
+      } else if (session.role === "seller") {
+        router.push("/supplier/dashboard");
+      }
+    }
+  }, [session, status, router]);
 
   return (
     <>
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center w-screen">
         {/* Logo */}
         <div className="mb-8 mt-8">
-          {/* <a href="/supplier/">
-          <Image
-            src="/public/Logo.png" // path to logo
-            alt="Logo"
-            width={120}
-            height={40}
-          />
-        </a> */}
           <div>Ubuntu Portal</div>
         </div>
         <div className="flex mb-16 gap-8">
           {/* Login Form Container */}
-          <div className="bg-green-50 bg-gradient-to-tr p-8 rounded-3xl shadow-md w-full max-w-sm shadow-lg shadow-slate-600">
+          <div className="bg-green-50 bg-gradient-to-tr p-8 rounded-3xl shadow-md w-full max-w-sm  shadow-slate-600">
             <div className="item-center text-center">
               <h2 className="text-2xl font-semibold mb-4 text-gray-800">
                 Login
@@ -91,8 +104,6 @@ export default function LoginPage() {
                   type="password"
                   id="password"
                   name="password"
-                  // value={password}
-                  // onChange={(e) => setPassword(e.target.value)}
                   className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
                   required
                 />
@@ -108,7 +119,7 @@ export default function LoginPage() {
                 type="submit"
                 className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
               >
-                Sign-In
+                {loading ? "Signing in...." : "Sign-In"}
               </button>
             </form>
             <button
@@ -118,20 +129,6 @@ export default function LoginPage() {
               Sign-In with Google
             </button>
 
-            {/* Additional Links */}
-            {/* <div className="mt-6 text-sm text-gray-600">
-          <p>
-            By continuing, you agree to our{" "}
-            <a href="#" className="text-blue-600 hover:underline">
-              Conditions of Use
-            </a>{" "}
-            and{" "}
-            <a href="#" className="text-blue-600 hover:underline">
-              Privacy Notice.
-            </a>
-          </p>
-        </div> */}
-
             <div className="mt-6 border-t pt-6 text-sm text-gray-600">
               <p>New to UbuntuPortal?</p>
               <Link href="/auth/register">
@@ -140,7 +137,7 @@ export default function LoginPage() {
                 </Button>
               </Link>
             </div>
-            {/* Terms and conditions */}
+
             <div className="mt-8 text-xs text-gray-500">
               <p>Conditions of Use</p>
               <p>Privacy Notice</p>
