@@ -3,6 +3,7 @@ import RevenueChart from "@/components/supplier/Chart";
 import StatsCard from "@/components/supplier/StatsCard";
 import OrderStatusTable from "@/components/supplier/OderStatusTable";
 import RFQNotification from "@/components/supplier/RFQNotification";
+import ServiceMessages from "@/components/supplier/ServiceMessages";
 import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
@@ -41,11 +42,9 @@ async function Dashboard() {
           />
         </div>
         {/* ORDER STATUS TABLE*/}
-        <div className="flex gap-4 flex-col lg:flex-row">
+        <div className="flex gap-4 flex-col lg:flex-row w-full">
           {" "}
-          <div>
-            <OrderStatusTable />
-          </div>
+          <OrderStatusTable />
         </div>
         {/* CHART */}
         <div className="w-full h-[500px]">
@@ -56,12 +55,14 @@ async function Dashboard() {
       {/* RIGHT */}
       <div className="w-full lg:w-1/3 flex flex-col gap-8 ">
         <section>
-          <div className=" bg-white rounded-2xl">
+          <div className=" bg-white rounded-2xl p-4">
             <RFQNotification />
           </div>
         </section>
         <section>
-          <div>Messages</div>
+          <div className="bg-[#00B074] w-full rounded-2xl p-4">
+            <ServiceMessages />
+          </div>
         </section>
       </div>
     </div>

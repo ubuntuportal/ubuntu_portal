@@ -66,10 +66,10 @@ const RFQNotificationTable = () => {
 
               {/* RFQ Code, Product, and Location */}
               <td className="p-4">
-                <div>{rfq.rfqCode}</div>
-                <div>{rfq.productName}</div>
-                <div className="flex items-center space-x-2">
-                  <FaMapMarkerAlt className="text-gray-500" />
+                <div className="text-gray-300">{rfq.rfqCode}</div>
+                <div className="text-black font-bold">{rfq.productName}</div>
+                <div className="flex items-center space-x-2 text-gray-300">
+                  <FaMapMarkerAlt />
                   <span>{rfq.country}</span>
                 </div>
               </td>

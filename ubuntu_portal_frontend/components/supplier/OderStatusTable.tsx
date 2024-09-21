@@ -7,8 +7,8 @@ function OrderStatusTable() {
   ];
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full bg-white">
+    <div className="overflow-x-auto min-w-full">
+      <table className=" bg-white">
         <thead>
           <tr>
             <th className="py-2 px-4 border-b text-left">Order ID</th>
