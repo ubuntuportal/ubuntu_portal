@@ -2,6 +2,8 @@ import React from "react";
 import RevenueChart from "@/components/supplier/Chart";
 import StatsCard from "@/components/supplier/StatsCard";
 import OrderStatusTable from "@/components/supplier/OderStatusTable";
+import RFQNotification from "@/components/supplier/RFQNotification";
+import ServiceMessages from "@/components/supplier/ServiceMessages";
 import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
@@ -51,9 +53,8 @@ async function Dashboard() {
             label="Total Revenue"
           />
         </div>
-
-        {/* ORDER STATUS TABLE */}
-        <div className="flex gap-4 flex-col lg:flex-row">
+        {/* ORDER STATUS TABLE*/}
+        <div className="flex gap-4 flex-col lg:flex-row w-full">
           <OrderStatusTable />
         </div>
 
@@ -63,21 +64,19 @@ async function Dashboard() {
         </div>
       </div>
 
-      {/* RIGHT SECTION */}
-      <div className="w-full lg:w-1/3 flex flex-col gap-8">
-        {/* RFQ SECTION */}
+      {/* RIGHT */}
+      <div className="w-full lg:w-1/3 flex flex-col gap-8 ">
         <section>
-          <div className="bg-white p-4 shadow-md rounded-lg">
-            <h4 className="font-semibold">RFQ (Request for Quotation)</h4>
-            {/* Add RFQ content here */}
+          <div className=" bg-white rounded-2xl p-4">
+            <RFQNotification />
           </div>
         </section>
 
         {/* MESSAGES SECTION */}
         <section>
-          <div className="bg-white p-4 shadow-md rounded-lg">
-            <h4 className="font-semibold">Messages</h4>
-            {/* Add messages content here */}
+          <div className="bg-[#00B074] w-full rounded-2xl p-4">
+            <ServiceMessages />
+
           </div>
         </section>
       </div>
