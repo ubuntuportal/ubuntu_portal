@@ -1,6 +1,40 @@
 from rest_framework import serializers
-from .models import Order, OrderItem
+from .models import Order, OrderItem, BillingInfo, ShippingInfo, ContactInfo
+
 from products.models import Product, ProductVariation
+
+class BillingInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BillingInfo
+        fields = '__all__'
+
+    def validate_user(self, value):
+        if '@' not in value:
+            raise serializers.ValidationError("Invalid email address.")
+        return value
+
+
+class ShippingInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShippingInfo
+        fields = '__all__'
+
+    def validate_user(self, value):
+        if '@' not in value:
+            raise serializers.ValidationError("Invalid email address.")
+        return value
+
+
+class ContactInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactInfo
+        fields = '__all__'
+
+    def validate_user(self, value):
+        if '@' not in value:
+            raise serializers.ValidationError("Invalid email address.")
+        return value
+
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product_id = serializers.UUIDField()
@@ -34,7 +68,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'user', 'shipping_address', 'payment_method', 'total_amount', 'items']
+        fields = ['id', 'user', 'billing_info', 'shipping_info', 'contact_info', 'payment_method', 'total_amount', 'items']
         read_only_fields = ['total_amount', 'created_at']
 
     def create(self, validated_data):
