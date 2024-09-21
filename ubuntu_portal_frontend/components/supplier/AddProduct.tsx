@@ -1,6 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+
+import { useSession } from "next-auth/react";
+
+// Default values shown
 
 import {
   Dialog,
@@ -32,6 +36,8 @@ export function AddProduct() {
   });
 
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { data: session } = useSession();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -39,7 +45,12 @@ export function AddProduct() {
     const { name, value } = e.target;
     setProduct({
       ...product,
-      [name]: name === "price" || name === "stock" ? parseFloat(value) : value,
+      [name]:
+        name === "price" || name === "stock"
+          ? value === ""
+            ? 0
+            : parseFloat(value)
+          : value,
     });
   };
 
@@ -73,6 +84,7 @@ export function AddProduct() {
       alert("Please upload at least one image.");
       return;
     }
+    setLoading(true); // Start loading
 
     const formData = new FormData();
     formData.append("title", product.title);
@@ -84,8 +96,44 @@ export function AddProduct() {
       formData.append(`images[${index}]`, image);
     });
 
-    setProduct({ title: "", description: "", price: 0, stock: 0, images: [] });
-    setImagePreviews([]);
+    try {
+      if (!session || !session?.accessToken) {
+        alert("Unauthorized: Token not found.");
+        return;
+      }
+
+      // Make the API request with the authorization token in the headers
+      const response = await fetch(
+        "https://ubuntu-portal.onrender.com/api/products/", // Use environment variable for the API URL
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.accessToken}`, // Add token to the request headers
+          },
+          body: formData,
+        }
+      );
+
+      if (response.ok) {
+        alert("Product added successfully");
+        // Reset the form and state
+        setProduct({
+          title: "",
+          description: "",
+          price: 0,
+          stock: 0,
+          images: [],
+        });
+        setImagePreviews([]);
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to add product: ${errorData.message}`);
+      }
+    } catch (error) {
+      alert("Error adding product: " + (error as Error).message);
+    } finally {
+      setLoading(false); // End loading state
+    }
 
     // Add your API request logic here
   };
@@ -246,7 +294,7 @@ export function AddProduct() {
                 type="submit"
                 className="w-full bg-orange-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
               >
-                Submit Product
+                {loading ? "Loading..." : "Add Product"}
               </button>
             </div>
           </form>
