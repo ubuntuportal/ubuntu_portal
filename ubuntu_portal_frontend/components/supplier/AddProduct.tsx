@@ -93,7 +93,7 @@ export function AddProduct() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="bg-amber-500 hover:bg-amber-300">
+        <Button variant="outline" className="bg-green-500 hover:bg-green-300">
           Add Product
         </Button>
       </DialogTrigger>

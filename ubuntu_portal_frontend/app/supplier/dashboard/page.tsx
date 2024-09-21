@@ -2,6 +2,7 @@ import React from "react";
 import RevenueChart from "@/components/supplier/Chart";
 import StatsCard from "@/components/supplier/StatsCard";
 import OrderStatusTable from "@/components/supplier/OderStatusTable";
+import RFQNotification from "@/components/supplier/RFQNotification";
 import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
@@ -53,9 +54,11 @@ async function Dashboard() {
       </div>
 
       {/* RIGHT */}
-      <div className="w-full lg:w-1/3 flex flex-col gap-8">
+      <div className="w-full lg:w-1/3 flex flex-col gap-8 ">
         <section>
-          <div>RFQ</div>
+          <div className=" bg-white rounded-2xl">
+            <RFQNotification />
+          </div>
         </section>
         <section>
           <div>Messages</div>
