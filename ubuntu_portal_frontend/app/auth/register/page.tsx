@@ -82,7 +82,10 @@ export default function RegisterPage() {
 
     // Prepend country code to the phone number
     formattedPhone = `${selectedCountry.callingCode}${formattedPhone}`;
-
+    if (data.password !== data.password2) {
+      toast.error("Passwords do not match!");
+      return;
+    }
     // Add the formatted phone number to the data object
     data.phone_number = formattedPhone;
     data.role = role; // Add selected role to the data object
@@ -124,7 +127,7 @@ export default function RegisterPage() {
           <div>Ubuntu Portal</div>
         </div>
         <div className="flex mb-16 gap-8">
-          <div className="bg-green-50 bg-gradient-to-tr p-8 pt-2 rounded-3xl shadow-md w-[70rem] max-w-sm shadow-lg shadow-slate-600">
+          <div className="bg-green-50 bg-gradient-to-tr p-8 pt-2 rounded-3xl shadow-md w-[70rem] max-w-sm  shadow-slate-600">
             <div className="item-center text-center">
               <h2 className="text-2xl font-semibold mb-4 text-gray-800">
                 Sign Up
@@ -299,7 +302,7 @@ export default function RegisterPage() {
               </div>
             </form>
             <button
-              onClick={() => signIn("google")}
+              onClick={() => signIn("google", { callbackUrl: "/auth/login" })}
               className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
             >
               Sign Up with Google

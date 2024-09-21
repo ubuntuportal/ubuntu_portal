@@ -1,4 +1,4 @@
-// ("use client");
+"use client";
 
 import React from "react";
 import { SearchIcon } from "@heroicons/react/outline";
@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import neonbg from "@/public/neonbg.png";
 import HomeInput from "@/components/buyer/HomeInput";
 import NavList from "@/components/buyer/NavList";
+import { useSession, signOut } from "next-auth/react";
+import Link from "next/link";
 
 function BuyersLandingPage() {
   return (
