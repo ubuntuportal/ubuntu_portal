@@ -1,12 +1,11 @@
+"use client";
 import { AddProduct } from "@/components/supplier/AddProduct";
 import { Tables } from "@/components/supplier/Table";
-import React from "react";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { redirect } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
+
   useEffect(function () {
     async function getProducts() {
       try {
@@ -22,17 +21,17 @@ export default function ProductsPage() {
       }
     }
 
-  // Extract userId from session
+    getProducts();
+  }, []);
 
   return (
     <div className="p-6">
-      {/* AddProduct component receives the userId as a prop */}
       <div className="flex justify-end mb-4">
         <AddProduct />
       </div>
-
-      {/* Tables component to display the product table */}
       <Tables />
     </div>
   );
 }
+
+// export default ProductsPage;

@@ -26,23 +26,10 @@ async function Dashboard() {
     <div className="px-8 mt-8 flex gap-8 flex-col md:flex-row">
       {/* LEFT SECTION */}
       <div className="w-full lg:w-2/3 flex flex-col gap-8">
-        {/* LINK TO PRODUCTS PAGE */}
-        <Link href="/supplier/products" className="text-blue-500 underline">
-          View Products
-        </Link>
-
-        {/* LOGOUT BUTTON */}
-        <LogoutButton />
-
-        {/* USER NAME */}
+        {/* WELCOME USER */}
         <h3 className="text-xl font-semibold">
           Welcome, {first_name} {last_name}
         </h3>
-
-        {/* STATS CARDS */}
-        <Link href="/supplier/products">Product</Link>
-        <LogoutButton />
-        <h3>{first_name}</h3>
 
         <div className="flex gap-2 justify-between flex-wrap">
           <StatsCard icon="/Icon_Order.png" value="75" label="Total Orders" />
