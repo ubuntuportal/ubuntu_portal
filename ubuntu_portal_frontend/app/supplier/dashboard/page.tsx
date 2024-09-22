@@ -1,22 +1,22 @@
-import React from "react";
-import RevenueChart from "@/components/supplier/Chart";
-import StatsCard from "@/components/supplier/StatsCard";
-import OrderStatusTable from "@/components/supplier/OderStatusTable";
-import RFQNotification from "@/components/supplier/RFQNotification";
-import ServiceMessages from "@/components/supplier/ServiceMessages";
-import Link from "next/link";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { redirect } from "next/navigation";
-import LogoutButton from "@/components/LogoutButton";
+import React from 'react';
+import RevenueChart from '@/components/supplier/Chart';
+import StatsCard from '@/components/supplier/StatsCard';
+import OrderStatusTable from '@/components/supplier/OderStatusTable';
+import RFQNotification from '@/components/supplier/RFQNotification';
+import ServiceMessages from '@/components/supplier/ServiceMessages';
+import Link from 'next/link';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation';
+import LogoutButton from '@/components/LogoutButton';
 
 async function Dashboard() {
   // Fetch the server-side session using NextAuth
   const session = await getServerSession(authOptions);
 
   // If no session exists or if the user is not a seller, redirect to the login page
-  if (!session || session.role !== "seller") {
-    redirect("/auth/login");
+  if (!session || session.role !== 'supplier') {
+    redirect('/auth/login');
   }
 
   // Extract first and last name of the user from session data
@@ -76,7 +76,6 @@ async function Dashboard() {
         <section>
           <div className="bg-[#00B074] w-full rounded-2xl p-4">
             <ServiceMessages />
-
           </div>
         </section>
       </div>

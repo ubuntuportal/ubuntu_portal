@@ -1,12 +1,12 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import Footer from "@/components/buyer/Footer";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
-import { signIn, useSession } from "next-auth/react";
+'use client';
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import Footer from '@/components/buyer/Footer';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+import { signIn, useSession } from 'next-auth/react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,7 +14,7 @@ export default function LoginPage() {
   const { data: session, status } = useSession();
 
   const handleGoogleLogin = () => {
-    signIn("google");
+    signIn('google');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,34 +27,32 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const result = await signIn("credentials", {
+      const result = await signIn('credentials', {
         redirect: false,
         email,
         password,
       });
 
-      console.log(result);
-
       if (result?.error) {
-        toast.error("Confirm Email & Password");
-        console.error("Confirm Email & Password");
+        toast.error('Confirm Email & Password');
+        console.error('Confirm Email & Password');
       } else {
-        toast.success("Login Successfully");
+        toast.success('Login Successfully');
       }
     } catch (error) {
-      console.error("Error during sign-in:", error);
-      toast.error("An error occurred during login. Please try again.");
+      console.error('Error during sign-in:', error);
+      toast.error('An error occurred during login. Please try again.');
     } finally {
       setLoading(false); // End loading state
     }
   };
 
   useEffect(() => {
-    if (status === "authenticated" && session?.role) {
-      if (session.role === "buyer") {
-        router.push("/home");
-      } else if (session.role === "seller") {
-        router.push("/supplier/dashboard");
+    if (status === 'authenticated' && session?.role) {
+      if (session.role === 'buyer') {
+        router.push('/home');
+      } else if (session.role === 'supplier') {
+        router.push('/supplier/dashboard');
       }
     }
   }, [session, status, router]);
@@ -119,7 +117,7 @@ export default function LoginPage() {
                 type="submit"
                 className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
               >
-                {loading ? "Signing in...." : "Sign-In"}
+                {loading ? 'Signing in....' : 'Sign-In'}
               </button>
             </form>
             <button

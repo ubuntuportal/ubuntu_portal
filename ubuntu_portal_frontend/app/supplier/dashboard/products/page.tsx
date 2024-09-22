@@ -1,17 +1,17 @@
-import { AddProduct } from "@/components/supplier/AddProduct";
-import { Tables } from "@/components/supplier/Table";
-import React from "react";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { redirect } from "next/navigation";
+import { AddProduct } from '@/components/supplier/AddProduct';
+import { Tables } from '@/components/supplier/Table';
+import React from 'react';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation';
 
 export default async function ProductsPage() {
   // Fetch the session from NextAuth
   const session = await getServerSession(authOptions);
 
   // Redirect to login if not authenticated or if user is not a seller
-  if (!session?.role || session.role !== "seller") {
-    redirect("/auth/login");
+  if (!session?.role || session.role !== 'supplier') {
+    redirect('/auth/login');
     return null; // Halt further rendering if the user is unauthorized
   }
 
