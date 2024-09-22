@@ -7,20 +7,20 @@ function OrderStatusTable() {
   ];
 
   return (
-    <div className="overflow-x-auto min-w-full">
-      <table className=" bg-white">
+    <div className="overflow-x-auto w-full">
+      <table className=" bg-white w-full overflow-auto">
         <thead>
           <tr>
-            <th className="py-2 px-4 border-b text-left">Order ID</th>
+            <th className="py-2 text-left">Order ID</th>
           </tr>
         </thead>
         <tbody>
           {orders.map((order) => (
             <tr key={order.id}>
-              <td className="py-2 px-4 border-b">{order.id}</td>
-              <td className="py-2 px-4 border-b">{order.product}</td>
-              <td className="py-2 px-4 border-b">{order.status}</td>
-              <td className="py-2 px-4 border-b">{order.date}</td>
+              <td className="py-2 px-4">{order.id}</td>
+              <td className="py-2 px-4">{order.product}</td>
+              <td className="py-2 px-4">{order.status}</td>
+              <td className="py-2 px-4">{order.date}</td>
             </tr>
           ))}
         </tbody>

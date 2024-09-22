@@ -1,6 +1,6 @@
 // components/LogoutButton.tsx
 "use client";
-
+import { Button } from "./ui/button";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
@@ -14,11 +14,8 @@ export default function LogoutButton() {
   };
 
   return (
-    <button
-      onClick={handleLogout}
-      className="bg-red-500 text-white px-4 py-2 rounded"
-    >
+    <Button onClick={handleLogout} className="bg-red-500 ">
       Logout
-    </button>
+    </Button>
   );
 }

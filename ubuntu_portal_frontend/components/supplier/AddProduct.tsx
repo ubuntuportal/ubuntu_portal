@@ -244,7 +244,7 @@ export function AddProduct() {
             <div className="mt-6">
               <button
                 type="submit"
-                className="w-full bg-orange-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+                className="w-full bg-green-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
               >
                 Submit Product
               </button>

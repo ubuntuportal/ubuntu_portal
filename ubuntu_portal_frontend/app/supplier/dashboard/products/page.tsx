@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
-
   useEffect(function () {
     async function getProducts() {
       try {
