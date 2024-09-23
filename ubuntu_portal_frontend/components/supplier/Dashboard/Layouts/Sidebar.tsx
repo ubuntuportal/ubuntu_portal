@@ -27,7 +27,7 @@ export default function Sidebar() {
       icon: HomeIcon,
       href: "/supplier/dashboard/communication",
     },
-    { name: "RFQ", icon: CollectionIcon, href: "/supplier/dashboard/rfq" },
+    { name: "RFQ", icon: CollectionIcon, href: "/supplier/dashboard/rfq-list" },
   ];
 
   return (
@@ -53,7 +53,7 @@ export default function Sidebar() {
                     onClick={() => setActive(item.name)}
                   >
                     {active === item.name && (
-                      <span className="absolute left-[-40px] h-6 border-l-4 border-green-500"></span>
+                      <span className="absolute left-[-30px] h-6 border-l-4 border-green-500"></span>
                     )}
                     <item.icon className="h-5 w-5 mr-3 z-10" />
                     <span className="z-10">{item.name}</span>
