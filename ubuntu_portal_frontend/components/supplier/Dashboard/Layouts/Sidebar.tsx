@@ -15,7 +15,11 @@ export default function Sidebar() {
   const menuItems = [
     { name: "Dashboard", icon: HomeIcon, href: "/supplier/dashboard" },
     { name: "Profile", icon: UserIcon, href: "/supplier/dashboard/profile" },
-    { name: "Store", icon: ShoppingBagIcon, href: "/supplier/dashboard/store" },
+    {
+      name: "Order List",
+      icon: ShoppingBagIcon,
+      href: "/supplier/dashboard/order-list",
+    },
     {
       name: "Products",
       icon: CollectionIcon,
@@ -27,7 +31,7 @@ export default function Sidebar() {
       icon: HomeIcon,
       href: "/supplier/dashboard/communication",
     },
-    { name: "RFQ", icon: CollectionIcon, href: "/supplier/dashboard/rfq" },
+    { name: "RFQ", icon: CollectionIcon, href: "/supplier/dashboard/rfq-list" },
   ];
 
   return (
@@ -53,7 +57,7 @@ export default function Sidebar() {
                     onClick={() => setActive(item.name)}
                   >
                     {active === item.name && (
-                      <span className="absolute left-[-40px] h-6 border-l-4 border-green-500"></span>
+                      <span className="absolute left-[-30px] h-6 border-l-4 border-green-500"></span>
                     )}
                     <item.icon className="h-5 w-5 mr-3 z-10" />
                     <span className="z-10">{item.name}</span>

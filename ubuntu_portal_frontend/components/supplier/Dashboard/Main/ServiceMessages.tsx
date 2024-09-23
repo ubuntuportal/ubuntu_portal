@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "../ui/button";
+import { Button } from "../../../ui/button";
 import { FaUserCircle } from "react-icons/fa"; // Example profile icon
 
 const messages = [
