@@ -15,7 +15,11 @@ export default function Sidebar() {
   const menuItems = [
     { name: "Dashboard", icon: HomeIcon, href: "/supplier/dashboard" },
     { name: "Profile", icon: UserIcon, href: "/supplier/dashboard/profile" },
-    { name: "Store", icon: ShoppingBagIcon, href: "/supplier/dashboard/store" },
+    {
+      name: "Order List",
+      icon: ShoppingBagIcon,
+      href: "/supplier/dashboard/order-list",
+    },
     {
       name: "Products",
       icon: CollectionIcon,
