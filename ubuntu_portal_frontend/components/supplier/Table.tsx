@@ -1,5 +1,7 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+
 import {
   Table,
   TableBody,
@@ -66,6 +68,40 @@ const products = [
 ];
 
 export function Tables() {
+  const [suppliersProduct, setSuppliersProducts] = useState([]);
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!session?.accessToken) return; // Ensure the token is available
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/suppliers/products/`, // Use environment variable for the API URL
+          {
+            method: "GET",
+
+            headers: {
+              Authorization: `Bearer ${session.accessToken}`, // Add token to the request headers
+            },
+          }
+        );
+        console.log(response);
+        // Check if response is OK (status in range of 200-299)
+        if (!response.ok) {
+          throw new Error(`Failed to fetch: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(data); // Handle the response data (e.g., set state)
+        console.log(data.results); // Handle the response data (e.g., set state)
+        // setSuppliersProducts(data.results); // Handle the response data (e.g., set state)
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    fetchProducts();
+  }, [session]);
   return (
     <>
       <Table>
