@@ -1,4 +1,6 @@
 import React from "react";
+import { Button } from "../../../ui/button";
+import LogoutButton from "../../../LogoutButton";
 import {
   BellIcon,
   CogIcon,
@@ -24,8 +26,11 @@ function Header() {
 
       {/* User Profile & Notifications */}
       <div className="flex items-center mr-4 space-x-4">
+        {/* <Button className="bg-amber-700">Logout</Button> */}
+        <LogoutButton />
         <button className="relative text-gray-600 hover:text-gray-800">
           <BellIcon className="h-6 w-6" />
+
           {/* Notification Badge */}
           <span className="absolute top-0 right-0 inline-flex items-center justify-center h-2 w-2 p-2 bg-red-500 text-white text-xs font-bold rounded-full">
             3
