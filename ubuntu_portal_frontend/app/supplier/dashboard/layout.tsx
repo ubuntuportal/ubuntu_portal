@@ -1,6 +1,6 @@
 import Footer from "@/components/buyer/Footer";
-import Header from "@/components/supplier/Header";
-import Sidebar from "@/components/supplier/Sidebar";
+import Header from "@/components/supplier/Dashboard/Layouts/Header";
+import Sidebar from "@/components/supplier/Dashboard/Layouts/Sidebar";
 
 export default function SupplierLayout({
   children,

@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "../ui/button";
-import LogoutButton from "../LogoutButton";
+import { Button } from "../../../ui/button";
+import LogoutButton from "../../../LogoutButton";
 import {
   BellIcon,
   CogIcon,
