@@ -25,7 +25,7 @@ export const authOptions: NextAuthOptions = {
         if (!credentials) return null;
 
         const res = await fetch(
-          "https://ubuntu-portal.onrender.com/api/auth/login/",
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/login/`,
           {
             method: "POST",
             body: JSON.stringify({

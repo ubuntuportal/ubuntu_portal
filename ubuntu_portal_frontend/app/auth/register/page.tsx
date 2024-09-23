@@ -94,7 +94,7 @@ export default function RegisterPage() {
 
     try {
       const response = await fetch(
-        "https://ubuntu-portal.onrender.com/api/auth/register/",
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/register/`,
         {
           method: "POST",
           mode: "cors",
