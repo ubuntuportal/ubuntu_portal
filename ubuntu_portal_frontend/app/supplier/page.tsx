@@ -1,7 +1,18 @@
-import React from "react";
+import HeroSection from '@/components/supplier/landing-page/HeroSection';
+import HomeHeader from '@/components/supplier/landing-page/HomeHeader';
+import Pricing from '@/components/supplier/landing-page/Pricing';
+import StatsSection from '@/components/supplier/landing-page/StatsSection';
+import React from 'react';
 
 function SipplierLandingPage() {
-  return <div className="text-4xl">Sipplier Landing Page</div>;
+  return (
+    <main className="">
+      <HomeHeader />
+      <HeroSection />
+      <StatsSection />
+      <Pricing />
+    </main>
+  );
 }
 
 export default SipplierLandingPage;

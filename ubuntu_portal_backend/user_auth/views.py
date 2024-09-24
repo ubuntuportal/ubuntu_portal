@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import AllowAny
 from .serializers import (RegisterSerializer, CustomTokenObtainPairSerializer, ForgotPasswordSerializer,
-                          ResetPasswordSerializer)
+                          ResetPasswordSerializer, UserProfileSerializer, CompanySerializer)
 from django.contrib.auth import get_user_model
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from dj_rest_auth.registration.views import SocialLoginView
@@ -22,6 +22,9 @@ from .utils import generate_activation_token, send_email_async
 from django.conf import settings
 import logging
 import jwt
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
+from .models import CustomUser, Company
 
 
 User = get_user_model()
@@ -144,3 +147,24 @@ class ResetPasswordView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)
+
+
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(id=self.request.user.id)
+
+    def get_object(self):
+        return self.request.user
+
+
+class CompanyViewSet(viewsets.ModelViewSet):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Company.objects.filter(user=self.request.user)

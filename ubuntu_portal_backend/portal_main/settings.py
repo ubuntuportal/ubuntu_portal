@@ -22,12 +22,15 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',  # channels for live chat
+    'daphne', # Daphne server for Async WebSockers
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -36,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'api',
-    'user_auth',
+    # 'user_auth',
     'carts',
     'orders',
     'rfqs',
@@ -60,9 +63,11 @@ INSTALLED_APPS = [
     # dj-rest-auth app
     'dj_rest_auth',
     'dj_rest_auth.registration',
-    
-    # channel
-    'channels',
+
+    'chat', # Live Chat App
+
+    'user_auth.apps.UserAuthConfig',
+
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -121,20 +126,46 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'portal_main.wsgi.application'
+# WSGI_APPLICATION = 'portal_main.wsgi.application'
+ASGI_APPLICATION = "portal_main.asgi.application" # User ASGI application
 
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-DATABASES = {
+# Configure redis for channel layer
+CHANNEL_LAYERS = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
 }
 
-# If DATABASE_URL is set, it will override the default SQLite3 settings
-DATABASES['default'] = dj_database_url.config(default=os.getenv('DATABASE_URL', DATABASES['default']))
+# Fetch the environment type from .env (no default)
+ENVIRONMENT = os.getenv('ENVIRONMENT')
+if not ENVIRONMENT:
+    raise ValueError("ENVIRONMENT variable not set in .env file!")
+
+# Configure the database according to the environment
+if ENVIRONMENT == 'production':
+    DATABASE_URL = os.getenv('DATABASE_URL')
+    if not DATABASE_URL:
+        raise ValueError("DATABASE_URL not set in production environment!")
+    
+    # Use the production database
+    DATABASES = {
+        'default': dj_database_url.config(default=DATABASE_URL)
+    }
+
+elif ENVIRONMENT == 'development':
+    # Use SQLite3 for development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+
+else:
+    raise ValueError("Invalid ENVIRONMENT value! Must be 'development' or 'production'.")
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

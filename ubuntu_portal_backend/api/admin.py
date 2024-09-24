@@ -14,8 +14,8 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'status', 'shipping_address', 'payment_method', 'total_amount', 'created_at')
-    search_fields = ('user__email', 'status', 'shipping_address', 'payment_method')
+    list_display = ('id', 'user', 'status', 'shipping_info', 'billing_info', 'contact_info', 'payment_method', 'total_amount', 'created_at')
+    search_fields = ('user__email', 'status', 'shipping_info', 'billing_info', 'contact_info', 'payment_method')
     list_filter = ('status', 'payment_method', 'created_at')
 
 class OrderItemAdmin(admin.ModelAdmin):
