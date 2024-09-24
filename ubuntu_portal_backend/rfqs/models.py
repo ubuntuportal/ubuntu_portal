@@ -89,10 +89,10 @@ class RFQ(models.Model):
     def get_relevant_suppliers(self):
         """Return a list of suppliers who can supply the requested product"""
         return User.objects.filter(
-            role='seller',
+            role='Seller',
             country=self.get_buyer_country(),
-            category=self.product.category
-        )
+            products__category__in=self.product.category.all()
+        ).distinct()
 
 
 class Quotation(models.Model):
