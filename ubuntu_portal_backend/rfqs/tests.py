@@ -8,8 +8,9 @@ from products.models import Product, Category
 from decimal import Decimal
 from django.core.exceptions import ValidationError
 from datetime import date
-import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, AsyncMock
+from channels.layers import get_channel_layer
+from asgiref.sync import sync_to_async
 import time
 
 
@@ -261,6 +262,82 @@ class RFQTestCase(TestCase):
         self.assertIn(self.supplier_2, relevant_supplier_2)
         self.assertIn(self.supplier_1, relevant_supplier_3)
         self.assertIn(self.supplier_2, relevant_supplier_4)
+    
+    @patch('channels.layers.get_channel_layer')
+    async def test_notify_suppliers(self, mock_get_channel_layer):
+        category = await sync_to_async(Category.objects.create)(name='Electronics')
+        
+        self.supplier_1 = await sync_to_async(User.objects.create_user)(
+            first_name='Kelvin',
+            last_name='Doe',
+            email='kelvin2@gmail.com',
+            country='NG',
+            role='Seller',
+            phone_number='+2435632920569'
+        )
+        
+        self.supplier_2 = await sync_to_async(User.objects.create_user)(
+            first_name='John',
+            last_name='Doe',
+            email='john2@gmail.com',
+            country='NG',
+            role='Seller',
+            phone_number='+2423684808668'
+        )
+        
+        self.product = await sync_to_async(Product.objects.create)(
+            title='Laptop',
+            description='A high-performance laptop',
+            price=1000,
+            seller=self.supplier_1
+        )
+        await sync_to_async(self.product.category.set)([category])
+        
+        self.buyer = await sync_to_async(User.objects.create_user)(
+            first_name='Ayuba',
+            last_name='Naomi',
+            email='ayuba@gmail.com',
+            country='NG',
+            role='Buyer'
+        )
+        
+        self.rfq = await sync_to_async(RFQ.objects.create)(
+            buyer=self.buyer,
+            product=self.product,
+            sourcing_quantity=5,
+            quantities_measurements='pieces',
+            unit_price=950.00,
+            detailed_requirements='Looking for the best price.'
+        )
+        
+        mock_group_layer = AsyncMock()
+        mock_get_channel_layer.return_value = mock_group_layer
+        
+        self.rfq.get_relevant_suppliers = lambda: [self.supplier_1, self.supplier_2]
+        
+        await self.rfq.notify_suppliers()
+        
+        # Assert that the suppliers are notified
+        mock_group_layer.group_send.assert_any_call(
+            f'supplier_{self.supplier_1.id}',
+            {
+                'type': 'send_notification',
+                'notification': f'{self.rfq.rfq_date} {self.rfq.id} {self.product.title} {self.buyer.country}'
+            }
+        )
+        
+        mock_group_layer.group_send.assert_any_call(
+            f'supplier_{self.supplier_2.id}',
+            {
+                'type': 'send_notification',
+                'notification': f'{self.rfq.rfq_date} {self.rfq.id} {self.product.title} {self.buyer.country}'
+            }
+        )
+        
+        # Check if suppliers are correctly notified
+        notified_suppliers = await sync_to_async(list)(self.rfq.suppliers_notified.all())
+        self.assertIn(self.supplier_1, notified_suppliers)
+        self.assertIn(self.supplier_2, notified_suppliers)
         
 
 class QuotationTestModel(TestCase):
