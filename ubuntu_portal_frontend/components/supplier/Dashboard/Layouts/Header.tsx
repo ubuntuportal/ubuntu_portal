@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "../../../ui/button";
+import { MenuIcon } from "@heroicons/react/outline"; // Import the menu icon
 import LogoutButton from "../../../LogoutButton";
 import {
   BellIcon,
@@ -7,9 +7,19 @@ import {
   SearchIcon,
   UserCircleIcon,
 } from "@heroicons/react/outline";
-function Header() {
+
+interface HeaderProps {
+  toggleSidebar: () => void;
+}
+
+function Header({ toggleSidebar }: HeaderProps) {
   return (
     <header className="bg-transparent p-4 flex items-center justify-between">
+      {/* Toggle Sidebar Button */}
+      <button onClick={toggleSidebar} className=" p-2 text-gray-600">
+        <MenuIcon className="h-6 w-6" />
+      </button>
+
       {/* Search Bar */}
       <div className="flex items-center w-full max-w-md mx-4">
         <div className="relative flex items-center w-full">
@@ -26,21 +36,16 @@ function Header() {
 
       {/* User Profile & Notifications */}
       <div className="flex items-center mr-4 space-x-4">
-        {/* <Button className="bg-amber-700">Logout</Button> */}
         <LogoutButton />
         <button className="relative text-gray-600 hover:text-gray-800">
           <BellIcon className="h-6 w-6" />
-
-          {/* Notification Badge */}
           <span className="absolute top-0 right-0 inline-flex items-center justify-center h-2 w-2 p-2 bg-red-500 text-white text-xs font-bold rounded-full">
             3
           </span>
-          {/*Settings*/}
         </button>
         <button className="text-gray-600 hover:text-gray-800">
-          <CogIcon className="h-8 w-8"></CogIcon>
+          <CogIcon className="h-8 w-8" />
         </button>
-        {/*User*/}
         <button className="text-gray-600 hover:text-gray-800">
           <UserCircleIcon className="h-8 w-8" />
         </button>
@@ -48,4 +53,5 @@ function Header() {
     </header>
   );
 }
+
 export default Header;
