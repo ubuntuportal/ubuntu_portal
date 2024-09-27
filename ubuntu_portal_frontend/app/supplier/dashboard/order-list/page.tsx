@@ -1,7 +1,7 @@
 import React from "react";
 
-import OrderFilter from "@/components/supplier/OrderList/OrderFilter";
-import OrderTable from "@/components/supplier/OrderList/OrderTable";
+import OrderFilter from "@/components/supplier/Dashboard/OrderList/OrderFilter";
+import OrderTable from "@/components/supplier/Dashboard/OrderList/OrderTable";
 
 export default function OrderList() {
   return (

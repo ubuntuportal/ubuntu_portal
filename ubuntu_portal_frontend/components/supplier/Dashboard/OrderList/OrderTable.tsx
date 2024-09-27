@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 
 import { FiArrowRight } from "react-icons/fi";
+import Action from "./Action";
 
 // Sample RFQ data (you can replace this with dynamic data later)
 const OrderData = [
@@ -146,11 +147,8 @@ const OrderTable = () => {
             </div>
           </div>
           {/* View Proposal Button */}
-          <div className="ml-4">
-            <Button className="bg-green-500 text-white flex items-center gap-2">
-              Action
-              <FiArrowRight className="h-5 w-10" /> {/* Arrow Icon */}
-            </Button>
+          <div className="">
+            <Action />
           </div>
         </div>
       ))}
