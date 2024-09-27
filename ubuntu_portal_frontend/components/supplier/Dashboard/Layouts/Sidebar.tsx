@@ -21,6 +21,11 @@ export default function Sidebar() {
       href: "/supplier/dashboard/order-list",
     },
     {
+      name: "Store",
+      icon: ShoppingBagIcon,
+      href: "/supplier/dashboard/store",
+    },
+    {
       name: "Products",
       icon: CollectionIcon,
       href: "/supplier/dashboard/products",
