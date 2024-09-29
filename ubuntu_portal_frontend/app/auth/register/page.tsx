@@ -90,7 +90,6 @@ export default function RegisterPage() {
     data.phone_number = formattedPhone;
     data.role = role; // Add selected role to the data object
     const body = JSON.stringify(data);
-    console.log(body);
 
     try {
       const response = await fetch(
@@ -105,7 +104,7 @@ export default function RegisterPage() {
         }
       );
       const result = await response.json();
-      console.log(result);
+
       if (!response.ok) {
         const errorData = await response.json();
         toast.error(errorData.detail);

@@ -22,7 +22,6 @@ export default function LoginPage() {
     const formData = new FormData(e.target as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
     const { email, password } = data;
-    console.log(data);
 
     setLoading(true);
 
@@ -33,11 +32,8 @@ export default function LoginPage() {
         password,
       });
 
-      console.log(result);
-
       if (result?.error) {
         toast.error("Confirm Email & Password");
-        console.error("Confirm Email & Password");
       } else {
         toast.success("Login Successfully");
       }
