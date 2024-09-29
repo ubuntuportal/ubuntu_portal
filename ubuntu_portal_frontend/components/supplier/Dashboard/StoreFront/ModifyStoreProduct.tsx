@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export default function ModifyStoreProduct() {
   return (
-    <div className="bg-white rounded-lg p-4 shadow-md w-full">
+    <div className="bg-white rounded-lg p-8 shadow-md w-full">
       {/* Product Image */}
       <div className="mb-4">
         <img
