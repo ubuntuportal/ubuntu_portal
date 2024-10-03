@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import Image from "next/image";
-import logo from "@/public/Logo.png";
+import Logo_complete from "@/public/Logo_complete.png";
 import { SearchIcon } from "@heroicons/react/outline";
 import { IoMenu, IoCloseSharp } from "react-icons/io5";
 import { useRouter } from "next/navigation";
@@ -26,10 +26,10 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-[#29964C]">
+    <header className="bg-[#A5C4D4]">
       <div className="flex items-center justify-between px-4 py-2 sm:px-6">
         <div className="flex">
-          <div className="flex md:hidden items-center">
+          {/* <div className="flex md:hidden items-center">
             {isOpen ? (
               <IoCloseSharp
                 className="text-white text-4xl"
@@ -38,8 +38,8 @@ export default function Header() {
             ) : (
               <IoMenu className="text-white text-4xl" onClick={toggleMenu} />
             )}
-          </div>
-          <Image src={logo} alt="logo" width={130} height={130} />
+          </div> */}
+          <Image src={Logo_complete} alt="logo" width={130} height={130} />
         </div>
 
         {/* Conditionally render buttons based on login status */}

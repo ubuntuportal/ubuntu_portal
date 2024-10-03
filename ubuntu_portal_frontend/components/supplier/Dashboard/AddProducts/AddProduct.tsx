@@ -141,7 +141,7 @@ export function AddProduct() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="bg-green-500 hover:bg-green-300">
+        <Button variant="outline" className="bg-[#36151E] hover:bg-green-300">
           Add Product
         </Button>
       </DialogTrigger>

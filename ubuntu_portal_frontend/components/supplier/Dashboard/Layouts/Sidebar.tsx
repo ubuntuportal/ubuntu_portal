@@ -41,7 +41,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
   return (
     <div
       className={
-        `bg-white text-black w-64 h-screen p-4 border-r border-gray-200 flex flex-col justify-between fixed z-30 transform ${
+        `bg-[#A5C4D4] text-black w-64 h-screen p-4 border-r border-gray-200 flex flex-col justify-between fixed z-30 transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-in-out` /* Removed lg:translate-x-0 */
       }
@@ -49,7 +49,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
       <div>
         <div className="mb-4 flex justify-between items-center">
           <Link href={"/supplier/dashboard"}>
-            <img src="/Logo_black.png" alt="logo" className="w-full" />
+            <img src="/Logo_complete.png" alt="logo" className="w-48" />
           </Link>
           {/* Close button inside sidebar */}
           <button onClick={toggleSidebar} className="p-2 text-gray-600">
