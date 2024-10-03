@@ -35,11 +35,12 @@ class ProductSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(), many=True)
     variations = ProductVariationSerializer(many=True, read_only=True)
+    price_by_quantity = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = ('id', 'title', 'description', 'stock',
-                  'price', 'image', 'category', 'variations', 'seller', 'rating')
+        fields = ('id', 'title', 'description', 'stock', 'manufactured_country',
+                  'price', 'price_by_quantity', 'image', 'category', 'variations', 'seller', 'rating')
         read_only_fields = ('seller', 'variations')
 
     def create(self, validated_data):
@@ -63,3 +64,8 @@ class ProductSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data['price'] = float(data['price'])
         return data
+
+    def get_price_by_quantity(self, obj):
+        # Get the requested quantity from the context or default to 1
+        quantity = self.context.get('quantity', 1)
+        return obj.get_price_by_quantity(quantity)
