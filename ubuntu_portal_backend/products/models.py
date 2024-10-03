@@ -34,6 +34,10 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)  # Base price
     seller = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='products', default=1)
+
+    manufactured_country = models.CharField(
+        max_length=100, null=True, blank=True)
+
     category = models.ManyToManyField(Category, related_name='products')
     rating = models.FloatField(default=0.0)
     image = models.ImageField(upload_to='products/', null=True, blank=True)
