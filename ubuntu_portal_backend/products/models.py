@@ -31,7 +31,7 @@ class Product(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     stock = models.PositiveIntegerField(default=0)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2)  # Base price
     seller = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='products', default=1)
     category = models.ManyToManyField(Category, related_name='products')
@@ -39,6 +39,10 @@ class Product(models.Model):
     image = models.ImageField(upload_to='products/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # Add discount tiers for quantity-based pricing
+    # Stores quantity-based price tiers
+    discount_tiers = models.JSONField(default=dict, blank=True)
 
     def __str__(self):
         return self.title
@@ -48,6 +52,20 @@ class Product(models.Model):
             models.Index(fields=['price']),
             models.Index(fields=['title', 'description']),
         ]
+
+    def get_price_by_quantity(self, quantity):
+        """
+        Returns the appropriate price based on the quantity ordered.
+        Applies discount tiers if available.
+        """
+        # Iterate over the discount tiers (e.g., {"2": 500, "200": 450})
+        for min_qty, tier_price in sorted(self.discount_tiers.items(), reverse=True):
+            # Apply price if the quantity meets or exceeds the min_qty
+            if quantity >= int(min_qty):
+                return tier_price
+
+        # If no discount applies, return the base price
+        return self.price
 
 
 class ProductVariation(models.Model):
