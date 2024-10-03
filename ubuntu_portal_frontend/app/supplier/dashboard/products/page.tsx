@@ -1,6 +1,6 @@
 "use client";
-import { AddProduct } from "@/components/supplier/AddProduct";
-import { Tables } from "@/components/supplier/Table";
+import { AddProduct } from "@/components/supplier/Dashboard/AddProducts/AddProduct";
+import { Tables } from "@/components/supplier/Dashboard/AddProducts/Table";
 import React, { useEffect, useState } from "react";
 
 export default function ProductsPage() {
