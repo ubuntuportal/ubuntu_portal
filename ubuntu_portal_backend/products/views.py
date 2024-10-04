@@ -46,6 +46,13 @@ class ProductViewSet(viewsets.ModelViewSet,
 
         return queryset
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        # Assume quantity is passed as a query parameter
+        quantity = self.request.query_params.get('quantity', 1)
+        context['quantity'] = int(quantity)
+        return context
+
     @action(detail=False, methods=['get'], url_path='search')
     def search(self, request):
         queryset = self.get_queryset()
