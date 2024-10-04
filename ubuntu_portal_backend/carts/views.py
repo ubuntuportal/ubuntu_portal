@@ -15,11 +15,22 @@ from rest_framework.decorators import action
 
 
 class CartViewSet(viewsets.ModelViewSet):
+
     serializer_class = CartSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Cart.objects.filter(user=self.request.user)
+    # Handle schema generation case for drf_yasg
+        if getattr(self, 'swagger_fake_view', False):
+            return Cart.objects.none()
+
+    # Ensure the request has an authenticated user
+        user = self.request.user
+        if not user.is_authenticated:
+            return Cart.objects.none()
+
+        return Cart.objects.filter(user=user)
+
 
     @action(detail=False, methods=['post'])
     @transaction.atomic

@@ -8,6 +8,41 @@ import uuid
 
 User = get_user_model()
 
+class BillingInfo(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='billing_info')
+    company_name = models.CharField(max_length=255, null=True, blank=True)
+    address = models.CharField(max_length=255)
+    country = models.CharField(max_length=100)
+    region_state = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    zip_code = models.CharField(max_length=20)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=20)
+
+
+class ShippingInfo(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    reciepient_first_name = models.CharField(max_length=100)
+    reciepient_last_name = models.CharField(max_length=100)
+    address = models.CharField(max_length=255)
+    country = models.CharField(max_length=100)
+    region_state = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    zip_code = models.CharField(max_length=20)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=20)
+
+
+class ContactInfo(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email_address = models.EmailField()
+    phone_number = models.CharField(max_length=20)
+    preferred_contact_method = models.CharField(max_length=50)
+    best_time_to_contact = models.CharField(max_length=50, blank=True, null=True)
+
+
 class Order(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     STATUS_CHOICES = [
@@ -23,9 +58,11 @@ class Order(models.Model):
         ('bank_transfer', _('Bank Transfer')),
         ('cash_on_delivery', _('Cash on Delivery')),
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', default=None)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    shipping_address = models.CharField(max_length=255, null=True, blank=True)
+    billing_info = models.ForeignKey(BillingInfo, on_delete=models.CASCADE, null=True, blank=True)
+    shipping_info = models.ForeignKey(ShippingInfo, on_delete=models.CASCADE, null=True, blank=True)
+    contact_info = models.ForeignKey(ContactInfo, on_delete=models.CASCADE, null=True, blank=True)
     payment_method = models.CharField(max_length=50, choices=PAYMENT_METHOD_CHOICES, null=True, blank=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     created_at = models.DateTimeField(auto_now_add=True)
@@ -67,5 +104,3 @@ class OrderItem(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.order.update_total_amount()
-
-

@@ -3,17 +3,25 @@ from .models import Product, ProductVariation, Category
 from django.db.models import F, Sum, ExpressionWrapper, DecimalField
 
 
+class SubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        # parent is the ForeignKey in the Category model
+        fields = ['id', 'name', 'parent']
+
+
 class CategorySerializer(serializers.ModelSerializer):
-    subcategories = SubCategorySerializer(many=True, read_only=True)
+    # Use the SubCategorySerializer for subcategories
+    subcategories = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
         fields = ['id', 'name', 'subcategories']
 
-class SubCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = ['id', 'name', 'parent']
+    def get_subcategories(self, obj):
+        # Fetch subcategories where the current category is the parent
+        subcategories = obj.subcategories.all()
+        return SubCategorySerializer(subcategories, many=True).data
 
 
 class ProductVariationSerializer(serializers.ModelSerializer):
@@ -31,7 +39,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id', 'title', 'description', 'stock',
-                  'price', 'image', 'category', 'variations')
+                  'price', 'image', 'category', 'variations', 'seller', 'rating')
         read_only_fields = ('seller', 'variations')
 
     def create(self, validated_data):
@@ -47,3 +55,11 @@ class ProductSerializer(serializers.ModelSerializer):
         if category_data is not None:
             instance.category.set(category_data)
         return instance
+
+    def to_representation(self, instance):
+        """
+        Ensure the price is a float in the JSON representation.
+        """
+        data = super().to_representation(instance)
+        data['price'] = float(data['price'])
+        return data

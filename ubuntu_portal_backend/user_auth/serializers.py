@@ -5,18 +5,66 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 from django_countries.widgets import CountrySelectWidget
-
+from .models import UserProfile, Company  # Import the Company model
 
 User = get_user_model()
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    """Serializer for the UserProfile model."""
+
+    class Meta:
+        model = UserProfile
+        fields = ('bio', 'profile_picture', 'address', 'city', 'postal_code')
+
+class CompanySerializer(serializers.ModelSerializer):
+    """Serializer for the Company model."""
+
+    class Meta:
+        model = Company
+        fields = ('user', 'company_name', 'company_logo', 'company_website', 'contact_person', 'contact_email', 'contact_phone')
+
+class CustomUserSerializer(serializers.ModelSerializer):
+    profile = UserProfileSerializer()
+    company = CompanySerializer()  # Add this line
+
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'email', 'country', 'phone_number', 'role', 'profile', 'company')
+        read_only_fields = ('id',)
+
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop('profile', None)
+        company_data = validated_data.pop('company', None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        if profile_data:
+            profile = instance.profile
+            for attr, value in profile_data.items():
+                setattr(profile, attr, value)
+            profile.save()
+
+        if company_data:
+            company, created = Company.objects.get_or_create(user=instance, defaults=company_data)
+            if not created:
+                for attr, value in company_data.items():
+                    setattr(company, attr, value)
+                company.save()
+
+        return instance
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
     role = serializers.CharField(required=True)
+    profile = UserProfileSerializer(required=False)  # Add profile to registration
+    company = CompanySerializer(required=False)      # Add company to registration
 
     class Meta:
         model = User
-        fields = ('id', 'country', 'first_name', 'last_name', 'email', 'password', 'password2', 'role')
+        fields = ('id', 'first_name', 'last_name', 'email', 'country', 'phone_number', 'password', 'password2', 'role', 'profile', 'company')
         widgets = {"country": CountrySelectWidget()}
 
     def validate(self, attrs):
@@ -25,6 +73,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+        profile_data = validated_data.pop('profile', None)  # Remove profile data from main user creation
+        company_data = validated_data.pop('company', None)  # Remove company data from main user creation
+
         user = User.objects.create(
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
@@ -35,6 +86,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         user.set_password(validated_data['password'])
         user.save()
+
+        # Create a user profile if provided
+        if profile_data:
+            UserProfile.objects.create(user=user, **profile_data)
+
+        # Create a company if provided
+        if company_data:
+            Company.objects.create(user=user, **company_data)
+
         return user
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -54,8 +114,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         return data
 
-
-
 class ForgotPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
@@ -63,7 +121,6 @@ class ForgotPasswordSerializer(serializers.Serializer):
         if not User.objects.filter(email=value).exists():
             raise serializers.ValidationError("This email is not registered.")
         return value
-
 
 class ResetPasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField(write_only=True)
