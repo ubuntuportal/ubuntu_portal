@@ -109,10 +109,10 @@ class OrderItem(models.Model):
         # Calculate total price based on quantity
         total_price = self.price_at_purchase * self.quantity
 
-        # Apply discount if 5 or more items are purchased
-        if self.quantity >= 5:
-            discount = Decimal('0.10')  # Example: 10% discount
-            total_price -= total_price * discount
+        # # Apply discount if 5 or more items are purchased
+        # if self.quantity >= 5:
+        #     discount = Decimal('0.10')  # Example: 10% discount
+        #     total_price -= total_price * discount
 
         return total_price
 
