@@ -40,11 +40,15 @@ class CartViewSet(viewsets.ModelViewSet):
             'variation_id')) if request.data.get('variation_id') else None
         quantity = int(request.data.get('quantity', 1))
 
+        # Calculate price based on quantity using the new tiered pricing logic
+        price_per_item = product.get_price_by_quantity(quantity)
+
         cart_item, item_created = CartItem.objects.get_or_create(
             cart=cart, product=product, variation=variation)
 
-        # Update quantity
+        # Update quantity and price
         cart_item.quantity = quantity
+        cart_item.price = price_per_item  # Save the price calculated for the quantity
         cart_item.save()
 
         if item_created:
@@ -54,10 +58,16 @@ class CartViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['put'])
     def update_item(self, request, pk=None):
         cart_item = get_object_or_404(CartItem, id=pk)
+
         cart_item.quantity = int(request.data.get(
             'quantity', cart_item.quantity))
+
         cart_item.variation_id = request.data.get(
             'variation_id', cart_item.variation_id)
+
+        # Update the price based on the updated quantity
+        cart_item.price = cart_item.product.get_price_by_quantity(
+            cart_item.quantity)
         cart_item.save()
         return Response({'success': 'Cart item updated'}, status=status.HTTP_200_OK)
 
@@ -98,20 +108,31 @@ class CartViewSet(viewsets.ModelViewSet):
             payment_method=payment_method
         )
 
-        # Move CartItems to OrderItems
+        # List to store all OrderItems to be created at once
+        order_items = []
+
+        # Move CartItems to OrderItems and calculate the total amount based on the discount logic
         for cart_item in cart.items.all():
-            OrderItem.objects.create(
+            price_at_purchase = cart_item.product.get_price_by_quantity(
+                cart_item.quantity)
+
+            # Create OrderItem instance (not saved yet)
+            order_item = OrderItem(
                 order=order,
                 product=cart_item.product,
                 variation=cart_item.variation,
                 quantity=cart_item.quantity,
-                price_at_purchase=cart_item.get_total_price()
+                price_at_purchase=price_at_purchase
             )
+            order_items.append(order_item)
 
-        # Update the total amount of the order
+        # Bulk create all OrderItems at once for efficiency
+        OrderItem.objects.bulk_create(order_items)
+
+        # After adding all order items, calculate and update the order total
         order.update_total_amount()
 
-        # Clear the cart
+        # Clear the cart after the order is successfully placed
         cart.items.all().delete()
 
         return Response({'success': 'Order placed successfully', 'order_id': order.id}, status=status.HTTP_201_CREATED)

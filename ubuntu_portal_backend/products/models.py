@@ -59,16 +59,28 @@ class Product(models.Model):
 
     def get_price_by_quantity(self, quantity):
         """
-        Returns the appropriate price based on the quantity ordered.
-        Applies discount tiers if available.
+        Calculate the price based on the quantity and discount tiers.
         """
-        # Iterate over the discount tiers (e.g., {"2": 500, "200": 450})
-        for min_qty, tier_price in sorted(self.discount_tiers.items(), reverse=True):
-            # Apply price if the quantity meets or exceeds the min_qty
-            if quantity >= int(min_qty):
-                return tier_price
+        # Iterate through discount tiers to apply the correct discount
+        for tier, discount in self.discount_tiers.items():
+            # Split the range string (e.g., '5-10') into min_qty and max_qty
+            if '-' in tier:
+                min_qty, max_qty = tier.split('-')
+                min_qty = int(min_qty.strip())
+                max_qty = int(max_qty.strip())
 
-        # If no discount applies, return the base price
+                # Check if the quantity falls within this range
+                if min_qty <= quantity <= max_qty:
+                    # Apply the discount percentage
+                    discounted_price = self.price * (1 - (discount / 100))
+                    return discounted_price
+
+            # Handle cases where the tier is a single quantity
+            elif int(tier) <= quantity:
+                discounted_price = self.price * (1 - (discount / 100))
+                return discounted_price
+
+        # If no discount applies, return the regular price
         return self.price
 
 

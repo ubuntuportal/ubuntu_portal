@@ -40,7 +40,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id', 'title', 'description', 'stock', 'manufactured_country',
-                  'price', 'price_by_quantity', 'image', 'category', 'variations', 'seller', 'rating')
+                  'price', 'discount_tiers', 'price_by_quantity', 'image', 'category', 'variations', 'seller', 'rating')
         read_only_fields = ('seller', 'variations')
 
     def create(self, validated_data):
