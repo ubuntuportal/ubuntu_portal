@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 import uuid
+from decimal import Decimal
 from django.core.exceptions import ValidationError
 
 
@@ -57,6 +58,8 @@ class Product(models.Model):
             models.Index(fields=['title', 'description']),
         ]
 
+    from decimal import Decimal
+
     def get_price_by_quantity(self, quantity):
         """
         Calculate the price based on the quantity and discount tiers.
@@ -71,13 +74,15 @@ class Product(models.Model):
 
                 # Check if the quantity falls within this range
                 if min_qty <= quantity <= max_qty:
-                    # Apply the discount percentage
-                    discounted_price = self.price * (1 - (discount / 100))
+                    # Convert discount to Decimal and calculate discounted price
+                    discounted_price = self.price * \
+                        (Decimal(1) - (Decimal(discount) / Decimal(100)))
                     return discounted_price
 
             # Handle cases where the tier is a single quantity
             elif int(tier) <= quantity:
-                discounted_price = self.price * (1 - (discount / 100))
+                discounted_price = self.price * \
+                    (Decimal(1) - (Decimal(discount) / Decimal(100)))
                 return discounted_price
 
         # If no discount applies, return the regular price
