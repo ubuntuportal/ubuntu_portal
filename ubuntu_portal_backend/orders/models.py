@@ -106,15 +106,17 @@ class OrderItem(models.Model):
         return f"{self.product.title} ({self.variation.value if self.variation else ''})"
 
     def calculate_total(self):
-        if self.product:
-            total_price = self.price_at_purchase
-        elif self.variation:
-            total_price = self.price_at_purchase + self.variation.price_modifier
-        else:
-            total_price = Decimal('0.00')
+        # Calculate total price based on quantity
+        total_price = self.price_at_purchase * self.quantity
+
+        # Apply discount if 5 or more items are purchased
+        if self.quantity >= 5:
+            discount = Decimal('0.10')  # Example: 10% discount
+            total_price -= total_price * discount
 
         return total_price
 
     def save(self, *args, **kwargs):
+        # Save the item and update the order total
         super().save(*args, **kwargs)
         self.order.update_total_amount()
