@@ -126,6 +126,51 @@ class ProductModelTest(TestCase):
         )
         self.assertTrue(product.image.name.startswith('products/test_image'))
 
+    def test_discount_tiers(self):
+        # Test that product discount tiers cannot be empty
+        with self.assertRaises(ValidationError):
+            product = Product(title="Valid Product", stock=10,
+                              price=100.00, seller=self.user, discount_tiers=[])
+            product.full_clean()
+
+    def test_product_discount_tiers(self):
+        # Test that product discount tiers are being calculated correctly
+        product = Product.objects.create(
+            title="Product with Discount",
+            description="Product description",
+            stock=10,
+            price=100.00,
+            seller=self.user,
+            rating=4.0,
+            # 10% discount for 10+ items, 20% for 20+ items
+            discount_tiers={5: 10, "6-10": 15, 20: 20}
+        )
+
+        # Quantity = 1, no discount applied
+        self.assertEqual(product.get_price_by_quantity(1), 100.00)
+
+        # Quantity = 4, no discount applied
+        # No discount applied (because of range "5-10")
+        self.assertEqual(product.get_price_by_quantity(4), 100.00)
+
+        # Quantity = 5, 10% discount applied
+        # Single tier example: {5: 10} (10% discount for quantity >= 5).
+        self.assertEqual(product.get_price_by_quantity(5), 90.00)
+
+        # Quantity = 8, 15% discount applied (because of range "6-10")
+        self.assertEqual(product.get_price_by_quantity(8), 85.00)
+
+        # Quantity = 20, 20% discount applied
+        self.assertEqual(product.get_price_by_quantity(20),
+                         80.00)  # 20% discount
+
+    def test_product_manufactured_country_not_empty(self):
+        # Test that product manufactured country cannot be empty
+        with self.assertRaises(ValidationError):
+            product = Product(title="Valid Product", stock=10,
+                              price=100.00, seller=self.user, manufactured_country="")
+            product.full_clean()
+
 
 class ProductVariationModelTest(TestCase):
 

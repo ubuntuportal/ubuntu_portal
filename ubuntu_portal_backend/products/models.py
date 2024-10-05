@@ -58,35 +58,34 @@ class Product(models.Model):
             models.Index(fields=['title', 'description']),
         ]
 
-    from decimal import Decimal
-
     def get_price_by_quantity(self, quantity):
         """
-        Calculate the price based on the quantity and discount tiers.
+        Returns the price of a product given a quantity.
+
+        This method takes into account any applicable discounts from the product's
+        discount tiers.
+
+        :param quantity: The quantity of the product to calculate the price for.
+        :type quantity: int
+        :return: The price of the product given the quantity.
+        :rtype: decimal.Decimal
         """
-        # Iterate through discount tiers to apply the correct discount
+        price = self.price
+        applicable_discount = 0  # Keep track of the largest applicable discount
+
         for tier, discount in self.discount_tiers.items():
-            # Split the range string (e.g., '5-10') into min_qty and max_qty
-            if '-' in tier:
-                min_qty, max_qty = tier.split('-')
-                min_qty = int(min_qty.strip())
-                max_qty = int(max_qty.strip())
+            if isinstance(tier, str) and '-' in tier:  # Handle range tiers like "6-10"
+                lower, upper = map(int, tier.split('-'))
+                if lower <= quantity <= upper:
+                    applicable_discount = max(applicable_discount, discount)
+            # Handle single-value tiers like {5: 10}
+            elif isinstance(tier, int):
+                if quantity >= tier:
+                    applicable_discount = max(applicable_discount, discount)
 
-                # Check if the quantity falls within this range
-                if min_qty <= quantity <= max_qty:
-                    # Convert discount to Decimal and calculate discounted price
-                    discounted_price = self.price * \
-                        (Decimal(1) - (Decimal(discount) / Decimal(100)))
-                    return discounted_price
-
-            # Handle cases where the tier is a single quantity
-            elif int(tier) <= quantity:
-                discounted_price = self.price * \
-                    (Decimal(1) - (Decimal(discount) / Decimal(100)))
-                return discounted_price
-
-        # If no discount applies, return the regular price
-        return self.price
+        # Apply the largest applicable discount
+        price -= (price * applicable_discount / 100)
+        return price
 
 
 class ProductVariation(models.Model):
@@ -110,3 +109,12 @@ class ProductVariation(models.Model):
         # Validate that price_modifier is not zero
         if self.price_modifier == 0:
             raise ValidationError("Price modifier cannot be zero.")
+
+        # Validate that stock is not negative
+
+        if self.stock < 0:
+            raise ValidationError("Stock cannot be negative")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
