@@ -46,7 +46,9 @@ class ProductModelTest(TestCase):
             stock=100,
             price=299.99,
             seller=self.user,
-            rating=4.5
+            rating=4.5,
+            # 10% discount for 10+ items, 20% for 20+ items
+            # discount_tiers={5: 10, "6-10": 15, 20: 20}
         )
         self.product.category.add(self.category)
 

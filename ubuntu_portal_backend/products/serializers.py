@@ -39,9 +39,20 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id', 'title', 'description', 'stock', 'manufactured_country',
-                  'price', 'discount_tiers', 'price_by_quantity', 'image', 'category', 'variations', 'seller', 'rating')
+        fields = ('id', 'title', 'description', 'stock', 'price', 'seller', 'category',
+                  'rating', 'image', 'created_at', 'updated_at', 'discount_tiers',
+                  'manufactured_country', 'price_by_quantity', 'variations')
         read_only_fields = ('seller', 'variations')
+
+    def get_price_by_quantity(self, obj):
+        # Get the requested quantity from the context or default to 1
+        quantity = self.context.get('quantity', 1)
+        return obj.get_price_by_quantity(quantity)
+
+    def validate(self, data):
+        # Add any custom validation logic here
+
+        return data
 
     def create(self, validated_data):
         category_data = validated_data.pop('category', [])
@@ -64,8 +75,3 @@ class ProductSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data['price'] = float(data['price'])
         return data
-
-    def get_price_by_quantity(self, obj):
-        # Get the requested quantity from the context or default to 1
-        quantity = self.context.get('quantity', 1)
-        return obj.get_price_by_quantity(quantity)

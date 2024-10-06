@@ -2,8 +2,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 import uuid
-from decimal import Decimal
 from django.core.exceptions import ValidationError
+from decimal import Decimal, ROUND_HALF_UP
 
 
 # Get the user model
@@ -59,33 +59,31 @@ class Product(models.Model):
         ]
 
     def get_price_by_quantity(self, quantity):
-        """
-        Returns the price of a product given a quantity.
+        price = Decimal(self.price)  # Ensure price is Decimal
+        applicable_discount = 0
 
-        This method takes into account any applicable discounts from the product's
-        discount tiers.
-
-        :param quantity: The quantity of the product to calculate the price for.
-        :type quantity: int
-        :return: The price of the product given the quantity.
-        :rtype: decimal.Decimal
-        """
-        price = self.price
-        applicable_discount = 0  # Keep track of the largest applicable discount
+        # print(f"Original Price: {price}")
 
         for tier, discount in self.discount_tiers.items():
-            if isinstance(tier, str) and '-' in tier:  # Handle range tiers like "6-10"
+            if isinstance(tier, str) and '-' in tier:
                 lower, upper = map(int, tier.split('-'))
                 if lower <= quantity <= upper:
                     applicable_discount = max(applicable_discount, discount)
-            # Handle single-value tiers like {5: 10}
             elif isinstance(tier, int):
                 if quantity >= tier:
                     applicable_discount = max(applicable_discount, discount)
 
+        # print(f"Applicable Discount: {applicable_discount}")
+
         # Apply the largest applicable discount
-        price -= (price * applicable_discount / 100)
-        return price
+        price -= (price * Decimal(applicable_discount) / Decimal(100))
+        # print(f"Discounted Price: {price}")
+
+        # Ensure proper rounding (to 2 decimal places for currency)
+        final_price = price.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        # print(f"Final Price (rounded): {final_price}")
+
+        return final_price
 
 
 class ProductVariation(models.Model):
