@@ -1,7 +1,8 @@
-'use client';
-import { Button } from '@/components/ui/button';
-import React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+"use client";
+import { Button } from "@/components/ui/button";
+import React, { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { africanCountries } from "@/lib/data/AfricanCountries"; // Adjust the path accordingly
 
 type ShippingFormInputs = {
   firstName: string;
@@ -22,8 +23,19 @@ function ShippingForm() {
     formState: { errors },
   } = useForm<ShippingFormInputs>();
 
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [regions, setRegions] = useState<string[]>([]);
+
   const onSubmit: SubmitHandler<ShippingFormInputs> = (data) => {
     console.log(data);
+  };
+
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const country = e.target.value;
+    setSelectedCountry(country);
+
+    const foundCountry = africanCountries.find((c) => c.name === country);
+    setRegions(foundCountry ? foundCountry.states : []);
   };
 
   return (
@@ -37,8 +49,8 @@ function ShippingForm() {
               <input
                 type="text"
                 placeholder="First Name"
-                {...register('firstName', {
-                  required: 'First name is required',
+                {...register("firstName", {
+                  required: "First name is required",
                 })}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
               />
@@ -53,8 +65,8 @@ function ShippingForm() {
               <input
                 type="text"
                 placeholder="Last Name"
-                {...register('lastName', {
-                  required: 'Last name is required',
+                {...register("lastName", {
+                  required: "Last name is required",
                 })}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
               />
@@ -73,7 +85,7 @@ function ShippingForm() {
           </label>
           <input
             type="text"
-            {...register('address', { required: 'Address is required' })}
+            {...register("address", { required: "Address is required" })}
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
           />
           {errors.address && (
@@ -84,68 +96,78 @@ function ShippingForm() {
         </div>
 
         <div className="md:flex gap-4">
-          <div className="flex gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Country</label>
-              <input
-                type="text"
-                {...register('country', { required: 'Country is required' })}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-              />
-              {errors.country && (
-                <span className="text-red-500 text-sm">
-                  {errors.country.message}
-                </span>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Region/State
-              </label>
-              <input
-                type="text"
-                {...register('region', {
-                  required: 'Region/State is required',
-                })}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-              />
-              {errors.region && (
-                <span className="text-red-500 text-sm">
-                  {errors.region.message}
-                </span>
-              )}
-            </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Country</label>
+            <select
+              {...register("country", { required: "Country is required" })}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+              onChange={handleCountryChange}
+            >
+              <option value="">Select Country</option>
+              {africanCountries.map((country) => (
+                <option key={country.name} value={country.name}>
+                  {country.name}
+                </option>
+              ))}
+            </select>
+            {errors.country && (
+              <span className="text-red-500 text-sm">
+                {errors.country.message}
+              </span>
+            )}
           </div>
 
-          <div className="flex gap-4 mt-4 md:mt-0">
-            <div>
-              <label className="block text-sm font-medium mb-1">City</label>
-              <input
-                type="text"
-                {...register('city', { required: 'City is required' })}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-              />
-              {errors.city && (
-                <span className="text-red-500 text-sm">
-                  {errors.city.message}
-                </span>
-              )}
-            </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Region/State
+            </label>
+            <select
+              {...register("region", { required: "Region/State is required" })}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+              disabled={!regions.length}
+            >
+              <option value="">Select Region/State</option>
+              {regions.map((region, index) => (
+                <option key={index} value={region}>
+                  {region}
+                </option>
+              ))}
+            </select>
+            {errors.region && (
+              <span className="text-red-500 text-sm">
+                {errors.region.message}
+              </span>
+            )}
+          </div>
+        </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1">Zip Code</label>
-              <input
-                type="text"
-                {...register('zipCode', { required: 'Zip code is required' })}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-              />
-              {errors.zipCode && (
-                <span className="text-red-500 text-sm">
-                  {errors.zipCode.message}
-                </span>
-              )}
-            </div>
+        <div className="md:flex gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">City</label>
+            <input
+              type="text"
+              {...register("city", { required: "City is required" })}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+            />
+            {errors.city && (
+              <span className="text-red-500 text-sm">
+                {errors.city.message}
+              </span>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Zip Code</label>
+            <input
+              type="text"
+              {...register("zipCode", { required: "Zip code is required" })}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+            />
+            {errors.zipCode && (
+              <span className="text-red-500 text-sm">
+                {errors.zipCode.message}
+              </span>
+            )}
           </div>
         </div>
 
@@ -154,7 +176,7 @@ function ShippingForm() {
             <label className="block text-sm font-medium mb-1">Email</label>
             <input
               type="email"
-              {...register('email', { required: 'Email is required' })}
+              {...register("email", { required: "Email is required" })}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
             />
             {errors.email && (
@@ -170,8 +192,8 @@ function ShippingForm() {
             </label>
             <input
               type="tel"
-              {...register('phoneNumber', {
-                required: 'Phone number is required',
+              {...register("phoneNumber", {
+                required: "Phone number is required",
               })}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
             />
