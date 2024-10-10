@@ -84,7 +84,7 @@ export default function Header() {
         </div>
 
         {/* Search bar for larger screens */}
-        <div className="relative hidden md:flex-2 md:block items-center md:w-3/5">
+        <div className="relative hidden md:flex-2 md:block items-center max-w-full md:w-3/5">
           <SearchIcon className="absolute top-[30%] left-3 h-5 w-5 text-gray-500" />
           <input
             type="text"
