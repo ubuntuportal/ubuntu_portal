@@ -13,13 +13,13 @@ export default function StoreProductCard({
   imageUrl,
 }: StoreProductCardProps) {
   return (
-    <div className="bg-white rounded-lg p-4 shadow-md w-full">
+    <div className="bg-white rounded-lg p-8 shadow-md w-full">
       {/* Product Image */}
       <div className="mb-4">
         <img
           src={imageUrl}
           alt={name}
-          className="w-full h-auto rounded-lg object-cover"
+          className="w-auto h-auto rounded-lg object-cover"
         />
       </div>
 
@@ -35,7 +35,7 @@ export default function StoreProductCard({
       {/* Price and Pending Button */}
       <div className="flex justify-between gap-4">
         <p className="text-lg font-bold text-green-600">{price}</p>
-        <Button className="w-full bg-amber-50 hover:bg-amber-100 text-green-600 text-md">
+        <Button className=" bg-amber-50 hover:bg-amber-100 text-green-600 text-md">
           Pending
         </Button>
       </div>
