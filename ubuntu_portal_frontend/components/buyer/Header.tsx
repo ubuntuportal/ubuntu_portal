@@ -27,7 +27,7 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-[#29964C]">
+    <header className="bg-[#A5C4D4]">
       <div className="flex items-center justify-between px-4 py-2 sm:px-6">
         <div className="flex">
           <div className="flex md:hidden items-center">
@@ -45,31 +45,31 @@ export default function Header() {
 
         {/* Conditionally render buttons based on login status */}
         <div className="flex items-center sm:hidden gap-2">
-          <MdOutlineShoppingCart />
           {!isLoggedIn ? (
             <>
               <Button
-                className="w-19 px-3 py-1 text-sm"
+                className="w-19 px-3 bg-white text-[#222] py-1 text-sm"
                 onClick={() => router.push("/auth/login")}
               >
                 Login
               </Button>
               <Button
-                className="w-18 px-2 py-1 text-sm"
+                className="w-18 px-2 py-1 bg-[#36151E] text-white text-sm"
                 onClick={() => router.push("/auth/register")}
               >
                 Sign Up
               </Button>
             </>
           ) : (
-            <Button className="w-18 px-2 py-1 text-sm" onClick={handleLogout}>
+            <Button
+              className="w-18 px-2 bg-[#36151E] text-white py-1 text-sm"
+              onClick={handleLogout}
+            >
               Logout
             </Button>
           )}
           <MdOutlineShoppingCart className="text-3xl w-1/2 text-white" />
         </div>
-
-        <div className="flex sm:hidden items-center text-white"></div>
 
         {/* Search bar for larger screens */}
         <div className="relative hidden md:flex-2 md:block items-center md:w-3/5">
@@ -86,20 +86,23 @@ export default function Header() {
           {!isLoggedIn ? (
             <>
               <Button
-                className="w-full px-4 py-2 text-sm"
+                className="w-full bg-[#36151E] text-white px-4 py-2 text-sm"
                 onClick={() => router.push("/auth/login")}
               >
                 Login
               </Button>
               <Button
-                className="w-full px-4 py-2 text-sm"
+                className="w-full bg-[#36151E] text-white px-4 py-2 text-sm"
                 onClick={() => router.push("/auth/register")}
               >
                 Sign Up
               </Button>
             </>
           ) : (
-            <Button className="w-full px-4 py-2 text-sm" onClick={handleLogout}>
+            <Button
+              className="w-full bg-[#36151E] text-white px-4 py-2 text-sm"
+              onClick={handleLogout}
+            >
               Logout
             </Button>
           )}
