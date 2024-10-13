@@ -1,4 +1,5 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useEffect } from "react";
+import { useRouter } from "/next/router"; // Import useRouter for navigation
 import Image from "next/image";
 import {
   Table,
@@ -97,6 +98,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 
 export default function Cart() {
   const [state, dispatch] = useReducer(cartReducer, initialState);
+  const router = useRouter(); // Initialize router for navigation
 
   const handleIncreaseQuantity = (id: number) => {
     dispatch({ type: "INCREASE_QUANTITY", payload: { id } });
@@ -118,6 +120,12 @@ export default function Cart() {
       (acc, cart) => acc + calculateSubtotal(cart.price, cart.quantity),
       0
     );
+  };
+
+  const handleProceedToCheckout = () => {
+    const total = calculateTotal();
+    sessionStorage.setItem("totalAmount", JSON.stringify(total)); // Store total in session storage
+    router.push("/home/buyers-information/shipping"); // Redirect to customer info form page
   };
 
   if (state.carts.length === 0) {
@@ -204,7 +212,10 @@ export default function Cart() {
               </div>
             </CardContent>
             <CardFooter>
-              <button className="bg-[#2DB224] hover:bg-[#248e1d] text-white font-bold py-2 px-4 rounded">
+              <button
+                className="bg-[#2DB224] hover:bg-[#248e1d] text-white font-bold py-2 px-4 rounded"
+                onClick={handleProceedToCheckout} // Call the proceed to checkout handler
+              >
                 PROCEED TO CHECKOUT
               </button>
             </CardFooter>
