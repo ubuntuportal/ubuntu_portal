@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import Product, ProductVariation, Category
-from django.db.models import F, Sum, ExpressionWrapper, DecimalField
+from .models import Product, ProductVariation, Category, Review
 
 
 class SubCategorySerializer(serializers.ModelSerializer):
@@ -70,3 +69,14 @@ class ProductSerializer(serializers.ModelSerializer):
         # Get the requested quantity from the context or default to 1
         quantity = self.context.get('quantity', 1)
         return obj.get_price_by_quantity(quantity)
+    
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['id', 'product', 'user', 'rating', 'comment', 'created_at']
+        read_only_fields = ('user', 'created_at')
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)

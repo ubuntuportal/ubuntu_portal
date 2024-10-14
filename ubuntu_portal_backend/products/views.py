@@ -2,10 +2,11 @@ from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Product, Category
+from .models import Product, Category, Review
 from django.db.models import Q
-from .serializers import ProductSerializer, CategorySerializer, SubCategorySerializer
+from .serializers import ProductSerializer, CategorySerializer, SubCategorySerializer, ReviewSerializer
 from rest_framework import filters
+from rest_framework import mixins
 from rest_framework.response import Response
 from .mixins import AdvanceFilteringMixins, PaginationMixins, IsSeller
 from rest_framework.decorators import action
@@ -187,3 +188,10 @@ class ManageProductsViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(seller=self.request.user)
+
+
+class RviewMixin(mixins.ListModelMixin,
+                 mixins.CreateModelMixin,
+                 viewsets.GenericViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
