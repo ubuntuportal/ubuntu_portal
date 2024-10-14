@@ -24,5 +24,5 @@ router.register(r'rfqs', RFQViewSet, basename='buyer-rfqs')
 urlpatterns = [
     path('api/', include(router.urls)),
     path('api/suggestions/', SuggestionGenericViewSet.as_view(), name='suggestions'),
-    path('api/notifications/', RfQNotifications.as_view()),
+    path('api/notifications/', RfQNotifications.as_view(), name='rfq-notification'),
 ]

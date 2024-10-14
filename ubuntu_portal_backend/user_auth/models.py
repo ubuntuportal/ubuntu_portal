@@ -1,11 +1,13 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.apps import apps
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 import uuid
 from phonenumber_field.modelfields import PhoneNumberField
 from django_countries.fields import CountryField
 from django.conf import settings
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -75,6 +77,7 @@ class UserProfile(models.Model):
     address = models.CharField(max_length=255, null=True, blank=True)
     city = models.CharField(max_length=100, null=True, blank=True)
     postal_code = models.CharField(max_length=20, null=True, blank=True)
+    viewed_products =  models.ManyToManyField('products.Product', related_name='viewed_by', blank=True)
 
     def __str__(self):
         return f"Profile of {self.user.first_name} {self.user.last_name}"

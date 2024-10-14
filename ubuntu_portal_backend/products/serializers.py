@@ -28,7 +28,8 @@ class ProductVariationSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductVariation
         fields = ['id', 'product', 'attribute',
-                  'value', 'price_modifier', 'stock']
+                  'value', 'price_modifier', 'stock', 'views_count',
+                  'sales_count', 'created_at', 'reviews_count']
 
 
 class ProductSerializer(serializers.ModelSerializer):

@@ -10,6 +10,8 @@ from rest_framework.response import Response
 from .mixins import AdvanceFilteringMixins, PaginationMixins, IsSeller
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
+import json
 
 
 class ProductViewSet(viewsets.ModelViewSet,
@@ -92,6 +94,49 @@ class ProductViewSet(viewsets.ModelViewSet,
 
     def perform_create(self, serializer):
         serializer.save(seller=self.request.user)
+
+    def retrieve(self, request, *args, **kwargs):
+        response = super().retrieve(request, *args, **kwargs)
+        product = get_object_or_404(Product, pk=kwargs['id'])
+
+        if not request.user.is_authenticated:
+            viewed_products = request.COOKIES.get('viewed_products')
+            if viewed_products:
+                viewed_products = json.loads(viewed_products)
+            else:
+                viewed_products = []
+
+            product_id = response.data['id']
+            if product_id not in viewed_products:
+                product.views_count += 1
+                product.save()
+                viewed_products.append(product_id)
+                response.set_cookie('viewed_products', json.dumps(
+                    viewed_products), max_age=60*60*24)
+        else:
+            user_profile = request.user.profile
+
+            if not user_profile.viewed_products.filter(id=product.id).exists():
+                product.views_count += 1
+                product.save()
+
+                user_profile.viewed_products.add(product)
+
+        return Response(response.data, status=response.status_code)
+
+    def list(self, request, *args, **kwargs):
+        queryset = Product.objects.all()
+        queryset = Product.calculate_score(queryset)
+        
+        # Order by the calculated total score
+        queryset = queryset.order_by('-total_score')
+        
+        # Apply pagination and serialize
+        paginator = PaginationMixins()
+        paginated_queryset = paginator.paginated_queryset(queryset, request)
+        serializer = self.get_serializer(paginated_queryset, many=True)
+        return Response(serializer.data)
+            
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

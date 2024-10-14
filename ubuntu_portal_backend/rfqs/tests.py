@@ -741,6 +741,7 @@ class TestSuggestionGenericViewset(APITestCase):
             price=100.00,
             seller=self.seller
         )
+    
         self.product2 = Product.objects.create(
             title='Cereal',
             description='Cereal for breakfast',
@@ -884,3 +885,131 @@ class TestSuggestionGenericViewset(APITestCase):
         
 
 
+class TestRfqNotificatoin(APITestCase):
+    def setUp(self):
+        self.buyer = User.objects.create_user(
+            first_name='Ayuba',
+            last_name='Naomi',
+            email='naomi@gmail.com',
+            country='SA',
+            role='Buyer',
+            phone_number='+2348085454617',
+            password='testing'
+        )
+
+        self.seller = User.objects.create_user(
+            first_name='John',
+            last_name='Doe',
+            email='john@gmail.com',
+            country='SA',
+            role='Seller',
+            phone_number='+23448085454617',
+            password='testing'
+        )
+        
+        self.seller2 = User.objects.create_user(
+            first_name='John',
+            last_name='Gabriel',
+            email='gabriel@gmail.com',
+            country='SA',
+            role='Seller',
+            phone_number='+23448093484617',
+            password='password'
+        )
+        
+        self.product2 = Product.objects.create(
+            title='Cereal',
+            description='Cereal for breakfast',
+            price=200.00,
+            seller=self.seller
+        )
+        
+        self.product3 = Product.objects.create(
+            title='Red Kettle',
+            description='Electric kettle for boiling water',
+            price=300.00,
+            seller=self.seller2
+        )
+        
+        self.product7 = Product.objects.create(
+            title='Black Kettle',
+            description='Electric kettle for boiling water',
+            price=300.00,
+            seller=self.seller
+        )
+        
+        self.product4 = Product.objects.create(
+            title='iPhone 16',
+            description='The latest iPhone in the market',
+            price=400.00,
+            seller=self.seller2
+        )
+        
+        self.product6 = Product.objects.create(
+            title='iPhone 12',
+            description='The latest iPhone in the market',
+            price=400.00,
+            seller=self.seller2
+        )
+        
+        category2 = Category.objects.create(name='Agricultural')
+        category3 = Category.objects.create(name='Wholesale Electronics')
+        # category4 = Category.objects.create(name='Fashion')
+        category5 = Category.objects.create(name='Home Appliances')
+       
+        self.product2.category.set([category2])
+        self.product3.category.set([category5])
+        self.product4.category.set([category3])
+        self.product6.category.set([category3])
+        self.product7.category.set([category5])
+        
+        self.client_as_a_buyer = APIClient()
+        self.client_as_a_buyer.force_authenticate(user=self.buyer)
+        self.client_as_a_seller = APIClient()
+        self.client_as_a_seller.force_authenticate(user=self.seller)
+        self.client_as_a_seller2 = APIClient()
+        self.client_as_a_seller2.force_authenticate(user=self.seller2)
+    
+    @patch('rfqs.models.RFQ.notify_suppliers')
+    def test_create_rfq_notification(self, mock_notify_suppliers):
+        url = reverse('rfq-notification')
+        valid_rfq_data = {
+            'buyer': self.buyer.id,
+            'product': self.product2.id,
+            'sourcing_quantity': 100,
+            'quantities_measurements': 'pieces',
+            'unit_price': 200.00,
+            'detailed_requirements': 'Test RFQ for quotation',
+            'status': 'Pending'
+        }
+        
+        response = self.client_as_a_buyer.post(url, valid_rfq_data, format='json')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(RFQ.objects.count(), 1)
+        self.assertEqual(RFQ.objects.first().buyer, self.buyer)
+        self.assertEqual(RFQ.objects.first().product, self.product2)
+        self.assertEqual(RFQ.objects.first().sourcing_quantity, 100)
+        self.assertEqual(RFQ.objects.first().unit_price, 200.00)
+        
+        mock_notify_suppliers.assert_called_once()
+    
+    def test_create_rfq_with_invalid_produt(self):
+        url = reverse('rfq-notification')
+        
+        invalid_rfq_data = {
+            'buyer': self.buyer.id,
+            'product': 9999,
+            'sourcing_quantity': 100,
+            'quantities_measurements': 'pieces',
+            'unit_price': 200.00,
+            'detailed_requirements': 'Test RFQ for invalid product',
+            'status': 'Pending'
+        }
+        
+    
+        response = self.client_as_a_buyer.post(url, invalid_rfq_data, format='json')
+        self.assertEqual(response.status_code, 400)
+        
+        self.assertIn('Invalid pk "9999" - object does not exist.', response.data['product'])
+
+        
