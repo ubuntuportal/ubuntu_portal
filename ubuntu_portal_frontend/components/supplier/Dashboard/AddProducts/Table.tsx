@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
 
 import {
   Table,
@@ -22,86 +21,19 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-const products = [
-  {
-    name: "Tomato",
-    description: "Fresh and Healthy tomatoes",
-    quantity: 5,
-    price: "$500",
-  },
-  {
-    name: "Apple",
-    description: "Fresh and Healthy apples",
-    quantity: 10,
-    price: "$100",
-  },
-  {
-    name: "Banana",
-    description: "Fresh and Healthy bananas",
-    quantity: 15,
-    price: "$150",
-  },
-  {
-    name: "Orange",
-    description: "Fresh and Healthy oranges",
-    quantity: 20,
-    price: "$200",
-  },
-  {
-    name: "Pineapple",
-    description: "Fresh and Healthy pineapples",
-    quantity: 25,
-    price: "$250",
-  },
-  {
-    name: "Grapes",
-    description: "Fresh and Healthy grapes",
-    quantity: 30,
-    price: "$300",
-  },
-  {
-    name: "Mango",
-    description: "Fresh and Healthy mangoes",
-    quantity: 35,
-    price: "$350",
-  },
-];
+interface SupplierProduct {
+  id: number;
+  title: string;
+  description: string;
+  stock: number;
+  price: string;
+}
 
-export function Tables() {
-  const [suppliersProduct, setSuppliersProducts] = useState([]);
-  const { data: session } = useSession();
+interface TablesProps {
+  suppliersProduct: SupplierProduct[];
+}
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      if (!session?.accessToken) return; // Ensure the token is available
-
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/suppliers/products/`, // Use environment variable for the API URL
-          {
-            method: "GET",
-
-            headers: {
-              Authorization: `Bearer ${session.accessToken}`, // Add token to the request headers
-            },
-          }
-        );
-        console.log(response);
-        // Check if response is OK (status in range of 200-299)
-        if (!response.ok) {
-          throw new Error(`Failed to fetch: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log(data); // Handle the response data (e.g., set state)
-        console.log(data.results); // Handle the response data (e.g., set state)
-        // setSuppliersProducts(data.results); // Handle the response data (e.g., set state)
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-    fetchProducts();
-  }, [session]);
+export function Tables({ suppliersProduct }: TablesProps) {
   return (
     <>
       <Table>
@@ -115,11 +47,11 @@ export function Tables() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products.map((product) => (
-            <TableRow key={product.name}>
-              <TableCell className="font-medium">{product.name}</TableCell>
+          {suppliersProduct.map((product) => (
+            <TableRow key={product.id}>
+              <TableCell className="font-medium">{product.title}</TableCell>
               <TableCell>{product.description}</TableCell>
-              <TableCell>{product.quantity}</TableCell>
+              <TableCell>{product.stock}</TableCell>
               <TableCell className="text-right">{product.price}</TableCell>
             </TableRow>
           ))}

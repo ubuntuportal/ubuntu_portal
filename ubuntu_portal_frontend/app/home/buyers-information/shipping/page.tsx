@@ -2,12 +2,11 @@
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { africanCountries } from "@/lib/data/AfricanCountries"; // Adjust the path accordingly
+import { africanCountries } from "@/lib/data/AfricanCountries"; // Ensure the correct path
 
-type BillingFormInputs = {
+type ShippingFormInputs = {
   firstName: string;
   lastName: string;
-  companyName?: string;
   address: string;
   country: string;
   region: string;
@@ -17,85 +16,74 @@ type BillingFormInputs = {
   phoneNumber: string;
 };
 
-function BillingForm() {
+function ShippingForm() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<BillingFormInputs>();
+  } = useForm<ShippingFormInputs>();
 
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [regions, setRegions] = useState<string[]>([]);
 
-  const onSubmit: SubmitHandler<BillingFormInputs> = (data) => {
+  const onSubmit: SubmitHandler<ShippingFormInputs> = (data) => {
     console.log(data);
   };
 
-  // Function to handle country change and update regions dropdown
   const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const country = e.target.value;
     setSelectedCountry(country);
 
+    // Find the country from the africanCountries array
     const foundCountry = africanCountries.find((c) => c.name === country);
-    setRegions(foundCountry ? foundCountry.states : []);
+    setRegions(foundCountry ? foundCountry.states : []); // Set regions based on the country
   };
 
   return (
     <div className="max-w-md mx-auto md:max-w-screen-md p-4">
-      <h2 className="text-2xl font-semibold mb-4">Billing Information</h2>
+      <h2 className="text-2xl font-semibold mb-4">Shipping Address</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="md:flex gap-4">
-          <div>
-            <p className="block text-sm font-medium mb-1">User name</p>
-            <div className="flex gap-4">
-              <div>
-                <input
-                  type="text"
-                  placeholder="First Name"
-                  {...register("firstName", {
-                    required: "First name is required",
-                  })}
-                  className="w-full md:max-w-44 px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-                />
-                {errors.firstName && (
-                  <span className="text-red-500 text-sm">
-                    {errors.firstName.message}
-                  </span>
-                )}
-              </div>
-
-              <div>
-                <input
-                  type="text"
-                  placeholder="Last Name"
-                  {...register("lastName", {
-                    required: "Last name is required",
-                  })}
-                  className="w-full md:max-w-44 px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-                />
-                {errors.lastName && (
-                  <span className="text-red-500 text-sm">
-                    {errors.lastName.message}
-                  </span>
-                )}
-              </div>
+        <div>
+          <p className="block text-sm font-medium mb-1">Recipient's Name</p>
+          <div className="flex gap-4">
+            <div>
+              <input
+                type="text"
+                placeholder="First Name"
+                {...register("firstName", {
+                  required: "First name is required",
+                })}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+              />
+              {errors.firstName && (
+                <span className="text-red-500 text-sm">
+                  {errors.firstName.message}
+                </span>
+              )}
             </div>
-          </div>
 
-          <div className="mt-4 md:mt-0 flex-1">
-            <label className="block text-sm font-medium mb-1">
-              Company Name (Optional)
-            </label>
-            <input
-              type="text"
-              {...register("companyName")}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-            />
+            <div>
+              <input
+                type="text"
+                placeholder="Last Name"
+                {...register("lastName", {
+                  required: "Last name is required",
+                })}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+              />
+              {errors.lastName && (
+                <span className="text-red-500 text-sm">
+                  {errors.lastName.message}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Address</label>
+          <label className="block text-sm font-medium mb-1">
+            Shipping Address
+          </label>
           <input
             type="text"
             {...register("address", { required: "Address is required" })}
@@ -184,32 +172,38 @@ function BillingForm() {
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
-          <input
-            type="email"
-            {...register("email", { required: "Email is required" })}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-          />
-          {errors.email && (
-            <span className="text-red-500 text-sm">{errors.email.message}</span>
-          )}
-        </div>
+        <div className="md:flex gap-4">
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-1">Email</label>
+            <input
+              type="email"
+              {...register("email", { required: "Email is required" })}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+            />
+            {errors.email && (
+              <span className="text-red-500 text-sm">
+                {errors.email.message}
+              </span>
+            )}
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Phone Number</label>
-          <input
-            type="tel"
-            {...register("phoneNumber", {
-              required: "Phone number is required",
-            })}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-          />
-          {errors.phoneNumber && (
-            <span className="text-red-500 text-sm">
-              {errors.phoneNumber.message}
-            </span>
-          )}
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-1">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              {...register("phoneNumber", {
+                required: "Phone number is required",
+              })}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+            />
+            {errors.phoneNumber && (
+              <span className="text-red-500 text-sm">
+                {errors.phoneNumber.message}
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="flex gap-4 pt-2">
@@ -221,4 +215,4 @@ function BillingForm() {
   );
 }
 
-export default BillingForm;
+export default ShippingForm;

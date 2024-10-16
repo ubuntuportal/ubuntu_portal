@@ -4,13 +4,23 @@ import { Button } from "@/components/ui/button";
 
 import { useSession } from "next-auth/react";
 
+interface SupplierProduct {
+  id: number;
+  title: string;
+  description: string;
+  stock: number;
+  price: string;
+}
+
+interface AddProductProps {
+  onProductAdd: (newProduct: SupplierProduct) => void;
+}
 // Default values shown
 
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -26,7 +36,7 @@ interface Product {
   images: File[]; // Images field added to the Product type
 }
 
-export function AddProduct() {
+export function AddProduct({ onProductAdd }: AddProductProps) {
   const [product, setProduct] = useState<Product>({
     title: "",
     description: "",
@@ -69,6 +79,7 @@ export function AddProduct() {
   };
 
   const handleRemoveImage = (index: number) => {
+    URL.revokeObjectURL(imagePreviews[index]);
     setProduct((prevProduct) => ({
       ...prevProduct,
       images: prevProduct.images.filter((_, i) => i !== index),
@@ -104,7 +115,7 @@ export function AddProduct() {
 
       // Make the API request with the authorization token in the headers
       const response = await fetch(
-        "https://ubuntu-portal.onrender.com/api/products/", // Use environment variable for the API URL
+        `${process.env.NEXT_PUBLIC_API_URL}/products/`, // Use environment variable for the API URL
         {
           method: "POST",
           headers: {
@@ -113,7 +124,8 @@ export function AddProduct() {
           body: formData,
         }
       );
-
+      const addedProduct = await response.json();
+      onProductAdd(addedProduct);
       if (response.ok) {
         alert("Product added successfully");
         // Reset the form and state
@@ -141,7 +153,7 @@ export function AddProduct() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="bg-green-500 hover:bg-green-300">
+        <Button variant="outline" className="bg-[#36151E] hover:bg-green-300">
           Add Product
         </Button>
       </DialogTrigger>

@@ -1,7 +1,7 @@
 import React from "react";
 import { Input } from "../ui/input";
 import Image from "next/image";
-import logo from "@/public/Logo.png";
+import Logo_complete from "@/public/Logo_complete.png";
 import { IoSend } from "react-icons/io5";
 
 export default function Footer() {
@@ -20,11 +20,16 @@ export default function Footer() {
     },
   ];
   return (
-    <footer className="flex gap-[1vw]  container bottom-0  bg-gradient-to-b from-[#29964C] to-[#0D3018] pb-10">
+    <footer className="flex gap-[1vw]  container bottom-0  bg-gradient-to-b from-[#543840] to-[#36151E] pb-10">
       <div className="flex flex-col md:flex-row w-full pt-14 gap-6">
         <aside className="flex-[1.5] mr-7">
           <div className=" mb-2 text-white font-extrabold leading-6">
-            <Image src={logo} alt="logo" />
+            <Image
+              src={Logo_complete}
+              alt="Ubuntu Portal"
+              width={360}
+              height={130}
+            />
           </div>
           <p className="text-white">
             We are a platform that connects buyers and suppliers.
