@@ -90,11 +90,10 @@ export default function RegisterPage() {
     data.phone_number = formattedPhone;
     data.role = role; // Add selected role to the data object
     const body = JSON.stringify(data);
-    console.log(body);
 
     try {
       const response = await fetch(
-        "https://ubuntu-portal.onrender.com/api/auth/register/",
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/register/`,
         {
           method: "POST",
           mode: "cors",
@@ -105,7 +104,7 @@ export default function RegisterPage() {
         }
       );
       const result = await response.json();
-      console.log(result);
+
       if (!response.ok) {
         const errorData = await response.json();
         toast.error(errorData.detail);

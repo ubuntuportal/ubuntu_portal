@@ -6,6 +6,7 @@ import Logo_complete from "@/public/Logo_complete.png";
 import { SearchIcon } from "@heroicons/react/outline";
 import { IoMenu, IoCloseSharp } from "react-icons/io5";
 import { useRouter } from "next/navigation";
+import { MdOutlineShoppingCart } from "react-icons/md";
 import { useSession, signOut } from "next-auth/react"; // Import NextAuth hooks
 
 export default function Header() {
@@ -43,48 +44,35 @@ export default function Header() {
         </div>
 
         {/* Conditionally render buttons based on login status */}
-        <div className="flex sm:hidden gap-2">
+        <div className="flex items-center sm:hidden gap-2">
           {!isLoggedIn ? (
             <>
               <Button
-                className="w-19 px-3 py-1 text-sm"
+                className="w-19 px-3 bg-white text-[#222] py-1 text-sm"
                 onClick={() => router.push("/auth/login")}
               >
                 Login
               </Button>
               <Button
-                className="w-18 px-2 py-1 text-sm"
+                className="w-18 px-2 py-1 bg-[#36151E] text-white text-sm"
                 onClick={() => router.push("/auth/register")}
               >
                 Sign Up
               </Button>
             </>
           ) : (
-            <Button className="w-18 px-2 py-1 text-sm" onClick={handleLogout}>
+            <Button
+              className="w-18 px-2 bg-[#36151E] text-white py-1 text-sm"
+              onClick={handleLogout}
+            >
               Logout
             </Button>
           )}
-        </div>
-
-        <div className="flex sm:hidden items-center text-white">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-7"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-            />
-          </svg>
+          <MdOutlineShoppingCart className="text-3xl w-1/2 text-white" />
         </div>
 
         {/* Search bar for larger screens */}
-        <div className="relative hidden md:flex-2 md:block items-center md:w-3/5">
+        <div className="relative hidden md:flex-2 md:block items-center max-w-full md:w-3/5">
           <SearchIcon className="absolute top-[30%] left-3 h-5 w-5 text-gray-500" />
           <input
             type="text"
@@ -94,27 +82,31 @@ export default function Header() {
         </div>
 
         {/* Conditional rendering of buttons for larger screens */}
-        <div className="sm:flex hidden space-x-2">
+        <div className="sm:flex items-center hidden space-x-2">
           {!isLoggedIn ? (
             <>
               <Button
-                className="w-full px-4 py-2 text-sm"
+                className="w-full bg-[#36151E] text-white px-4 py-2 text-sm"
                 onClick={() => router.push("/auth/login")}
               >
                 Login
               </Button>
               <Button
-                className="w-full px-4 py-2 text-sm"
+                className="w-full bg-[#36151E] text-white px-4 py-2 text-sm"
                 onClick={() => router.push("/auth/register")}
               >
                 Sign Up
               </Button>
             </>
           ) : (
-            <Button className="w-full px-4 py-2 text-sm" onClick={handleLogout}>
+            <Button
+              className="w-full bg-[#36151E] text-white px-4 py-2 text-sm"
+              onClick={handleLogout}
+            >
               Logout
             </Button>
           )}
+          <MdOutlineShoppingCart className="text-5xl w-1/2 text-white" />
         </div>
       </div>
 

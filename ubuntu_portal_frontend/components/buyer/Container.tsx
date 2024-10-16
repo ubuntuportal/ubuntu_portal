@@ -99,7 +99,7 @@ export default function Container() {
       <div className="w-full sm:w-8/12 pt-4 pb-4">
         <Searchbox />
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-4">
         {products.map((product) => (
           <Link href={`products-listing/${product.id}`} key={product.id}>
             <ProductCard

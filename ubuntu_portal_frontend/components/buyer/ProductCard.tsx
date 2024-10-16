@@ -15,18 +15,19 @@ export function ProductCard({
   price,
 }: ProductCardProps) {
   return (
-    <div className="bg-white h-auto shadow-md rounded-lg  transition-transform transform hover:scale-105">
+    <div className="bg-white overflow-hidden shadow-md rounded-lg transition-transform transform hover:scale-105 hover:shadow-lg p-4">
       <Image
         src={image}
-        alt={name}
-        className="w-full p-5 "
+        alt={name} // Make sure this is descriptive
+        className="w-full h-32 object-cover"
         width={187}
         height={162}
+        loading="lazy" // Improve performance with lazy loading
       />
-      <div className="p-4">
-        <h3 className="text-lg font-semibold">{name}</h3>
-        <p className="text-gray-600 mt-2">{description}</p>
-        <div className="mt-4">
+      <div className="p-3">
+        <h3 className="text-sm font-semibold">{name}</h3>
+        <p className="text-gray-600 mt-1">{description}</p>
+        <div className="mt-2">
           <span className="font-sans text-lg font-bold text-green-700">
             {price}
           </span>

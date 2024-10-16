@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
+
 import {
   Table,
   TableBody,
@@ -20,52 +21,19 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-const products = [
-  {
-    name: "Tomato",
-    description: "Fresh and Healthy tomatoes",
-    quantity: 5,
-    price: "$500",
-  },
-  {
-    name: "Apple",
-    description: "Fresh and Healthy apples",
-    quantity: 10,
-    price: "$100",
-  },
-  {
-    name: "Banana",
-    description: "Fresh and Healthy bananas",
-    quantity: 15,
-    price: "$150",
-  },
-  {
-    name: "Orange",
-    description: "Fresh and Healthy oranges",
-    quantity: 20,
-    price: "$200",
-  },
-  {
-    name: "Pineapple",
-    description: "Fresh and Healthy pineapples",
-    quantity: 25,
-    price: "$250",
-  },
-  {
-    name: "Grapes",
-    description: "Fresh and Healthy grapes",
-    quantity: 30,
-    price: "$300",
-  },
-  {
-    name: "Mango",
-    description: "Fresh and Healthy mangoes",
-    quantity: 35,
-    price: "$350",
-  },
-];
+interface SupplierProduct {
+  id: number;
+  title: string;
+  description: string;
+  stock: number;
+  price: string;
+}
 
-export function Tables() {
+interface TablesProps {
+  suppliersProduct: SupplierProduct[];
+}
+
+export function Tables({ suppliersProduct }: TablesProps) {
   return (
     <>
       <Table>
@@ -79,11 +47,11 @@ export function Tables() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products.map((product) => (
-            <TableRow key={product.name}>
-              <TableCell className="font-medium">{product.name}</TableCell>
+          {suppliersProduct.map((product) => (
+            <TableRow key={product.id}>
+              <TableCell className="font-medium">{product.title}</TableCell>
               <TableCell>{product.description}</TableCell>
-              <TableCell>{product.quantity}</TableCell>
+              <TableCell>{product.stock}</TableCell>
               <TableCell className="text-right">{product.price}</TableCell>
             </TableRow>
           ))}
