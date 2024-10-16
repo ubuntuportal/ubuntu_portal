@@ -133,6 +133,6 @@ class CartViewSet(viewsets.ModelViewSet):
         order.update_total_amount()
 
         # Clear the cart after the order is successfully placed
-        cart.items.all().delete()
+        #cart.items.all().delete()
 
         return Response({'success': 'Order placed successfully', 'order_id': order.id}, status=status.HTTP_201_CREATED)

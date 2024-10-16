@@ -2,14 +2,50 @@ from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Product, Category
+from .models import Product, Category, Review, ProductSpecification, AdditionalInformation
 from django.db.models import Q
-from .serializers import ProductSerializer, CategorySerializer, SubCategorySerializer
+from .serializers import ProductSerializer, CategorySerializer, SubCategorySerializer, ReviewSerializer, ProductSpecificationSerializer, AdditionalInformationSerializer
 from rest_framework import filters
+from rest_framework import mixins
 from rest_framework.response import Response
 from .mixins import AdvanceFilteringMixins, PaginationMixins, IsSeller
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
+import json
+
+
+
+class AdditionalInformationViewSet(viewsets.ModelViewSet):
+    queryset = AdditionalInformation.objects.all()
+    serializer_class = AdditionalInformationSerializer
+    
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [IsAuthenticatedOrReadOnly()]  # Allow anyone to view
+        return [IsAuthenticated()]  # Restrict write actions to authenticated users
+
+    def get_queryset(self):
+        product_id = self.request.query_params.get('product_id', None)
+        if product_id:
+            return AdditionalInformation.objects.filter(product_id=product_id)
+        return super().get_queryset()
+
+
+class ProductSpecificationViewSet(viewsets.ModelViewSet):
+    queryset = ProductSpecification.objects.all()
+    serializer_class = ProductSpecificationSerializer
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [IsAuthenticatedOrReadOnly()]  # Allow anyone to view
+        return [IsAuthenticated()]  # Restrict write actions to authenticated users
+
+    def get_queryset(self):
+        product_id = self.request.query_params.get('product_id', None)
+        if product_id:
+            return Specification.objects.filter(product_id=product_id)
+        return super().get_queryset()
 
 
 class ProductViewSet(viewsets.ModelViewSet,
@@ -29,6 +65,9 @@ class ProductViewSet(viewsets.ModelViewSet,
 
         # Set default ordering
         queryset = queryset.order_by('created_at')
+
+        # Prefetch additional information, specifications, and reviews
+        queryset = queryset.prefetch_related('additional_info','specifications')
 
         # General filtering applied to all requests
         price_min = self.request.query_params.get('price_min')
@@ -91,7 +130,63 @@ class ProductViewSet(viewsets.ModelViewSet,
         return super().get_permissions()
 
     def perform_create(self, serializer):
-        serializer.save(seller=self.request.user)
+        additional_info_data = self.request.data.pop('additional_info')
+        specifications_data = self.request.data.pop('specifications')
+
+        # Save the Product instance
+        product = serializer.save(seller=self.request.user)
+
+        # Handle related models creation
+        if additional_info_data:
+            for info in additional_info_data:
+                AdditionalInformation.objects.create(product=product, **info)
+
+        if specifications_data:
+            for spec in specifications_data:
+                Specification.objects.create(product=product, **spec)
+
+    def retrieve(self, request, *args, **kwargs):
+        response = super().retrieve(request, *args, **kwargs)
+        product = get_object_or_404(Product, pk=kwargs['id'])
+
+        if not request.user.is_authenticated:
+            viewed_products = request.COOKIES.get('viewed_products')
+            if viewed_products:
+                viewed_products = json.loads(viewed_products)
+            else:
+                viewed_products = []
+
+            product_id = response.data['id']
+            if product_id not in viewed_products:
+                product.views_count += 1
+                product.save()
+                viewed_products.append(product_id)
+                response.set_cookie('viewed_products', json.dumps(
+                    viewed_products), max_age=60*60*24)
+        else:
+            user_profile = request.user.profile
+
+            if not user_profile.viewed_products.filter(id=product.id).exists():
+                product.views_count += 1
+                product.save()
+
+                user_profile.viewed_products.add(product)
+
+        return Response(response.data, status=response.status_code)
+
+    def list(self, request, *args, **kwargs):
+        queryset = Product.objects.all()
+        queryset = Product.calculate_score(queryset)
+        
+        # Order by the calculated total score
+        queryset = queryset.order_by('-total_score')
+        
+        # Apply pagination and serialize
+        paginator = PaginationMixins()
+        paginated_queryset = paginator.paginated_queryset(queryset, request)
+        serializer = self.get_serializer(paginated_queryset, many=True)
+        return Response(serializer.data)
+            
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -142,3 +237,12 @@ class ManageProductsViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(seller=self.request.user)
+
+
+class RviewMixin(mixins.ListModelMixin,
+                 mixins.CreateModelMixin,
+                 viewsets.GenericViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+

@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import Product, ProductVariation, Category
-from django.db.models import F, Sum, ExpressionWrapper, DecimalField
+from .models import Product, ProductVariation, Category, Review, AdditionalInformation, ProductSpecification
 
 
 class SubCategorySerializer(serializers.ModelSerializer):
@@ -24,11 +23,24 @@ class CategorySerializer(serializers.ModelSerializer):
         return SubCategorySerializer(subcategories, many=True).data
 
 
+class AdditionalInformationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdditionalInformation
+        fields = ['info_title', 'info_description']
+
+
+class ProductSpecificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductSpecification
+        fields = ['spec_name', 'spec_value']
+
+
 class ProductVariationSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductVariation
         fields = ['id', 'product', 'attribute',
-                  'value', 'price_modifier', 'stock']
+                  'value', 'price_modifier', 'stock', 'views_count',
+                  'sales_count', 'created_at', 'reviews_count']
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -36,11 +48,13 @@ class ProductSerializer(serializers.ModelSerializer):
         queryset=Category.objects.all(), many=True)
     variations = ProductVariationSerializer(many=True, read_only=True)
     price_by_quantity = serializers.SerializerMethodField()
+    additional_info = AdditionalInformationSerializer(many=True, read_only=True)
+    specifications = ProductSpecificationSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
         fields = ('id', 'title', 'description', 'stock', 'manufactured_country',
-                  'price', 'discount_tiers', 'price_by_quantity', 'image', 'category', 'variations', 'seller', 'rating')
+                  'price', 'discount_tiers', 'price_by_quantity', 'image', 'category', 'variations', 'seller', 'rating', 'additional_info', 'specifications')
         read_only_fields = ('seller', 'variations')
 
     def create(self, validated_data):
@@ -69,3 +83,14 @@ class ProductSerializer(serializers.ModelSerializer):
         # Get the requested quantity from the context or default to 1
         quantity = self.context.get('quantity', 1)
         return obj.get_price_by_quantity(quantity)
+    
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['id', 'product', 'user', 'rating', 'comment', 'created_at']
+        read_only_fields = ('user', 'created_at')
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
