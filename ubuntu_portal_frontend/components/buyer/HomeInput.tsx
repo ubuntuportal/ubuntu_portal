@@ -1,14 +1,41 @@
-import React from "react";
+"use client";
 import { SearchIcon } from "@heroicons/react/outline";
-export default function HomeInput() {
+import React, { useState } from "react";
+
+interface HomeInputProps {
+  setFilteredProducts: (products: any[]) => void;
+}
+
+export default function HomeInput({ setFilteredProducts }: HomeInputProps) {
+  const [filterTerm, setFilterTerm] = useState<string>("");
+
+  const handleFilter = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (filterTerm.trim() === "") return;
+
+    try {
+      const response = await fetch(
+        `https://ubuntu-portal.onrender.com/api/products/filter/?category=${filterTerm}`
+      );
+      const data = await response.json();
+      setFilteredProducts(data.results); // Pass the filtered products to the parent component
+    } catch (error) {
+      console.error("Error filtering products:", error);
+    }
+  };
+
   return (
-    <div className="relative md:hidden mx-auto my-2.5 items-center w-auto">
-      <SearchIcon className="absolute top-[25%] left-2 h-5 w-5 text-gray-500" />
+    <div className="relative flex items-center w-full">
       <input
         type="text"
-        placeholder="Search essentials, groceries and more.."
-        className="w-full py-1.5 pl-8 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500"
+        placeholder="Filter by category..."
+        className="w-full py-2 pl-4 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500"
+        value={filterTerm}
+        onChange={(e) => setFilterTerm(e.target.value)}
       />
+      <button className="absolute right-3 h-5 w-5 text-gray-500" onClick={handleFilter}>
+        <SearchIcon />
+      </button>
     </div>
   );
 }
