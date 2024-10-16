@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import Footer from "@/components/buyer/Footer";
 import Header from "@/components/supplier/Dashboard/Layouts/Header";
 import Sidebar from "@/components/supplier/Dashboard/Layouts/Sidebar";
 
@@ -22,7 +21,6 @@ export default function SupplierLayout({
           <section>{children}</section>
         </div>
       </div>
-      <Footer />
     </main>
   );
 }

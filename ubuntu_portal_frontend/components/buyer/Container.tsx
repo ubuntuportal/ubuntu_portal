@@ -1,4 +1,3 @@
-// "use client";
 import React from "react";
 import { ProductCard } from "./ProductCard"; // Ensure the correct import path
 import Searchbox from "./Searchbox";
