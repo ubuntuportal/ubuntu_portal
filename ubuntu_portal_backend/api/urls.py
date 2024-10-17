@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from products.views import ProductViewSet, CategoryViewSet, ManageProductsViewSet, AdditionalInformationViewSet, ProductSpecificationViewSet
+from products.views import ProductViewSet, CategoryViewSet, ManageProductsViewSet, AdditionalInformationViewSet, ProductSpecificationViewSet, RviewMixin
 from orders.views import OrderViewSet, BillingInfoViewSet, ContactInfoViewSet, ShippingInfoViewSet
 from rfqs.views import QuotationViewSet, RFQViewSet, SuggestionGenericViewSet, RfQNotifications
 from carts.views import CartViewSet
@@ -25,6 +25,7 @@ router.register(r'products/specifications', ProductSpecificationViewSet, basenam
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('rfqs/suggestions/', SuggestionGenericViewSet.as_view(), name='suggestions'),
-    path('rfqs/notifications/', RfQNotifications.as_view()),
+    path('api/suggestions/', SuggestionGenericViewSet.as_view(), name='suggestions'),
+    path('api/notifications/', RfQNotifications.as_view(), name='rfq-notification'),
+    path('api/reviews/', RviewMixin.as_view({'get': 'list', 'post': 'create'}), name='reviews'),
 ]

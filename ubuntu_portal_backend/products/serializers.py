@@ -39,8 +39,7 @@ class ProductVariationSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductVariation
         fields = ['id', 'product', 'attribute',
-                  'value', 'price_modifier', 'stock', 'views_count',
-                  'sales_count', 'created_at', 'reviews_count']
+                  'value', 'price_modifier', 'stock']
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -54,7 +53,9 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id', 'title', 'description', 'stock', 'manufactured_country',
-                  'price', 'discount_tiers', 'price_by_quantity', 'image', 'category', 'variations', 'seller', 'rating', 'additional_info', 'specifications')
+                  'price', 'discount_tiers', 'price_by_quantity', 'image', 'category',
+                  'variations', 'seller', 'additional_info', 'specifications', 'views_count',
+                  'sales_count', 'created_at', 'reviews_count')
         read_only_fields = ('seller', 'variations')
 
     def create(self, validated_data):
@@ -88,7 +89,7 @@ class ProductSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
-        fields = ['id', 'product', 'user', 'rating', 'comment', 'created_at']
+        fields = ['id', 'product', 'user', 'rating', 'comment']
         read_only_fields = ('user', 'created_at')
 
     def create(self, validated_data):

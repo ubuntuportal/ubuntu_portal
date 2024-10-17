@@ -8,6 +8,7 @@ from .serializers import QuotationSerializer, RFQSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+from asgiref.sync import sync_to_async
 
 
 
@@ -62,13 +63,13 @@ class RfQNotifications(generics.CreateAPIView):
     queryset = Product.objects.all()
     serializer_class = RFQSerializer
     
-    def perform_create(self, *args, **kwargs):
+    async def perform_create(self, *args, **kwargs):
         try:
-            product = Product.objects.get(id=self.request.data['product_id'])
+            product = await Product.objects.get(id=self.request.data['product'])
         except Product.DoesNotExist:
             raise ValidationError({'product_id': 'Product does not exist'})
         
-        rfq = RFQ.objects.create(
+        rfq = await RFQ.objects.create(
             buyer=self.request.user, 
             product=product,
             sourcing_quantity=self.request.data['sourcing_quantity'],
@@ -78,6 +79,6 @@ class RfQNotifications(generics.CreateAPIView):
             media=self.request.FILES.get('media', None)
         )
         
-        rfq.notify_suppliers()
+        await rfq.notify_suppliers()
         return rfq
     

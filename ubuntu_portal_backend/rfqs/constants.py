@@ -100,3 +100,5 @@ STATUS_CHOICE = [
     ('Approved', 'Approved'),
     ('Rejected', 'Rejected'),
 ]
+
+MAX_VIEW = 500
