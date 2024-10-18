@@ -139,7 +139,7 @@ export default function Cart() {
   }
 
   return (
-    <div className="container px-3 md:px-16 bg-white">
+    <div className="container px-3 md:px-16 bg-transparent">
       <div className="flex flex-col pt-10 md:flex-row gap-4 mx-auto">
         <div className="">
           <Table className="w-[100%] md:w-auto border-2 rounded-md border-slate-200">

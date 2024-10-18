@@ -30,10 +30,12 @@ export default function Products({
           Product name for maximum two text lines title could be very long
         </p>
 
-        <h2 className="text-4xl font-bold text-[#2DB224] ">$30</h2>
+        <h2 className="text-4xl font-bold text-[#7fb4cf]">$30</h2>
         <div className="flex gap-5 py-6">
           <Button>Start Order</Button>
-          <Button className="bg-[#2DB224]">Add to Cart</Button>
+          <Button className="bg-[#7fb4cf] hover:bg-[#7badc6]">
+            Add to Cart
+          </Button>
         </div>
         <div className="grid w-[80%] grid-cols-2 gap-2 text-xs font-semibold">
           <div>
