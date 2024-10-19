@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { MenuIcon } from "@heroicons/react/outline"; // Import the menu icon
 import LogoutButton from "../../../LogoutButton";
 import {
@@ -14,14 +15,16 @@ interface HeaderProps {
 
 function Header({ toggleSidebar }: HeaderProps) {
   return (
-    <header className="bg-[#A5C4D4] p-4 flex items-center justify-between">
+    <header className="bg-transparent p-4 flex items-center justify-between">
       <div className="flex items-center justify-between">
         {/* Toggle Sidebar Button */}
         <button onClick={toggleSidebar} className=" p-2 text-gray-600">
           <MenuIcon className="h-6 w-6" />
         </button>
         <div className="w-48">
-          <img src="/Logo_complete.png" alt="Ubuntu Portal" />
+          <Link href="/supplier/dashboard">
+            <img src="/Logo_complete.png" alt="Ubuntu Portal" />
+          </Link>
         </div>
       </div>
 
