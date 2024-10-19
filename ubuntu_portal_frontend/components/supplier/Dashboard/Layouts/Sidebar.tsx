@@ -48,9 +48,10 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     >
       <div>
         <div className="mb-4 flex justify-between items-center">
-          <Link href={"/supplier/dashboard"}>
+          <div>
             <img src="/Logo_complete.png" alt="logo" className="w-48" />
-          </Link>
+          </div>
+
           {/* Close button inside sidebar */}
           <button onClick={toggleSidebar} className="p-2 text-gray-600">
             <span className="sr-only">Close sidebar</span>✖{" "}

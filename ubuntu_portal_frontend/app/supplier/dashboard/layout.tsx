@@ -13,7 +13,7 @@ export default function SupplierLayout({
   const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
 
   return (
-    <main className="bg-gray-50">
+    <main className="bg-gray-100">
       <div className="h-screen flex">
         <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         <div className="w-[86%] md:w-[92%] lg:w-[84%] xl:w-[86%] overflow-scroll flex-1 flex-col mb-2">
