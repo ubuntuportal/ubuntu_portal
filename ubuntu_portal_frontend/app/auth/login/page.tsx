@@ -52,7 +52,6 @@ export default function LoginPage() {
       } else if (session.role === "supplier") {
         router.push("/supplier/dashboard");
       }
-      console.log(session?.role);
     }
   }, [session, status, router]);
 

@@ -62,7 +62,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
           <ul className="space-y-2">
             {menuItems.map((item) => (
               <li key={item.name} className="relative">
-                <Link href={item.href}>
+                <Link href={item.href} onClick={toggleSidebar}>
                   <div className="flex items-center ml-8 p-2 rounded-md transition-colors duration-200 relative text-black hover:bg-gray-200">
                     <item.icon className="h-5 w-5 mr-3 z-10" />
                     <span className="z-10">{item.name}</span>
