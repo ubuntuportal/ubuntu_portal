@@ -2,22 +2,34 @@
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useSession } from "next-auth/react";
 import { africanCountries } from "@/lib/data/AfricanCountries"; // Adjust the path accordingly
+import { toast } from "react-toastify";
+
+address: "9 agoro Street idumota lagos Island ";
+city: "Kosofe";
+companyName: "Mayowa";
+country: "Nigeria";
+email: "inioluwadaniel03@gmail.com";
+phoneNumber: "08113777257";
+region: "Lagos";
+zipCode: "100001";
 
 type BillingFormInputs = {
   firstName: string;
   lastName: string;
-  companyName?: string;
+  company_name?: string;
   address: string;
   country: string;
-  region: string;
+  region_state: string;
   city: string;
-  zipCode: string;
+  zip_code: string;
   email: string;
-  phoneNumber: string;
+  phone_number: string;
 };
 
 function BillingForm() {
+  const { data: session } = useSession();
   const {
     register,
     handleSubmit,
@@ -27,7 +39,35 @@ function BillingForm() {
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [regions, setRegions] = useState<string[]>([]);
 
-  const onSubmit: SubmitHandler<BillingFormInputs> = (data) => {
+  const onSubmit: SubmitHandler<BillingFormInputs> = async (data) => {
+    try {
+      if (!session || !session?.accessToken) {
+        toast.error("Unauthorized: Token not found.");
+        return;
+      }
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/billing_info/orders/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.accessToken}`, // Add token to the request headers
+          },
+          body: JSON.stringify(data), // Convert the form data to JSON
+        }
+      );
+
+      const result = await response.json();
+      console.log(result);
+      if (!response.ok) {
+        throw new Error("Failed to submit the form");
+        console.log(result);
+      }
+
+      console.log("Form submitted successfully:", result);
+    } catch (error) {
+      console.error("Error submitting the form:", error);
+    }
     console.log(data);
   };
 
@@ -45,7 +85,7 @@ function BillingForm() {
       <h2 className="text-2xl font-semibold mb-4">Billing Information</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="md:flex gap-4">
-          <div>
+          {/* <div>
             <p className="block text-sm font-medium mb-1">User name</p>
             <div className="flex gap-4">
               <div>
@@ -80,7 +120,7 @@ function BillingForm() {
                 )}
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="mt-4 md:mt-0 flex-1">
             <label className="block text-sm font-medium mb-1">
@@ -88,7 +128,7 @@ function BillingForm() {
             </label>
             <input
               type="text"
-              {...register("companyName")}
+              {...register("company_name")}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
             />
           </div>
@@ -135,7 +175,9 @@ function BillingForm() {
               Region/State
             </label>
             <select
-              {...register("region", { required: "Region/State is required" })}
+              {...register("region_state", {
+                required: "Region/State is required",
+              })}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
               disabled={!regions.length}
             >
@@ -146,9 +188,9 @@ function BillingForm() {
                 </option>
               ))}
             </select>
-            {errors.region && (
+            {errors.region_state && (
               <span className="text-red-500 text-sm">
-                {errors.region.message}
+                {errors.region_state.message}
               </span>
             )}
           </div>
@@ -173,12 +215,12 @@ function BillingForm() {
             <label className="block text-sm font-medium mb-1">Zip Code</label>
             <input
               type="text"
-              {...register("zipCode", { required: "Zip code is required" })}
+              {...register("zip_code", { required: "Zip code is required" })}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
             />
-            {errors.zipCode && (
+            {errors.zip_code && (
               <span className="text-red-500 text-sm">
-                {errors.zipCode.message}
+                {errors.zip_code.message}
               </span>
             )}
           </div>
@@ -200,14 +242,14 @@ function BillingForm() {
           <label className="block text-sm font-medium mb-1">Phone Number</label>
           <input
             type="tel"
-            {...register("phoneNumber", {
+            {...register("phone_number", {
               required: "Phone number is required",
             })}
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
           />
-          {errors.phoneNumber && (
+          {errors.phone_number && (
             <span className="text-red-500 text-sm">
-              {errors.phoneNumber.message}
+              {errors.phone_number.message}
             </span>
           )}
         </div>

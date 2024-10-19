@@ -44,7 +44,9 @@ function ShippingForm() {
       <h2 className="text-2xl font-semibold mb-4">Shipping Address</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <p className="block text-sm font-medium mb-1">Recipient's Name</p>
+          <p className="block text-sm font-medium mb-1">
+            Recipient`&apos;`s Name
+          </p>
           <div className="flex gap-4">
             <div>
               <input
