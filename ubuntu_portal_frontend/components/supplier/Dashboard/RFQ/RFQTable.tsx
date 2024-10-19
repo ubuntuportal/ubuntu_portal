@@ -56,24 +56,24 @@ const RFQTable = () => {
           {/* Smart RFQ ID */}
           <div className="w-1/4 text-left">
             <div className="text-gray-400">Smart RFQ ID</div>
-            <div className="text-black text-xl font-semibold ">{rfq.id}</div>
+            <div className="text-black text-lg font-semibold ">{rfq.id}</div>
           </div>
 
           <div className="w-1/4 text-left">
             <div className="text-gray-400">Name</div>
-            <div className="text-black text-xl font-semibold ">{rfq.name}</div>
+            <div className="text-black text-lg font-semibold ">{rfq.name}</div>
           </div>
 
           <div className="w-1/4 text-left">
             <div className="text-gray-400">Quantity</div>
-            <div className="text-black text-xl font-semibold ">
+            <div className="text-black text-lg font-semibold ">
               {rfq.quantity}
             </div>
           </div>
 
           <div className="w-1/4 text-left">
             <div className="text-gray-400">Date</div>
-            <div className="text-black text-xl font-semibold ">{rfq.date}</div>
+            <div className="text-black text-lg font-semibold ">{rfq.date}</div>
           </div>
 
           {/* View Proposal Button */}

@@ -15,7 +15,7 @@ async function Dashboard() {
   const session = await getServerSession(authOptions);
 
   // If no session exists or if the user is not a seller, redirect to the login page
-  if (!session || session.role !== "seller") {
+  if (!session || session.role !== "supplier") {
     redirect("/auth/login");
   }
 

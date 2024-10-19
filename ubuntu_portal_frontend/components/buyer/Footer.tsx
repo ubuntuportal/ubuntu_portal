@@ -1,5 +1,4 @@
 import React from "react";
-import { Input } from "../ui/input";
 import Image from "next/image";
 import Logo_complete from "@/public/Logo_complete.png";
 import { IoSend } from "react-icons/io5";
@@ -27,7 +26,7 @@ export default function Footer() {
             <Image
               src={Logo_complete}
               alt="Ubuntu Portal"
-              width={360}
+              width={200}
               height={130}
             />
           </div>

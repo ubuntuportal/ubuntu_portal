@@ -23,7 +23,7 @@ export async function middleware(req: NextRequest) {
       if (isProtectedRoute) {
         return NextResponse.redirect(new URL("/home", req.url)); // Redirect buyer to their homepage
       }
-    } else if (token.role !== "seller") {
+    } else if (token.role !== "supplier") {
       // If the user is neither a seller nor a buyer, redirect to login
       return NextResponse.redirect(new URL("/auth/login", req.url));
     }

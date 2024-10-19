@@ -4,19 +4,30 @@ import { Button } from "@/components/ui/button";
 
 import { useSession } from "next-auth/react";
 
+interface SupplierProduct {
+  id: number;
+  title: string;
+  description: string;
+  stock: number;
+  price: string;
+}
+
+interface AddProductProps {
+  onProductAdd: (newProduct: SupplierProduct) => void;
+}
 // Default values shown
 
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "react-toastify";
 
 interface Product {
   title: string;
@@ -26,7 +37,7 @@ interface Product {
   images: File[]; // Images field added to the Product type
 }
 
-export function AddProduct() {
+export function AddProduct({ onProductAdd }: AddProductProps) {
   const [product, setProduct] = useState<Product>({
     title: "",
     description: "",
@@ -69,6 +80,7 @@ export function AddProduct() {
   };
 
   const handleRemoveImage = (index: number) => {
+    URL.revokeObjectURL(imagePreviews[index]);
     setProduct((prevProduct) => ({
       ...prevProduct,
       images: prevProduct.images.filter((_, i) => i !== index),
@@ -81,7 +93,7 @@ export function AddProduct() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (product.images.length === 0) {
-      alert("Please upload at least one image.");
+      toast.error("Please upload at least one image.");
       return;
     }
     setLoading(true); // Start loading
@@ -98,39 +110,43 @@ export function AddProduct() {
 
     try {
       if (!session || !session?.accessToken) {
-        alert("Unauthorized: Token not found.");
+        toast.error("Unauthorized: Token not found.");
         return;
       }
 
       // Make the API request with the authorization token in the headers
       const response = await fetch(
-        "https://ubuntu-portal.onrender.com/api/products/", // Use environment variable for the API URL
+        `${process.env.NEXT_PUBLIC_API_URL}/products/`, // Use environment variable for the API URL
         {
           method: "POST",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${session.accessToken}`, // Add token to the request headers
           },
           body: formData,
         }
       );
+      const result = await response.json();
 
-      if (response.ok) {
-        alert("Product added successfully");
-        // Reset the form and state
-        setProduct({
-          title: "",
-          description: "",
-          price: 0,
-          stock: 0,
-          images: [],
-        });
-        setImagePreviews([]);
-      } else {
-        const errorData = await response.json();
-        alert(`Failed to add product: ${errorData.message}`);
+      if (!response.ok) {
+        toast.error(`Failed to add product: ${result.messages[0].message}`);
+        console.error(result.messages);
+        return;
       }
+
+      onProductAdd(result);
+      toast.success("Product added successfully");
+      // Reset the form and state
+      setProduct({
+        title: "",
+        description: "",
+        price: 0,
+        stock: 0,
+        images: [],
+      });
+      setImagePreviews([]);
     } catch (error) {
-      alert("Error adding product: " + (error as Error).message);
+      toast.error("Error adding product: " + (error as Error).message);
     } finally {
       setLoading(false); // End loading state
     }
@@ -303,3 +319,29 @@ export function AddProduct() {
     </Dialog>
   );
 }
+
+// const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//   const files = e.target.files;
+//   if (files) {
+//     const validFiles = [];
+//     const previewUrls = [];
+//     for (let i = 0; i < files.length; i++) {
+//       const file = files[i];
+//       if (file.size > 2 * 1024 * 1024) { // 2MB limit
+//         alert(`${file.name} is too large. Please upload files smaller than 2MB.`);
+//         continue;
+//       }
+//       if (!file.type.startsWith("image/")) {
+//         alert(`${file.name} is not a valid image file.`);
+//         continue;
+//       }
+//       validFiles.push(file);
+//       previewUrls.push(URL.createObjectURL(file));
+//     }
+//     setProduct((prevProduct) => ({
+//       ...prevProduct,
+//       images: [...prevProduct.images, ...validFiles],
+//     }));
+//     setImagePreviews((prevPreviews) => [...prevPreviews, ...previewUrls]);
+//   }
+// };
