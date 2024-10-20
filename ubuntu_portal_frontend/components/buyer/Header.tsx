@@ -68,7 +68,7 @@ export default function Header() {
               Logout
             </Button>
           )}
-          <MdOutlineShoppingCart className="text-3xl w-1/2 text-white" />
+          <MdOutlineShoppingCart className="text-3xl w-1/2 text-[#36151E]" />
         </div>
 
         {/* Search bar for larger screens */}
@@ -106,7 +106,7 @@ export default function Header() {
               Logout
             </Button>
           )}
-          <MdOutlineShoppingCart className="text-5xl w-1/2 text-white" />
+          <MdOutlineShoppingCart className="text-5xl w-1/2 text-[#36151E]" />
         </div>
       </div>
 

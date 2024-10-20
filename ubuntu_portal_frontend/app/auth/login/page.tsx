@@ -49,7 +49,7 @@ export default function LoginPage() {
     if (status === "authenticated" && session?.role) {
       if (session.role === "buyer") {
         router.push("/home");
-      } else if (session.role === "seller") {
+      } else if (session.role === "supplier") {
         router.push("/supplier/dashboard");
       }
     }

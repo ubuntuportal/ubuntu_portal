@@ -104,17 +104,19 @@ export default function RegisterPage() {
         }
       );
       const result = await response.json();
+      console.log(result.password);
 
       if (!response.ok) {
-        const errorData = await response.json();
-        toast.error(errorData.detail);
-        throw new Error(errorData.detail || "Failed to register.");
+        // Use the parsed result for the error
+        toast.error(result);
+        throw new Error(result || "Failed to register.");
       }
 
       // Registration successful
       toast.success("Please check email to verify account");
       router.push("/auth/login");
     } catch (err) {
+      console.error(err);
       toast.error("Registration failed");
     }
   };

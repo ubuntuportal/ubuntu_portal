@@ -1,27 +1,57 @@
-'use client';
-import { Button } from '@/components/ui/button';
-import React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+"use client";
+import { Button } from "@/components/ui/button";
+import React from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 type ContactFormInputs = {
-  firstName: string;
-  lastName: string;
-  country: string;
-  region: string;
+  first_name: string;
+  last_name: string;
+  preferred_contact_method: string;
+  best_time_to_contact: string;
   city: string;
   zipCode: string;
-  email: string;
-  phoneNumber: string;
+  email_address: string;
+  phone_number: string;
 };
 
 function ContactForm() {
+  const { data: session } = useSession();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<ContactFormInputs>();
 
-  const onSubmit: SubmitHandler<ContactFormInputs> = (data) => {
+  const onSubmit: SubmitHandler<ContactFormInputs> = async (data) => {
+    try {
+      if (!session || !session?.accessToken) {
+        toast.error("Unauthorized: Token not found.");
+        return;
+      }
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/contact_info/orders/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.accessToken}`, // Add token to the request headers
+          },
+          body: JSON.stringify(data), // Convert the form data to JSON
+        }
+      );
+
+      const result = await response.json();
+      console.log(result);
+      if (!response.ok) {
+        throw new Error("Failed to submit the form");
+      }
+
+      console.log("Form submitted successfully:", result);
+    } catch (error) {
+      console.error("Error submitting the form:", error);
+    }
     console.log(data);
   };
 
@@ -36,14 +66,14 @@ function ContactForm() {
               <input
                 type="text"
                 placeholder="First Name"
-                {...register('firstName', {
-                  required: 'First name is required',
+                {...register("first_name", {
+                  required: "First name is required",
                 })}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
               />
-              {errors.firstName && (
+              {errors.first_name && (
                 <span className="text-red-500 text-sm">
-                  {errors.firstName.message}
+                  {errors.first_name.message}
                 </span>
               )}
             </div>
@@ -52,14 +82,14 @@ function ContactForm() {
               <input
                 type="text"
                 placeholder="Last Name"
-                {...register('lastName', {
-                  required: 'Last name is required',
+                {...register("last_name", {
+                  required: "Last name is required",
                 })}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
               />
-              {errors.lastName && (
+              {errors.last_name && (
                 <span className="text-red-500 text-sm">
-                  {errors.lastName.message}
+                  {errors.last_name.message}
                 </span>
               )}
             </div>
@@ -70,13 +100,14 @@ function ContactForm() {
           <div className="flex-1">
             <label className="block text-sm font-medium mb-1">Email</label>
             <input
+              placeholder="Email"
               type="email"
-              {...register('email', { required: 'Email is required' })}
+              {...register("email_address", { required: "Email is required" })}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
             />
-            {errors.email && (
+            {errors.email_address && (
               <span className="text-red-500 text-sm">
-                {errors.email.message}
+                {errors.email_address.message}
               </span>
             )}
           </div>
@@ -86,15 +117,16 @@ function ContactForm() {
               Phone Number
             </label>
             <input
+              placeholder="Phone Number"
               type="tel"
-              {...register('phoneNumber', {
-                required: 'Phone number is required',
+              {...register("phone_number", {
+                required: "Phone number is required",
               })}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
             />
-            {errors.phoneNumber && (
+            {errors.phone_number && (
               <span className="text-red-500 text-sm">
-                {errors.phoneNumber.message}
+                {errors.phone_number.message}
               </span>
             )}
           </div>
@@ -106,13 +138,16 @@ function ContactForm() {
               Preferred Contact Method
             </label>
             <input
+              placeholder="Email / Phone Number"
               type="text"
-              {...register('country', { required: 'Country is required' })}
+              {...register("preferred_contact_method", {
+                required: "Method required",
+              })}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
             />
-            {errors.country && (
+            {errors.preferred_contact_method && (
               <span className="text-red-500 text-sm">
-                {errors.country.message}
+                {errors.preferred_contact_method.message}
               </span>
             )}
           </div>
@@ -122,15 +157,16 @@ function ContactForm() {
               Best Time to Contact (Optional)
             </label>
             <input
+              placeholder="Afternoon, Morning, Evening, Weekend's"
               type="text"
-              {...register('region', {
-                required: 'Region/State is required',
+              {...register("best_time_to_contact", {
+                required: "Time is required",
               })}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
             />
-            {errors.region && (
+            {errors.best_time_to_contact && (
               <span className="text-red-500 text-sm">
-                {errors.region.message}
+                {errors.best_time_to_contact.message}
               </span>
             )}
           </div>
