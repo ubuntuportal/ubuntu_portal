@@ -6,7 +6,7 @@ from products.models import Product, ProductVariation
 class BillingInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = BillingInfo
-        fields = '__all__'
+        fields = ['company_name', 'address', 'country', 'region_state', 'city', 'zip_code', 'email', 'phone_number']
 
     def validate_user(self, value):
         # Assuming 'value' is a CustomUser object, access the email field
@@ -19,7 +19,7 @@ class BillingInfoSerializer(serializers.ModelSerializer):
 class ShippingInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShippingInfo
-        fields = '__all__'
+        fields = ['reciepient_first_name', 'reciepient_last_name', 'address', 'country', 'region_state', 'city', 'zip_code', 'email', 'phone_number']
 
     def validate_user(self, value):
         # Assuming 'value' is a CustomUser object, access the email field
@@ -32,7 +32,7 @@ class ShippingInfoSerializer(serializers.ModelSerializer):
 class ContactInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactInfo
-        fields = '__all__'
+        fields = ['first_name', 'last_name', 'email_address', 'phone_number', 'preferred_contact_method', 'best_time_to_contact']
 
     def validate_user(self, value):
         # Assuming 'value' is a CustomUser object, access the email field
