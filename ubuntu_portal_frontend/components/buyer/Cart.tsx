@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect } from "react";
-import { useRouter } from "/next/router"; // Import useRouter for navigation
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   Table,

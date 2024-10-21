@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import ProfileFormC from "./ProfileFormC";
 
 const ProfileFormA: React.FC = () => {
   const [image, setImage] = useState<string | null>(null);
@@ -26,7 +27,7 @@ const ProfileFormA: React.FC = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto">
+    <div className="items-center max-w-md mx-auto">
       {/* Image Upload */}
       <div className="flex flex-col items-center mb-6">
         <p>Your profile Picture</p>
@@ -101,6 +102,7 @@ const ProfileFormA: React.FC = () => {
           className="w-full px-3 py-2 border rounded-md"
         />
       </div>
+      <ProfileFormC />
     </div>
   );
 };

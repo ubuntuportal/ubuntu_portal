@@ -113,8 +113,8 @@ const RevenueChart = () => {
             verticalAlign="top"
             wrapperStyle={{ paddingTop: "10px", paddingBottom: "30px" }}
           />
-          <Line type="monotone" dataKey="2023" stroke="green" strokeWidth={5} />
-          <Line type="monotone" dataKey="2024" stroke="red" strokeWidth={5} />
+          <Line type="monotone" dataKey="2023" stroke="green" strokeWidth={2} />
+          <Line type="monotone" dataKey="2024" stroke="red" strokeWidth={2} />
         </LineChart>
       </ResponsiveContainer>
     </div>

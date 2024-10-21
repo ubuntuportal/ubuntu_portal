@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { MenuIcon } from "@heroicons/react/outline"; // Import the menu icon
 import LogoutButton from "../../../LogoutButton";
+import ProfileButton from "./ProfileButton";
 import {
   BellIcon,
   CogIcon,
@@ -54,9 +55,7 @@ function Header({ toggleSidebar }: HeaderProps) {
         <button className="text-gray-600 hover:text-gray-800">
           <CogIcon className="h-8 w-8" />
         </button>
-        <button className="text-gray-600 hover:text-gray-800">
-          <UserCircleIcon className="h-8 w-8" />
-        </button>
+        <ProfileButton />
       </div>
     </header>
   );
