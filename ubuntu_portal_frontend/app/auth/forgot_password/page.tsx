@@ -1,42 +1,69 @@
 "use client";
-import React, { useState } from "react";
-import Image from "next/image";
+import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/buyer/Footer";
-import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { signIn } from "next-auth/react";
-import { GetServerSideProps } from "next";
-import { getSession } from "next-auth/react";
+import axios from "axios";
 
 export default function LoginPage() {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const data = Object.fromEntries(formData.entries());
+    const { email } = data;
+
+    try {
+      const response = await axios.post(
+        "https://ubuntu-portal.onrender.com/api/auth/forgot-password/",
+        { email },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Axios will throw an error if the response status is not in the 2xx range
+      if (response.status === 200) {
+        toast.success("Password reset instructions sent to your email!");
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        // Handle Axios-specific errors
+        const message =
+          err.response?.data?.detail ||
+          "Failed to send reset instructions. Please try again.";
+        toast.error(message);
+      } else if (err instanceof Error) {
+        // Handle other errors
+        toast.error(err.message);
+      } else {
+        toast.error("Something went wrong.");
+      }
+    } finally {
+      // setLoading(false); // Uncomment if you're using loading state
+    }
+  };
+
   return (
     <>
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center w-screen">
         {/* Logo */}
         <div className="mb-8 mt-8">
-          {/* <a href="/supplier/">
-          <Image
-            src="/public/Logo.png" // path to logo
-            alt="Logo"
-            width={120}
-            height={40}
-          />
-        </a> */}
           <div>Ubuntu Portal</div>
         </div>
         <div className="flex mb-16 gap-8">
           {/* Login Form Container */}
-          <div className="bg-green-50 bg-gradient-to-tr p-8 rounded-3xl shadow-md w-full max-w-sm shadow-lg shadow-slate-600">
+          <div className="bg-green-50 bg-gradient-to-tr p-8 rounded-3xl shadow-md w-full max-w-sm shadow-slate-600">
             <div className="item-center text-center">
               <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-                Reset password
+                Reset Password
               </h2>
             </div>
 
             {/* Login Form */}
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label
                   htmlFor="email"

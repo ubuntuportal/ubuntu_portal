@@ -7,6 +7,7 @@ import { CarouselSize } from "@/components/buyer/Carousel";
 
 import ProductTab from "@/components/buyer/ProductTab";
 import Products from "@/components/buyer/Product";
+import ProductPage from "@/components/buyer/ProductPage";
 
 export default function ProductDetails({
   params,
@@ -28,6 +29,7 @@ export default function ProductDetails({
           <ProductTab />
         </div>
       </div>
+      <ProductPage />
     </div>
   );
 }

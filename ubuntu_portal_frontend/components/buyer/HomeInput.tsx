@@ -25,7 +25,7 @@ export default function HomeInput({ setFilteredProducts }: HomeInputProps) {
   };
 
   return (
-    <div className="relative flex items-center w-full">
+    <div className="md:hidden my-3 relative flex items-center w-full">
       <input
         type="text"
         placeholder="Filter by category..."
@@ -33,7 +33,10 @@ export default function HomeInput({ setFilteredProducts }: HomeInputProps) {
         value={filterTerm}
         onChange={(e) => setFilterTerm(e.target.value)}
       />
-      <button className="absolute right-3 h-5 w-5 text-gray-500" onClick={handleFilter}>
+      <button
+        className="absolute right-3 h-5 w-5 text-gray-500"
+        onClick={handleFilter}
+      >
         <SearchIcon />
       </button>
     </div>
