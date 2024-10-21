@@ -15,7 +15,7 @@ const ProfileFormC: React.FC = () => {
   };
 
   return (
-    <div className="m-8 w-[620]">
+    <div className=" w-full">
       {/* Bio Section */}
       <div className="mb-4">
         <label className="block text-gray-700 font-semibold mb-1">Bio</label>
@@ -23,7 +23,7 @@ const ProfileFormC: React.FC = () => {
           name="bio"
           value={formData.bio}
           onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-md"
+          className="w-full h-fit px-3 py-2 border rounded-md"
         />
       </div>
     </div>
