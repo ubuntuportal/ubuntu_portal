@@ -9,10 +9,10 @@ from rest_framework import filters
 from rest_framework.response import Response
 from .mixins import AdvanceFilteringMixins, PaginationMixins, IsSeller
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
 
 
-
-class ProductViewSet(viewsets.ModelViewSet, 
+class ProductViewSet(viewsets.ModelViewSet,
                      AdvanceFilteringMixins,
                      PaginationMixins):
 
@@ -26,7 +26,7 @@ class ProductViewSet(viewsets.ModelViewSet,
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        
+
         # Set default ordering
         queryset = queryset.order_by('created_at')
 
@@ -63,7 +63,6 @@ class ProductViewSet(viewsets.ModelViewSet,
         serializer = self.get_serializer(paginated_queryset, many=True)
         return Response(serializer.data)
 
-
     @action(detail=False, methods=['get'], url_path='filter')
     def filter(self, request):
         queryset = self.get_queryset()
@@ -88,7 +87,6 @@ class ProductViewSet(viewsets.ModelViewSet,
         serializer.save(seller=self.request.user)
 
 
-
 class CategoryViewSet(viewsets.ModelViewSet):
     """
     A viewset for handling CRUD operations on the Category model.
@@ -111,13 +109,15 @@ class CategoryViewSet(viewsets.ModelViewSet):
         """
         parent_category = self.get_object()
         subcategory_data = request.data
-        
+
         subcategory_serializer = SubCategorySerializer(data=subcategory_data)
-        
+
         if subcategory_serializer.is_valid():
-            subcategory_serializer.save(parent=parent_category)  # Ensure 'parent' field is set correctly
+            # Ensure 'parent' field is set correctly
+            subcategory_serializer.save(parent=parent_category)
             return Response(subcategory_serializer.data, status=201)
         return Response(subcategory_serializer.errors, status=400)
+
 
 class ManageProductsViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
@@ -127,7 +127,7 @@ class ManageProductsViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if getattr(self, 'swagger_fake_view', False):
             return self.queryset.none()  # Return an empty queryset for schema generation
-    
+
         # For real requests, check if the user is authenticated
         if not self.request.user.is_authenticated:
             raise PermissionDenied("You must be logged in to view this data.")
