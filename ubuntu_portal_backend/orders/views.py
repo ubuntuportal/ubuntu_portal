@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from .models import Order, ShippingInfo, BillingInfo, ContactInfo
 from .serializers import OrderSerializer, BillingInfoSerializer, ShippingInfoSerializer, ContactInfoSerializer
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.decorators import action
 
 
@@ -33,7 +34,6 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
-
     def get_queryset(self):
         # Handle schema generation case for drf_yasg
         if getattr(self, 'swagger_fake_view', False):
@@ -45,7 +45,6 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Order.objects.filter(user=user)
         else:
             return Order.objects.none()
-
 
     def perform_create(self, serializer):
         # Retrieve the related objects by their IDs
@@ -86,7 +85,6 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Response({'success': 'Order status updated'}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Status field is required'}, status=status.HTTP_400_BAD_REQUEST)
-
 
     @action(detail=False, methods=['get'], url_path='history')
     def history(self, request):

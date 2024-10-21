@@ -167,4 +167,8 @@ class CompanyViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Company.objects.filter(user=self.request.user)
+        if self.request.user.is_authenticated:
+            return Company.objects.filter(user=self.request.user)
+        else:
+            return Company.objects.none()
+
