@@ -15,8 +15,8 @@ function EditProfile() {
         </div>
       </div>
       <div className="mt-8 flex space-x-4">
-        <Button>Reset</Button>
-        <Button className="bg-white text-black">Submit</Button>
+        <Button className="w-[240px]">Reset</Button>
+        <Button className="w-[240px] bg-white text-black">Submit</Button>
       </div>
     </div>
   );
