@@ -40,7 +40,14 @@ export default function Header() {
               <IoMenu className="text-white text-4xl" onClick={toggleMenu} />
             )}
           </div> */}
-          <Image src={Logo_complete} alt="logo" width={130} height={130} />
+          <Image
+            onClick={() => router.push("/home")}
+            className="cursor-pointer"
+            src={Logo_complete}
+            alt="logo"
+            width={130}
+            height={130}
+          />
         </div>
 
         {/* Conditionally render buttons based on login status */}
@@ -68,7 +75,10 @@ export default function Header() {
               Logout
             </Button>
           )}
-          <MdOutlineShoppingCart className="text-3xl w-1/2 text-[#36151E]" />
+          <MdOutlineShoppingCart
+            onClick={() => router.push("/home/carts")}
+            className="text-3xl w-1/2 text-[#36151E] cursor-pointer"
+          />
         </div>
 
         {/* Search bar for larger screens */}
@@ -106,7 +116,10 @@ export default function Header() {
               Logout
             </Button>
           )}
-          <MdOutlineShoppingCart className="text-5xl w-1/2 text-[#36151E]" />
+          <MdOutlineShoppingCart
+            onClick={() => router.push("/home/carts")}
+            className="text-5xl w-1/2 text-[#36151E] cursor-pointer"
+          />
         </div>
       </div>
 

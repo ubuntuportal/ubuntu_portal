@@ -63,20 +63,20 @@ class RFQ(models.Model):
         except AttributeError:
             return "Unknown"
 
-    def notify_suppliers(self):
+    async def notify_suppliers(self):
         """Trigger real-time notification to relevant suppliers, including"""
         from channels.layers import get_channel_layer
-        from asgiref.sync import async_to_sync
+        from asgiref.sync import sync_to_async
 
         channel_layer = get_channel_layer()
-        suppliers = self.get_relevant_suppliers()
+        suppliers = await sync_to_async(self.get_relevant_suppliers)()
 
-        buyer_country = self.get_buyer_country()
+        buyer_country = await sync_to_async(self.get_buyer_country)()
 
         for supplier in suppliers:
-            self.suppliers_notified.add(supplier)
+            await sync_to_async(self.suppliers_notified.add)(supplier)
             try:
-                async_to_sync(channel_layer.group_send)(
+                await channel_layer.group_send(
                     f"supplier_{supplier.id}",
                     {
                         'type': 'send_notification',
@@ -89,10 +89,10 @@ class RFQ(models.Model):
     def get_relevant_suppliers(self):
         """Return a list of suppliers who can supply the requested product"""
         return User.objects.filter(
-            role='seller',
+            role='Seller',
             country=self.get_buyer_country(),
-            category=self.product.category
-        )
+            products__category__in=self.product.category.all()
+        ).distinct()
 
 
 class Quotation(models.Model):
