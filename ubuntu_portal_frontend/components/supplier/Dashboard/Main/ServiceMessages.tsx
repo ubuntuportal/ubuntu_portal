@@ -33,10 +33,10 @@ const ServiceMessages = () => {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl text-white">Service Messages</h2>
+        <h2 className="text-lg text-white">Service Messages</h2>
         <a
           href="/rfq-page"
-          className="text-white text-lg hover:underline hover:text-amber-800"
+          className="text-white hover:underline hover:text-amber-800"
         >
           View All
         </a>

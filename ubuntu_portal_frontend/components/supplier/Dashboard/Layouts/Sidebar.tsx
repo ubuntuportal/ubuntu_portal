@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation"; // Import useRouter
 import {
   HomeIcon,
   UserIcon,
@@ -15,6 +16,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
+  const router = useRouter();
   const menuItems = [
     { name: "Dashboard", icon: HomeIcon, href: "/supplier/dashboard" },
     { name: "Profile", icon: UserIcon, href: "/supplier/dashboard/profile" },
@@ -38,24 +40,25 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     { name: "RFQ", icon: CollectionIcon, href: "/supplier/dashboard/rfq-list" },
   ];
 
+  const isActive = (href: string) => router.pathname === href;
+
   return (
     <div
-      className={
-        `bg-[#A5C4D4] text-black w-64 h-screen p-4 border-r border-gray-200 flex flex-col justify-between fixed z-30 transform ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out` /* Removed lg:translate-x-0 */
-      }
+      className={`bg-[#A5C4D4] text-black w-64 h-screen p-4 border-r border-gray-200 flex flex-col justify-between fixed z-30 md:static transform ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      } md:translate-x-0 transition-transform duration-300 ease-in-out`}
     >
       <div>
         <div className="mb-4 flex justify-between items-center">
           <div>
             <img src="/Logo_complete.png" alt="logo" className="w-48" />
           </div>
-
           {/* Close button inside sidebar */}
-          <button onClick={toggleSidebar} className="p-2 text-gray-600">
-            <span className="sr-only">Close sidebar</span>✖{" "}
-            {/* Or any icon you prefer */}
+          <button
+            onClick={toggleSidebar}
+            className="p-2 text-gray-600 md:hidden"
+          >
+            <span className="sr-only">Close sidebar</span>✖
           </button>
         </div>
         <div className="text-center text-gray-500">Suppliers Dashboard</div>
@@ -64,9 +67,15 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
             {menuItems.map((item) => (
               <li key={item.name} className="relative">
                 <Link href={item.href} onClick={toggleSidebar}>
-                  <div className="flex items-center ml-8 p-2 rounded-md transition-colors duration-200 relative text-black hover:bg-gray-200">
-                    <item.icon className="h-5 w-5 mr-3 z-10" />
-                    <span className="z-10">{item.name}</span>
+                  <div
+                    className={`flex items-center ml-8 p-2 rounded-md transition-colors duration-200 relative ${
+                      isActive(item.href)
+                        ? "bg-blue-600 text-white"
+                        : "text-black hover:bg-gray-200"
+                    }`}
+                  >
+                    <item.icon className="h-5 w-5 mr-3" />
+                    <span>{item.name}</span>
                   </div>
                 </Link>
               </li>

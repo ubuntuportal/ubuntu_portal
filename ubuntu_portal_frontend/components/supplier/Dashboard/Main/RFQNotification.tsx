@@ -42,7 +42,7 @@ const RFQNotificationTable = () => {
     <div className="overflow-x-auto">
       {/* Header Section */}
       <div className="flex justify-between items-center m-4">
-        <h2 className="text-xl font-bold">RFQ Notifications</h2>
+        <h2 className="text-lg font-semibold">RFQ Notifications</h2>
         <a
           href="/rfq-page"
           className="text-amber-600 text-lg hover:underline hover:text-amber-800"

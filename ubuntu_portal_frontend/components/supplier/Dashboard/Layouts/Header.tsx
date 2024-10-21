@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { MenuIcon } from "@heroicons/react/outline"; // Import the menu icon
-import LogoutButton from "../../../LogoutButton";
+import { MenuIcon } from "@heroicons/react/outline";
+import LogoutButton from "../../../LogoutButton"; // Assuming this is a custom component
 import {
   BellIcon,
   CogIcon,
@@ -14,14 +14,38 @@ interface HeaderProps {
 }
 
 function Header({ toggleSidebar }: HeaderProps) {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Add scroll effect to change header background on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <header className="bg-transparent p-4 flex items-center justify-between">
-      <div className="flex items-center justify-between">
-        {/* Toggle Sidebar Button */}
-        <button onClick={toggleSidebar} className=" p-2 text-gray-600">
+    <header
+      className={`mx-4 p-4 flex gap-x-8 items-center justify-center fixed top-0 w-fit z-20 transition-all duration-300 ${
+        isScrolled ? "bg-white shadow-md" : "bg-transparent"
+      }`}
+    >
+      <div className="flex items-center">
+        {/* Toggle Sidebar Button (Hamburger) - hidden on desktop */}
+        <button onClick={toggleSidebar} className="p-2 text-gray-600 md:hidden">
           <MenuIcon className="h-6 w-6" />
         </button>
-        <div className="w-48">
+
+        {/* Logo - visible only on mobile */}
+        <div className="w-48 md:hidden">
           <Link href="/supplier/dashboard">
             <img src="/Logo_complete.png" alt="Ubuntu Portal" />
           </Link>
@@ -29,10 +53,10 @@ function Header({ toggleSidebar }: HeaderProps) {
       </div>
 
       {/* Search Bar */}
-      <div className="flex items-center w-full max-w-md mx-4">
+      <div className="flex items-center w-full max-w-64 mx-4">
         <div className="relative flex items-center w-full">
           <button className="absolute right-2">
-            <SearchIcon className=" h-auto w-6 text-gray-500" />
+            <SearchIcon className="h-auto w-6 text-gray-500" />
           </button>
           <input
             type="text"
@@ -42,8 +66,8 @@ function Header({ toggleSidebar }: HeaderProps) {
         </div>
       </div>
 
-      {/* User Profile & Notifications */}
-      <div className="flex items-center mr-4 space-x-4">
+      {/* User Profile & Notifications - Ensure visibility */}
+      <div className="flex items-center space-x-4">
         <LogoutButton />
         <button className="relative text-gray-600 hover:text-gray-800">
           <BellIcon className="h-6 w-6" />
