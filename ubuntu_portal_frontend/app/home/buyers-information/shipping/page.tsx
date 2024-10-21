@@ -45,7 +45,7 @@ function ShippingForm() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <p className="block text-sm font-medium mb-1">
-            Recipient`&apos;`s Name
+            Recipient&apos;s Name
           </p>
           <div className="flex gap-4">
             <div>
@@ -89,6 +89,7 @@ function ShippingForm() {
           <input
             type="text"
             {...register("address", { required: "Address is required" })}
+            placeholder=""
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
           />
           {errors.address && (
@@ -180,6 +181,7 @@ function ShippingForm() {
             <input
               type="email"
               {...register("email", { required: "Email is required" })}
+              placeholder="info@example.com"
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
             />
             {errors.email && (

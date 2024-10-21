@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import Searchbox from "./Searchbox";
 import HomeInput from "./HomeInput";
 
@@ -12,7 +12,12 @@ interface Product {
   price: number;
   stock: number;
   category: string[];
-  variations: { id: string; attribute: string; value: string; price_modifier: number }[];
+  variations: {
+    id: string;
+    attribute: string;
+    value: string;
+    price_modifier: number;
+  }[];
 }
 
 export default function ProductPage() {
@@ -22,8 +27,8 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const router = useRouter();
-  const { id } = router.query;
+  const param = useParams();
+  const id = param?.id;
 
   // Fetch product details by ID when component mounts or when `id` changes
   useEffect(() => {
@@ -35,7 +40,9 @@ export default function ProductPage() {
   const fetchProductDetails = async (productId: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`https://ubuntu-portal.onrender.com/api/products/${productId}/`);
+      const response = await fetch(
+        `https://ubuntu-portal.onrender.com/api/products/${productId}/`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch product details");
       }
@@ -57,7 +64,7 @@ export default function ProductPage() {
       <HomeInput setFilteredProducts={setFilteredProducts} />
 
       {/* Display search results */}
-      {searchResults.length > 0 && (
+      {searchResults?.length > 0 && (
         <div>
           <h2>Search Results</h2>
           <ul>
@@ -104,7 +111,8 @@ export default function ProductPage() {
           <ul>
             {productDetails.variations.map((variation) => (
               <li key={variation.id}>
-                Attribute: {variation.attribute}, Value: {variation.value}, Price Modifier: {variation.price_modifier}
+                Attribute: {variation.attribute}, Value: {variation.value},
+                Price Modifier: {variation.price_modifier}
               </li>
             ))}
           </ul>

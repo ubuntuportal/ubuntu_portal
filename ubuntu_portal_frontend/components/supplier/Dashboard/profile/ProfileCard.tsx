@@ -6,6 +6,9 @@ import {
   FaEnvelope,
 } from "react-icons/fa"; // Added FaEnvelope for email icon
 import { Button } from "@/components/ui/button";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 
 // Define the props interface
 interface SupplierProfileCardProps {
@@ -17,7 +20,14 @@ interface SupplierProfileCardProps {
 }
 
 // Temporary component to simulate dynamic data
-const SupplierProfileCard: React.FC = () => {
+const SupplierProfileCard: React.FC = async () => {
+  const session = await getServerSession(authOptions);
+
+  if (!session || session.role !== "supplier") {
+    redirect("/auth/login");
+  }
+
+  const { first_name, last_name, email } = session?.user;
   // Simulating dynamic details (these could be fetched from an API or passed as props later)
   const simulatedData: SupplierProfileCardProps = {
     profileImage:
@@ -39,7 +49,9 @@ const SupplierProfileCard: React.FC = () => {
         />
       </div>
       <div className="mb-4 font-bold text-xl">
-        <h2>Hezekiahs O.</h2>
+        <h2>
+          {first_name} {last_name}
+        </h2>
       </div>
 
       {/* Information section aligned to the left */}
@@ -59,7 +71,7 @@ const SupplierProfileCard: React.FC = () => {
         </div>
         <div className="flex items-center my-4">
           <FaEnvelope className="mr-2" /> {/* Icon for email */}
-          <span>{simulatedData.email}</span> {/* Simulated email */}
+          <span>{email}</span> {/* Simulated email */}
         </div>
       </div>
 
