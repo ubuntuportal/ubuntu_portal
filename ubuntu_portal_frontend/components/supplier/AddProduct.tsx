@@ -13,24 +13,25 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// src/types/Product.ts
+
 interface Product {
   title: string;
   description: string;
   price: number;
+  stock: number;
+  images: File[]; // Images field added to the Product type
 }
 
 export function AddProduct() {
-  //   interface ProductFormProps {
-  //     onSubmit: (product: Product) => void;
-  //   }
-
-  // const ProductForm: React.FC<ProductFormProps> = ({ onSubmit }) => {
   const [product, setProduct] = useState<Product>({
     title: "",
     description: "",
     price: 0,
+    stock: 0,
+    images: [],
   });
+
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -38,14 +39,55 @@ export function AddProduct() {
     const { name, value } = e.target;
     setProduct({
       ...product,
-      [name]: name === "price" ? parseFloat(value) : value,
+      [name]: name === "price" || name === "stock" ? parseFloat(value) : value,
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const fileArray = Array.from(files);
+      setProduct((prevProduct) => ({
+        ...prevProduct,
+        images: [...prevProduct.images, ...fileArray],
+      }));
+
+      const previewUrls = fileArray.map((file) => URL.createObjectURL(file));
+      setImagePreviews((prevPreviews) => [...prevPreviews, ...previewUrls]);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setProduct((prevProduct) => ({
+      ...prevProduct,
+      images: prevProduct.images.filter((_, i) => i !== index),
+    }));
+    setImagePreviews((prevPreviews) =>
+      prevPreviews.filter((_, i) => i !== index)
+    );
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // onSubmit(product);
-    setProduct({ title: "", description: "", price: 0 });
+    if (product.images.length === 0) {
+      alert("Please upload at least one image.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", product.title);
+    formData.append("description", product.description);
+    formData.append("price", product.price.toString());
+    formData.append("stock", product.stock.toString());
+
+    product.images.forEach((image, index) => {
+      formData.append(`images[${index}]`, image);
+    });
+
+    setProduct({ title: "", description: "", price: 0, stock: 0, images: [] });
+    setImagePreviews([]);
+
+    // Add your API request logic here
   };
 
   return (
@@ -55,82 +97,160 @@ export function AddProduct() {
           Add Product
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Add Product</DialogTitle>
-          <DialogDescription>
-            {/* <div>Add a new product</div> */}
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="max-w-lg">
-          <div className="mb-5">
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Product Title
-            </label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              value={product.title}
-              onChange={handleChange}
-              className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="Enter product title"
-              required
-            />
-          </div>
 
-          <div className="mb-5">
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Product Description
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              value={product.description}
-              onChange={handleChange}
-              className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="Enter product description"
-              rows={5}
-              required
-            />
-          </div>
+      <DialogContent
+        className="sm:max-w-[500px] lg:max-w-[700px] w-full max-h-[90vh] overflow-y-auto"
+        style={{ maxHeight: "90vh" }}
+      >
+        <div className="p-5">
+          <DialogHeader>
+            <DialogTitle>Add Product</DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
 
-          <div className="mb-5">
-            <label
-              htmlFor="price"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Price (in USD)
-            </label>
-            <input
-              type="number"
-              id="price"
-              name="price"
-              value={product.price}
-              onChange={handleChange}
-              className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              step="0.01"
-              min="0"
-              placeholder="Enter price"
-              required
-            />
-          </div>
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-5 sm:space-y-6 md:space-y-8"
+            encType="multipart/form-data"
+          >
+            {/* Product Title */}
+            <div className="mb-5">
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Product Title
+              </label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                value={product.title}
+                onChange={handleChange}
+                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="Enter product title"
+                required
+              />
+            </div>
 
-          <div className="mt-6">
-            <button
-              type="submit"
-              className="w-full bg-orange-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
-            >
-              Submit Product
-            </button>
-          </div>
-        </form>
+            {/* Product Description */}
+            <div className="mb-5">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Product Description
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                value={product.description}
+                onChange={handleChange}
+                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="Enter product description"
+                rows={5}
+                required
+              />
+            </div>
+
+            {/* Price and Stock */}
+            <div className="mb-5 flex gap-4">
+              <div>
+                <label
+                  htmlFor="price"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Price (in USD)
+                </label>
+                <input
+                  type="number"
+                  id="price"
+                  name="price"
+                  value={product.price}
+                  onChange={handleChange}
+                  className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  step="0.01"
+                  min="0"
+                  placeholder="Enter price"
+                  required
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="stock"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Stock
+                </label>
+                <input
+                  type="number"
+                  id="stock"
+                  name="stock"
+                  value={product.stock}
+                  onChange={handleChange}
+                  className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  step="1"
+                  min="0"
+                  placeholder="Enter stock quantity"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Image Upload */}
+            <div className="mb-5">
+              <label
+                htmlFor="images"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Product Images (first will be the main image)
+              </label>
+              <input
+                type="file"
+                id="images"
+                name="images"
+                accept="image/*"
+                multiple
+                onChange={handleImageChange}
+                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                required
+              />
+
+              {/* Preview uploaded images */}
+              {imagePreviews.length > 0 && (
+                <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  {imagePreviews.map((src, index) => (
+                    <div key={index} className="relative">
+                      <img
+                        src={src}
+                        alt={`Preview ${index}`}
+                        className="w-full h-24 object-cover rounded-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="absolute top-1 right-1 text-white bg-red-600 rounded-full w-6 h-6 flex items-center justify-center"
+                      >
+                        &times;
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <div className="mt-6">
+              <button
+                type="submit"
+                className="w-full bg-orange-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+              >
+                Submit Product
+              </button>
+            </div>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import AllowAny
 from .serializers import (RegisterSerializer, CustomTokenObtainPairSerializer, ForgotPasswordSerializer,
-                          ResetPasswordSerializer)
+                          ResetPasswordSerializer, UserProfileSerializer, CompanySerializer)
 from django.contrib.auth import get_user_model
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from dj_rest_auth.registration.views import SocialLoginView
@@ -22,44 +22,16 @@ from .utils import generate_activation_token, send_email_async
 from django.conf import settings
 import logging
 import jwt
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
+from .models import CustomUser, Company
 
 
 User = get_user_model()
 
 
 class RegisterViewSet(viewsets.ModelViewSet):
-    """
-    A viewset for handling user registration.
 
-    This viewset provides the functionality to register a new user to the platform.
-
-    - **Create**: Handles user registration by accepting the required data, validating it, and saving the new user to the database.
-
-    Permissions:
-    - **AllowAny**: This viewset is accessible to anyone, including unauthenticated users, allowing them to register.
-
-    Methods:
-    - `create(request, *args, **kwargs)`: Custom implementation of the create method to handle user registration.
-      Validates the provided data and saves a new user to the database if validation is successful.
-      Returns a success message upon successful registration.
-
-    Example Request:
-    ```
-    POST /register/
-    {
-        "username": "newuser",
-        "password": "password123",
-        "email": "newuser@example.com"
-    }
-    ```
-
-    Response:
-    ```
-    {
-        "message": "User registered successfully"
-    }
-    ```
-    """
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
@@ -122,18 +94,24 @@ class ActivateAccountView(APIView):
 class CustomTokenObtainPairView(TokenObtainPairView):
     """
     A custom view for handling JWT token generation upon user login.
-
-    This view extends the default `TokenObtainPairView` provided by Django REST framework SimpleJWT.
-
-    - **Create**: Handles the generation of a pair of JWT tokens (access and refresh) upon successful authentication.
-
-    Permissions:
-    - **AllowAny**: This view is accessible to anyone, allowing both authenticated and unauthenticated users to request tokens.
-
-    Serializer:
-    - Uses a custom serializer (`CustomTokenObtainPairSerializer`) to handle the token creation logic.
     """
     serializer_class = CustomTokenObtainPairSerializer
+
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter
+
+    def get_response(self):
+        original_response = super().get_response()
+        user = self.user
+
+        refresh = RefreshToken.for_user(user)
+        token_data = {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }
+
+        original_response.data.update(token_data)
+        return original_response
 
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
@@ -185,3 +163,28 @@ class ResetPasswordView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)
+
+
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(id=self.request.user.id)
+
+    def get_object(self):
+        return self.request.user
+
+
+class CompanyViewSet(viewsets.ModelViewSet):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Company.objects.filter(user=self.request.user)
+        else:
+            return Company.objects.none()
+

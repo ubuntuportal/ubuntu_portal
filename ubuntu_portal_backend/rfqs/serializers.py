@@ -6,7 +6,7 @@ class RFQSerializer(serializers.ModelSerializer):
     class Meta:
         model = RFQ
         fields = '__all__'
-        read_only_fields = ['buyer']  # Make buyer a read-only field
+        read_only_fields = ['buyer']
 
     def create(self, validated_data):
         # Automatically set the buyer as the logged-in user
