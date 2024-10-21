@@ -78,7 +78,9 @@ function Header({ toggleSidebar }: HeaderProps) {
         <button className="text-gray-600 hover:text-gray-800">
           <CogIcon className="h-8 w-8" />
         </button>
-        <ProfileButton />
+        <button className="text-gray-600 hover:text-gray-800">
+          <UserCircleIcon className="h-8 w-8" />
+        </button>
       </div>
     </header>
   );
