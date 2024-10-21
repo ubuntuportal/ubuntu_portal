@@ -2,11 +2,6 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 # from django.urls import path
-import dj_database_url
-
-
-# Load environment variables from .env file
-load_dotenv()
 
 
 # Load environment variables from .env file
@@ -26,15 +21,12 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',  # channels for live chat
-    'daphne', # Daphne server for Async WebSockers
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,7 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'api',
-    # 'user_auth',
+    'user_auth',
     'carts',
     'orders',
     'rfqs',
@@ -51,27 +43,21 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     'drf_yasg',
-    'phonenumber_field',
-    'django_countries',
 
     'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_countries',
 
     # Authentication apps
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-
+    
     # dj-rest-auth app
     'dj_rest_auth',
     'dj_rest_auth.registration',
-
-    'chat', # Live Chat App
-
-    'user_auth.apps.UserAuthConfig',
-
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -109,7 +95,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'portal_main.urls'
@@ -130,46 +115,19 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'portal_main.wsgi.application'
-ASGI_APPLICATION = "portal_main.asgi.application" # User ASGI application
+WSGI_APPLICATION = 'portal_main.wsgi.application'
 
-# Configure redis for channel layer
-CHANNEL_LAYERS = {
+
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+DATABASES = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
-    },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
-# Fetch the environment type from .env (no default)
-ENVIRONMENT = os.getenv('ENVIRONMENT')
-if not ENVIRONMENT:
-    raise ValueError("ENVIRONMENT variable not set in .env file!")
-
-# Configure the database according to the environment
-if ENVIRONMENT == 'production':
-    DATABASE_URL = os.getenv('DATABASE_URL')
-    if not DATABASE_URL:
-        raise ValueError("DATABASE_URL not set in production environment!")
-    
-    # Use the production database
-    DATABASES = {
-        'default': dj_database_url.config(default=DATABASE_URL)
-    }
-
-elif ENVIRONMENT == 'development':
-    # Use SQLite3 for development
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
-    }
-
-else:
-    raise ValueError("Invalid ENVIRONMENT value! Must be 'development' or 'production'.")
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -244,11 +202,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
-#whitenoise staticfile storage
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -269,17 +224,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Allow Origin of cors-headers(Cross-Origin Resource Sharing)
 CORS_ALLOW_ALL_ORIGINS = True
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    'ubuntu-portal.onrender.com',
-]
-
-
 REST_USE_JWT = True  # Enable JWT authentication
-ACCOUNT_EMAIL_VERIFICATION = "none"  # Disable email verification
-ACCOUNT_AUTHENTICATION_METHOD = "email"  # Use email for authentication
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "none"  # Disable email verification 
+ACCOUNT_AUTHENTICATION_METHOD = "email"  # Use email for authentication 
+ACCOUNT_EMAIL_REQUIRED = True 
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
@@ -299,12 +247,3 @@ EMAIL_HOST_PASSWORD = 'znyo ompp mcsl euta'
 DEFAULT_FROM_EMAIL = 'ubuntuportal60@gmail.com'
 
 
-# Channel layer definitions
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [('127.0.01', 6379)]
-        },
-    },
-}
